@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:18 # Puoi specificare una versione o 'latest'
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: myuser        # Nome utente (opzionale, default: postgres)
+      POSTGRES_PASSWORD: mypassword # Password (obbligatoria)
+      POSTGRES_DB: mydatabase     # Database creato all'avvio (opzionale)
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    shm_size: 128mb # Raccomandato per migliorare le performance di PostgreSQL
+
+volumes:
+  postgres_data:
