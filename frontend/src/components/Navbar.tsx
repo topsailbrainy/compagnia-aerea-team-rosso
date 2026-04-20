@@ -27,33 +27,38 @@ const Navbar: React.FC = () => {
               { label: 'Check-in', path: '/check-in' },
               { label: 'Status', path: '/flight-status' }
             ].map((link) => (
-              <NavLink 
-                key={link.path} 
-                to={link.path}
-                className={({ isActive }) => `
-                  text-xs font-black uppercase tracking-[0.2em] transition-all relative py-2
-                  ${isActive ? 'text-accent' : 'text-white/60 hover:text-white'}
-                `}
+              <motion.div
+                key={link.path}
+                whileHover={{ y: -2 }}
+                className="relative"
               >
-                {link.label}
-                {({ isActive }) => isActive && (
-                  <motion.div 
-                    layoutId="navUnderline"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent"
-                  />
-                )}
-              </NavLink>
+                <NavLink 
+                  to={link.path}
+                  className={({ isActive }) => `
+                    text-xs font-black uppercase tracking-[0.2em] transition-all relative py-2 px-3 rounded-lg
+                    ${isActive ? 'text-accent' : 'text-white/60 hover:text-accent hover:bg-white/5'}
+                  `}
+                >
+                  {link.label}
+                  {({ isActive }) => isActive && (
+                    <motion.div 
+                      layoutId="navUnderline"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent"
+                    />
+                  )}
+                </NavLink>
+              </motion.div>
             ))}
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           <div className="hidden md:flex items-center gap-6 mr-6 pr-6 border-r border-white/10">
-            <button className="text-xs font-black uppercase tracking-[0.2em] text-white/60 hover:text-white transition-all flex items-center gap-2">
+            <button className="text-xs font-black uppercase tracking-[0.2em] text-white/60 hover:text-accent transition-all flex items-center gap-2">
               <Globe size={14} className="text-accent" />
               EN
             </button>
-            <button className="text-xs font-black uppercase tracking-[0.2em] text-white/60 hover:text-white transition-all flex items-center gap-2">
+            <button className="text-xs font-black uppercase tracking-[0.2em] text-white/60 hover:text-accent transition-all flex items-center gap-2">
               <Bell size={14} className="text-accent" />
               Alerts
             </button>
@@ -62,7 +67,7 @@ const Navbar: React.FC = () => {
           <div className="flex items-center gap-4">
             <NavLink 
               to="/login"
-              className="text-xs font-black uppercase tracking-[0.2em] text-white/60 hover:text-white transition-all flex items-center gap-2 py-2 px-4 rounded-lg hover:bg-white/5"
+              className="text-xs font-black uppercase tracking-[0.2em] text-white/60 hover:text-accent transition-all flex items-center gap-2 py-2 px-4 rounded-lg hover:bg-white/5"
             >
               <User size={14} className="text-accent" />
               Login

@@ -34,7 +34,7 @@ const Sidebar: React.FC = () => {
         className={`fixed top-0 left-0 h-screen transition-all duration-300 z-40 bg-primary border-r border-white/10
           ${isSidebarOpen ? 'w-64' : 'w-0 -translate-x-full lg:w-20 lg:translate-x-0'}`}
       >
-        <div className="flex flex-col h-full overflow-hidden">
+        <div className="flex flex-col h-full overflow-y-auto custom-scrollbar">
           {/* Logo Section */}
           <div className="sidebar-brand mt-8 mb-12">
             <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mb-2 shadow-lg shadow-accent/20">

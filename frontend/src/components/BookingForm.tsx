@@ -61,51 +61,19 @@ const CustomDatePicker: React.FC<{
   label: string;
   disabled?: boolean;
 }> = ({ value, onChange, label, disabled }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const inputRef = React.useRef<HTMLInputElement>(null);
-
   return (
     <div className={`flex flex-col gap-3 transition-all duration-500 ${disabled ? 'opacity-30 grayscale' : 'opacity-100'}`}>
       <label className="text-[10px] uppercase font-black text-gray-400 tracking-[0.2em] ml-2">{label}</label>
-      <div className="relative">
-        <div 
-          onClick={() => !disabled && setIsOpen(!isOpen)}
-          className={`flex items-center gap-2 px-4 py-3 bg-gray-50 ${!disabled && 'hover:bg-white border-gray-100 hover:border-accent/30 cursor-pointer'} border rounded-xl transition-all group`}
-        >
-          <Calendar size={16} className="text-accent group-hover:scale-110 transition-transform" />
-          <span className="text-xs font-black uppercase tracking-widest text-primary flex-1">
-            {value ? new Date(value).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Select Date'}
-          </span>
-          <ChevronDown size={14} className={`text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
-        </div>
-
-        <AnimatePresence>
-          {isOpen && (
-            <>
-              <div className="fixed inset-0 z-[60]" onClick={() => setIsOpen(false)} />
-              <motion.div 
-                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                className="absolute left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl z-[70] p-4 min-w-[300px]"
-              >
-                <input 
-                  ref={inputRef}
-                  type="date" 
-                  value={value}
-                  onChange={(e) => {
-                    onChange(e.target.value);
-                    setIsOpen(false);
-                  }}
-                  className="w-full p-2 border border-gray-100 rounded-lg text-sm font-bold text-primary focus:border-accent outline-none"
-                />
-                <div className="mt-4 text-[10px] font-black uppercase tracking-widest text-gray-400 text-center">
-                  Select your travel date
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
+      <div className="relative group">
+        <Calendar size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-accent group-hover:scale-110 transition-transform pointer-events-none z-10" />
+        <input 
+          type="date"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={disabled}
+          className={`w-full pl-12 pr-4 py-5 bg-gray-50 border border-gray-100 rounded-2xl transition-all font-black text-sm uppercase tracking-widest text-primary outline-none ${!disabled && 'hover:bg-white hover:border-accent/30 cursor-pointer'}`}
+          style={{ colorScheme: 'light' }}
+        />
       </div>
     </div>
   );
