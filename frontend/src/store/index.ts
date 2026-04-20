@@ -2,9 +2,7 @@ import { create } from 'zustand';
 
 interface UIState {
   isSidebarOpen: boolean;
-  activePage: string;
   setSidebarOpen: (isOpen: boolean) => void;
-  setActivePage: (page: string) => void;
 }
 
 interface SearchState {
@@ -18,9 +16,7 @@ interface SearchState {
 
 export const useUIStore = create<UIState>((set) => ({
   isSidebarOpen: true,
-  activePage: 'home',
   setSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
-  setActivePage: (page) => set({ activePage: page }),
 }));
 
 export const useSearchStore = create<SearchState>((set) => ({

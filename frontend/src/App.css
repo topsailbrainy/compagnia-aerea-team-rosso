@@ -52,18 +52,21 @@
 
 .accent-button {
   background-color: var(--accent);
-  color: white;
+  color: var(--primary);
   padding: 0.75rem 2rem;
-  border-radius: 4px;
-  font-weight: 600;
-  transition: all 0.3s ease;
+  border-radius: 12px;
+  font-weight: 800;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+  box-shadow: 0 10px 20px -5px rgba(205, 164, 52, 0.3);
 }
 
 .accent-button:hover {
-  background-color: #b08d2d;
-  transform: translateY(-1px);
+  background-color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px -5px rgba(205, 164, 52, 0.4);
 }
 
 /* Custom Scrollbar */

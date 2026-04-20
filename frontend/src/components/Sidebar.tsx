@@ -1,17 +1,24 @@
 import React from 'react';
-import { Plane, MapPin, Info, Phone, LayoutGrid, Menu, X, ChevronRight } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+import { Plane, Briefcase, CheckCircle2, Clock, MapPin, LayoutGrid, Info, Phone, Menu, X, ChevronRight } from 'lucide-react';
 import { useUIStore } from '../store';
 import { GlassCard } from 'react-glass-ui';
 
 const Sidebar: React.FC = () => {
-  const { isSidebarOpen, setSidebarOpen, activePage, setActivePage } = useUIStore();
+  const { isSidebarOpen, setSidebarOpen } = useUIStore();
 
   const navItems = [
-    { id: 'home', label: 'Book Flight', icon: Plane },
-    { id: 'destinations', label: 'Destinations', icon: MapPin },
-    { id: 'fleet', label: 'Our Fleet', icon: LayoutGrid },
-    { id: 'about', label: 'Company Info', icon: Info },
-    { id: 'contact', label: 'Contact Us', icon: Phone },
+    { id: 'book', label: 'Book', icon: Plane, path: '/book' },
+    { id: 'manage', label: 'Manage', icon: Briefcase, path: '/manage' },
+    { id: 'check-in', label: 'Check-in', icon: CheckCircle2, path: '/check-in' },
+    { id: 'flight-status', label: 'Flight Status', icon: Clock, path: '/flight-status' },
+  ];
+
+  const secondaryItems = [
+    { id: 'destinations', label: 'Destinations', icon: MapPin, path: '/destinations' },
+    { id: 'fleet', label: 'Our Fleet', icon: LayoutGrid, path: '/fleet' },
+    { id: 'about', label: 'Company Info', icon: Info, path: '/about' },
+    { id: 'contact', label: 'Contact Us', icon: Phone, path: '/contact' },
   ];
 
   return (
@@ -41,22 +48,45 @@ const Sidebar: React.FC = () => {
             )}
           </div>
 
-          {/* Navigation */}
+          {/* Primary Navigation */}
           <nav className="flex-1 space-y-1">
+            <div className="px-4 mb-2 text-[10px] font-bold text-white/30 uppercase tracking-widest">
+              {isSidebarOpen ? 'Services' : ''}
+            </div>
             {navItems.map((item) => (
-              <button
+              <NavLink
                 key={item.id}
-                onClick={() => setActivePage(item.id)}
-                className={`w-full nav-link group ${activePage === item.id ? 'active' : ''}`}
+                to={item.path}
+                className={({ isActive }) => 
+                  `w-full nav-link group ${isActive ? 'active' : ''}`
+                }
               >
                 <item.icon size={22} className={isSidebarOpen ? 'mr-4' : 'mx-auto'} />
                 {isSidebarOpen && (
                   <>
                     <span className="flex-1 text-left font-medium">{item.label}</span>
-                    {activePage === item.id && <ChevronRight size={16} className="text-accent" />}
+                    <ChevronRight size={16} className="text-accent opacity-0 group-[.active]:opacity-100 transition-opacity" />
                   </>
                 )}
-              </button>
+              </NavLink>
+            ))}
+
+            <div className="pt-6 pb-2 px-4 text-[10px] font-bold text-white/30 uppercase tracking-widest">
+              {isSidebarOpen ? 'Explore' : ''}
+            </div>
+            {secondaryItems.map((item) => (
+              <NavLink
+                key={item.id}
+                to={item.path}
+                className={({ isActive }) => 
+                  `w-full nav-link group ${isActive ? 'active' : ''}`
+                }
+              >
+                <item.icon size={20} className={isSidebarOpen ? 'mr-4' : 'mx-auto opacity-70'} />
+                {isSidebarOpen && (
+                  <span className="flex-1 text-left font-medium text-sm">{item.label}</span>
+                )}
+              </NavLink>
             ))}
           </nav>
 
