@@ -21,6 +21,17 @@ SET row_security = off;
 
 BEGIN;
 
+-- --- PULIZIA SCHEMA (Opzionale, utile per sviluppo) ---
+DROP TABLE IF EXISTS biglietti CASCADE;
+DROP TABLE IF EXISTS prenotazioni CASCADE;
+DROP TABLE IF EXISTS utenti CASCADE;
+DROP TABLE IF EXISTS documenti CASCADE;
+DROP TABLE IF EXISTS gate CASCADE;
+DROP TABLE IF EXISTS voli CASCADE;
+DROP TABLE IF EXISTS aeroporti CASCADE;
+DROP TABLE IF EXISTS tratte CASCADE;
+DROP TABLE IF EXISTS aerei CASCADE;
+
 -- --- TABELLE ---
 
 -- Tabella Aerei
