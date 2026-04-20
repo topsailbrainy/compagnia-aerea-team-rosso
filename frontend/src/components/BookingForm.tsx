@@ -71,7 +71,7 @@ const CustomDatePicker: React.FC<{
           value={value}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
-          className={`w-full pl-12 pr-4 py-5 bg-gray-50 border border-gray-100 rounded-2xl transition-all font-black text-sm uppercase tracking-widest text-primary outline-none ${!disabled && 'hover:bg-white hover:border-accent/30 cursor-pointer'}`}
+          className={`min-w-[180px] w-full md:w-fit pl-12 pr-4 h-[68px] bg-gray-50 border border-gray-100 rounded-2xl transition-all font-black text-sm uppercase tracking-widest text-primary outline-none ${!disabled && 'hover:bg-white hover:border-accent/30 cursor-pointer'}`}
           style={{ colorScheme: 'light' }}
         />
       </div>
@@ -80,16 +80,16 @@ const CustomDatePicker: React.FC<{
 };
 
 const BookingForm: React.FC = () => {
-  const { from, to, departureDate, returnDate, passengers, setSearch } = useSearchStore();
+  const { from, to, departureDate, returnDate, passengers, cabinClass, setSearch } = useSearchStore();
   const [tripType, setTripType] = React.useState<'return' | 'oneway' | 'multi'>('return');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!from || !to) {
-      alert('Please fill in both origin and destination.');
+    if (!from || !to || !departureDate || (tripType === 'return' && !returnDate)) {
+      alert('Please fill in all sections: Origin, Destination, Departure and Return date.');
       return;
     }
-    console.log('Searching flights for:', { tripType, from, to, departureDate, returnDate, passengers });
+    console.log('Searching flights for:', { tripType, from, to, departureDate, returnDate, passengers, cabinClass });
   };
 
   const swapLocations = () => {
@@ -151,7 +151,7 @@ const BookingForm: React.FC = () => {
                     placeholder="Where from?"
                     value={from}
                     onChange={(e) => setSearch('from', e.target.value)}
-                    className="w-full pl-14 pr-6 py-5 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-accent/20 focus:ring-8 focus:ring-accent/5 outline-none transition-all font-bold text-primary placeholder:text-gray-300"
+                    className="w-full pl-14 pr-6 h-[68px] bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-accent/20 focus:ring-8 focus:ring-accent/5 outline-none transition-all font-bold text-primary placeholder:text-gray-300"
                   />
                 </div>
               </div>
@@ -177,14 +177,14 @@ const BookingForm: React.FC = () => {
                     placeholder="Where to?"
                     value={to}
                     onChange={(e) => setSearch('to', e.target.value)}
-                    className="w-full pl-14 pr-6 py-5 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-accent/20 focus:ring-8 focus:ring-accent/5 outline-none transition-all font-bold text-primary placeholder:text-gray-300"
+                    className="w-full pl-14 pr-6 h-[68px] bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-accent/20 focus:ring-8 focus:ring-accent/5 outline-none transition-all font-bold text-primary placeholder:text-gray-300"
                   />
                 </div>
               </div>
             </div>
 
             {/* Dates Container */}
-            <div className="lg:col-span-4 grid grid-cols-2 gap-4">
+            <div className="lg:col-span-4 flex flex-col md:flex-row gap-4">
               <CustomDatePicker 
                 label="Departure"
                 value={departureDate}
@@ -229,8 +229,8 @@ const BookingForm: React.FC = () => {
                 ]}
               />
               <CustomSelect 
-                value="economy"
-                onChange={() => {}}
+                value={cabinClass}
+                onChange={(val) => setSearch('cabinClass', val)}
                 icon={<ArrowRightLeft size={16} />}
                 options={[
                   { value: 'economy', label: 'Economy' },

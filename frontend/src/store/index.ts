@@ -11,6 +11,7 @@ interface SearchState {
   departureDate: string;
   returnDate: string;
   passengers: number;
+  cabinClass: string;
   setSearch: (key: keyof Omit<SearchState, 'setSearch'>, value: string | number) => void;
 }
 
@@ -25,5 +26,6 @@ export const useSearchStore = create<SearchState>((set) => ({
   departureDate: '',
   returnDate: '',
   passengers: 1,
+  cabinClass: 'economy',
   setSearch: (key, value) => set((state) => ({ ...state, [key]: value })),
 }));
