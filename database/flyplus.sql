@@ -1,11 +1,18 @@
 -- Database Schema per Compagnia Aerea "FlyPlus"
--- Correzioni apportate:
--- 1. Uniformata la naming convention in lowercase per tabelle e colonne.
--- 2. Corretti i tipi di dato per i voli (TIMESTAMP invece di DECIMAL).
--- 3. Invertite le relazioni errate (es. prenotazioni -> utenti, non viceversa).
--- 4. Risolte le dipendenze circolari tra aeroporti e gate rendendo opzionali i vincoli ridondanti.
--- 5. Aggiunti indici per ottimizzare le performance delle query comuni.
--- 6. Organizzato l'ordine delle tabelle secondo le dipendenze logiche.
+-- ... (rest of the comments)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+BEGIN;
 
 -- --- TABELLE ---
 
@@ -138,3 +145,5 @@ CREATE INDEX idx_prenotazioni_utente ON prenotazioni(utente_id);
 CREATE INDEX idx_prenotazioni_tratta ON prenotazioni(tratta_id);
 CREATE INDEX idx_biglietti_utente ON biglietti(utente_id);
 CREATE INDEX idx_biglietti_gate ON biglietti(gate_id);
+
+COMMIT;
