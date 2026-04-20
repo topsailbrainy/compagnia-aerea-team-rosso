@@ -1,11 +1,11 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import app from './app';
 
-dotenv.config();
+// Porta di ascolto
+const port = Number(process.env.PORT ?? 3000);
 
-const PORT = Number(process.env.APP_PORT ?? 3000);
-
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+// Avvio server
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
 });
 

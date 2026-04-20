@@ -1,0 +1,691 @@
+openapi: 3.0.3
+info:
+  title: API Compagnia Aerea
+  description: API per la gestione di voli, prenotazioni, utenti e infrastrutture aeroportuali.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Server di sviluppo
+
+paths:
+  # AEROPORTI
+  /aeroporti:
+    get:
+      summary: Lista tutti gli aeroporti
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Aeroporto'
+    post:
+      summary: Crea un nuovo aeroporto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Aeroporto'
+      responses:
+        '201':
+          description: Creato
+  /aeroporti/{nome}:
+    parameters:
+      - name: nome
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Ottieni un aeroporto per nome
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Aeroporto'
+    put:
+      summary: Aggiorna un aeroporto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Aeroporto'
+      responses:
+        '200':
+          description: Aggiornato
+    delete:
+      summary: Elimina un aeroporto
+      responses:
+        '204':
+          description: Eliminato
+
+  # AEREI
+  /aerei:
+    get:
+      summary: Lista tutti gli aerei
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Aereo'
+    post:
+      summary: Crea un nuovo aereo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AereoInput'
+      responses:
+        '201':
+          description: Creato
+  /aerei/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Ottieni un aereo per ID
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Aereo'
+    put:
+      summary: Aggiorna un aereo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AereoInput'
+      responses:
+        '200':
+          description: Aggiornato
+    delete:
+      summary: Elimina un aereo
+      responses:
+        '204':
+          description: Eliminato
+
+  # VOLI
+  /voli:
+    get:
+      summary: Lista tutti i voli
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Volo'
+    post:
+      summary: Crea un nuovo volo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoloInput'
+      responses:
+        '201':
+          description: Creato
+  /voli/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Ottieni un volo per ID
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Volo'
+    put:
+      summary: Aggiorna un volo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoloInput'
+      responses:
+        '200':
+          description: Aggiornato
+    delete:
+      summary: Elimina un volo
+      responses:
+        '204':
+          description: Eliminato
+
+  # UTENTI
+  /utenti:
+    get:
+      summary: Lista tutti gli utenti
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Utente'
+    post:
+      summary: Crea un nuovo utente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UtenteInput'
+      responses:
+        '201':
+          description: Creato
+  /utenti/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Ottieni un utente per ID
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Utente'
+    put:
+      summary: Aggiorna un utente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UtenteInput'
+      responses:
+        '200':
+          description: Aggiornato
+    delete:
+      summary: Elimina un utente
+      responses:
+        '204':
+          description: Eliminato
+
+  # PRENOTAZIONI
+  /prenotazioni:
+    get:
+      summary: Lista tutte le prenotazioni
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Prenotazione'
+    post:
+      summary: Crea una nuova prenotazione
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrenotazioneInput'
+      responses:
+        '201':
+          description: Creata
+  /prenotazioni/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Ottieni una prenotazione per ID
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prenotazione'
+    put:
+      summary: Aggiorna una prenotazione
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrenotazioneInput'
+      responses:
+        '200':
+          description: Aggiornata
+    delete:
+      summary: Elimina una prenotazione
+      responses:
+        '204':
+          description: Eliminata
+
+  # BIGLIETTI
+  /biglietti:
+    get:
+      summary: Lista tutti i biglietti
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Biglietto'
+    post:
+      summary: Crea un nuovo biglietto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BigliettoInput'
+      responses:
+        '201':
+          description: Creato
+  /biglietti/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Ottieni un biglietto per ID
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Biglietto'
+    delete:
+      summary: Elimina un biglietto
+      responses:
+        '204':
+          description: Eliminato
+
+  # GATE
+  /gate:
+    get:
+      summary: Lista tutti i gate
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Gate'
+    post:
+      summary: Crea un nuovo gate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GateInput'
+      responses:
+        '201':
+          description: Creato
+  /gate/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Ottieni un gate per ID
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gate'
+    put:
+      summary: Aggiorna un gate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GateInput'
+      responses:
+        '200':
+          description: Aggiornato
+    delete:
+      summary: Elimina un gate
+      responses:
+        '204':
+          description: Eliminato
+
+  # TRATTE
+  /tratte:
+    get:
+      summary: Lista tutte le tratte
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tratta'
+    post:
+      summary: Crea una nuova tratta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrattaInput'
+      responses:
+        '201':
+          description: Creatata
+  /tratte/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Ottieni una tratta per ID
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tratta'
+    put:
+      summary: Aggiorna una tratta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrattaInput'
+      responses:
+        '200':
+          description: Aggiornata
+    delete:
+      summary: Elimina una tratta
+      responses:
+        '204':
+          description: Eliminata
+
+  # DOCUMENTI
+  /documenti:
+    get:
+      summary: Lista tutti i documenti
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Documento'
+    post:
+      summary: Carica un nuovo documento
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentoInput'
+      responses:
+        '201':
+          description: Creato
+  /documenti/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Ottieni un documento per ID
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Documento'
+    delete:
+      summary: Elimina un documento
+      responses:
+        '204':
+          description: Eliminato
+
+components:
+  schemas:
+    Aeroporto:
+      type: object
+      required:
+        - nome
+        - aereo_id
+        - gate_id
+        - citta
+      properties:
+        nome:
+          type: string
+        aereo_id:
+          type: integer
+        gate_id:
+          type: integer
+        citta:
+          type: string
+
+    AereoInput:
+      type: object
+      required:
+        - capienza
+        - stato
+        - modello
+      properties:
+        capienza:
+          type: integer
+        stato:
+          type: boolean
+        modello:
+          type: string
+
+    Aereo:
+      allOf:
+        - $ref: '#/components/schemas/AereoInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+
+    VoloInput:
+      type: object
+      required:
+        - tratte_id
+        - aerei_id
+        - partenza
+        - arrivo
+      properties:
+        tratte_id:
+          type: integer
+        aerei_id:
+          type: integer
+        partenza:
+          type: number
+          format: decimal
+        arrivo:
+          type: number
+          format: decimal
+
+    Volo:
+      allOf:
+        - $ref: '#/components/schemas/VoloInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+
+    UtenteInput:
+      type: object
+      required:
+        - nome
+        - cognome
+        - email
+        - documenti_id
+      properties:
+        nome:
+          type: string
+        cognome:
+          type: string
+        email:
+          type: string
+          format: email
+        documenti_id:
+          type: integer
+
+    Utente:
+      allOf:
+        - $ref: '#/components/schemas/UtenteInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+
+    PrenotazioneInput:
+      type: object
+      required:
+        - utente_id
+        - passeggeri
+        - tratta_id
+      properties:
+        utente_id:
+          type: integer
+        passeggeri:
+          type: integer
+        tratta_id:
+          type: integer
+
+    Prenotazione:
+      allOf:
+        - $ref: '#/components/schemas/PrenotazioneInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+
+    BigliettoInput:
+      type: object
+      required:
+        - utente_id
+        - gate_id
+      properties:
+        utente_id:
+          type: integer
+        gate_id:
+          type: integer
+
+    Biglietto:
+      allOf:
+        - $ref: '#/components/schemas/BigliettoInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+
+    GateInput:
+      type: object
+      required:
+        - aeroporto_nome
+        - voli_id
+      properties:
+        aeroporto_nome:
+          type: string
+        voli_id:
+          type: integer
+
+    Gate:
+      allOf:
+        - $ref: '#/components/schemas/GateInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+
+    TrattaInput:
+      type: object
+      required:
+        - nome
+      properties:
+        nome:
+          type: string
+
+    Tratta:
+      allOf:
+        - $ref: '#/components/schemas/TrattaInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+
+    DocumentoInput:
+      type: object
+      required:
+        - utente_id
+        - documento
+      properties:
+        utente_id:
+          type: integer
+        documento:
+          type: string
+          format: binary
+          description: Rappresentazione base64 del file (BYTEA)
+
+    Documento:
+      allOf:
+        - $ref: '#/components/schemas/DocumentoInput'
+        - type: object
+          properties:
+            id:
+              type: integer
