@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@layer theme {
+  :root {
+    --primary: #263A46;
+    --accent: #CDA434;
+    --secondary: #F5F5F5;
+    --text-navy: #263A46;
+    --text-gold: #CDA434;
+    --bg-light: #F5F5F5;
+  }
+}
+
+@theme {
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --color-secondary: var(--secondary);
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--secondary);
+  color: var(--primary);
+  overflow-x: hidden;
+}
+
+@import "./App.css";
