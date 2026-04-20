@@ -1,17 +1,35 @@
 services:
-  db:
-    image: postgres:18 # Puoi specificare una versione o 'latest'
-    container_name: postgres_db
-    restart: always
+  dbms:
+    image: postgres:17-alpine
+    container_name: dbms
     environment:
-      POSTGRES_USER: myuser        # Nome utente (opzionale, default: postgres)
-      POSTGRES_PASSWORD: mypassword # Password (obbligatoria)
-      POSTGRES_DB: mydatabase     # Database creato all'avvio (opzionale)
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
+      - POSTGRES_USER=${DB_USER:-postgres}
+    volumes:
+    
+      - pgdata:/var/lib/postgresql/data 
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    shm_size: 128mb # Raccomandato per migliorare le performance di PostgreSQL
+    restart: unless-stopped
+    networks:
+      db-net:
+        aliases:
+          - dbms.local
+
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    networks:
+      db-net:
+        aliases:
+          - adminer.local
 
 volumes:
-  postgres_data:
+  pgdata:
+
+networks:
+  db-net:
+    driver: bridge
