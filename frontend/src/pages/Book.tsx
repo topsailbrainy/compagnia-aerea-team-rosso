@@ -19,16 +19,16 @@ const Book: React.FC = () => {
     <div className="flex flex-col">
       <HeroCarousel />
       
-      <div className="px-6 md:px-12">
+      <div className="pl-4 pr-6 md:pr-12">
         <BookingForm />
         <UtilityNav />
 
         {/* Features Section */}
-        <section className="py-24 max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+        <section className="py-24 max-w-none ml-0">
+          <div className="text-left mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-primary mb-4 tracking-tight">Why Choose FlyPlus?</h2>
-            <p className="text-gray-500 max-w-2xl mx-auto">Discover the difference of flying with a premium carrier dedicated to your comfort and safety.</p>
-            <div className="w-24 h-1 bg-accent mx-auto mt-6" />
+            <p className="text-gray-500 max-w-2xl">Discover the difference of flying with a premium carrier dedicated to your comfort and safety.</p>
+            <div className="w-24 h-1 bg-accent mt-6" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
@@ -39,7 +39,7 @@ const Book: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="flex flex-col items-center text-center p-8 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                className="flex flex-col items-start text-left p-8 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mb-6">
                   <f.icon className="text-accent" size={32} />
@@ -53,7 +53,7 @@ const Book: React.FC = () => {
 
         <PromotionalCarousel />
 
-        <section className="max-w-7xl mx-auto mb-20">
+        <section className="max-w-none ml-0 mb-20">
           <div className="bg-primary rounded-3xl p-10 md:p-16 relative overflow-hidden flex flex-col md:flex-row items-center gap-12">
             <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full -mr-32 -mt-32 blur-3xl" />
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-accent/5 rounded-full -ml-24 -mb-24 blur-2xl" />
@@ -82,8 +82,8 @@ const Book: React.FC = () => {
 
         <InfoCards />
 
-        <section className="py-24 bg-primary -mx-6 md:-mx-12 px-6 md:px-12 text-white overflow-hidden">
-          <div className="max-w-7xl mx-auto">
+        <section className="py-24 bg-primary -mx-4 md:-mx-12 px-6 md:px-12 text-white overflow-hidden">
+          <div className="max-w-none ml-0">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
               <div>
                 <span className="text-accent uppercase tracking-[0.3em] font-bold mb-4 block">Destinations</span>

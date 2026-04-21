@@ -11,7 +11,7 @@ const UtilityNav: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-6 mt-4 relative z-40 mb-12">
+    <div className="max-w-none ml-0 relative z-40 mb-12">
       <div className="grid grid-cols-2 md:grid-cols-4 bg-primary shadow-[0_30px_60px_rgba(0,0,0,0.2)] rounded-[2rem] overflow-hidden border border-white/10">
         {items.map((item, index) => (
           <motion.button 

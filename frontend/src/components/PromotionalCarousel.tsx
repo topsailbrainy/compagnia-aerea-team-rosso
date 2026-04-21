@@ -1,29 +1,64 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
+
+// Import images from assets
+import aereoImg from '../assets/aerei/aereo.avif';
+import loungeImg from '../assets/aerei/lounge.avif';
+import romaImg from '../assets/destinazioni/roma.avif';
+import maldiveImg from '../assets/destinazioni/maldive.avif';
+import tokyoImg from '../assets/destinazioni/tokyo.avif';
 
 const PromotionalCarousel: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const promos = [
-    { title: 'Book our latest deals', category: 'OFFERS', desc: 'Explore the world with our special fares.' },
-    { title: 'Italy Stopover', category: 'EXPERIENCE', desc: 'Enjoy a free hotel stay in Rome or Milan.' },
-    { title: 'FlyPlus Guest', category: 'LOYALTY', desc: 'Earn miles every time you fly with us.' },
-    { title: 'Sky Suite', category: 'LUXURY', desc: 'Experience the world\'s most private suite in the sky.' },
-    { title: 'Our New Routes', category: 'EXPLORE', desc: 'Discover our expanding global network.' },
+    { title: 'Book our latest deals', category: 'OFFERS', desc: 'Explore the world with our special fares.', image: maldiveImg },
+    { title: 'Italy Stopover', category: 'EXPERIENCE', desc: 'Enjoy a free hotel stay in Rome or Milan.', image: romaImg },
+    { title: 'FlyPlus Guest', category: 'LOYALTY', desc: 'Earn miles every time you fly with us.', image: aereoImg },
+    { title: 'Sky Suite', category: 'LUXURY', desc: 'Experience the world\'s most private suite in the sky.', image: loungeImg },
+    { title: 'Our New Routes', category: 'EXPLORE', desc: 'Discover our expanding global network.', image: tokyoImg },
   ];
+
+  // Triple the promos to create an infinite loop effect
+  const extendedPromos = [...promos, ...promos, ...promos];
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (container) {
+      // Start in the middle set of items
+      const setWidth = container.scrollWidth / 3;
+      container.scrollLeft = setWidth;
+    }
+  }, []);
+
+  const handleScroll = () => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const { scrollLeft, scrollWidth } = container;
+    const setWidth = scrollWidth / 3;
+
+    // Jump logic for infinite loop
+    if (scrollLeft <= 0) {
+      container.scrollLeft = setWidth;
+    } else if (scrollLeft >= setWidth * 2) {
+      container.scrollLeft = setWidth;
+    }
+  };
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
       const { scrollLeft, clientWidth } = scrollRef.current;
-      const scrollTo = direction === 'left' ? scrollLeft - clientWidth / 2 : scrollLeft + clientWidth / 2;
+      const scrollAmount = clientWidth * 0.8;
+      const scrollTo = direction === 'left' ? scrollLeft - scrollAmount : scrollLeft + scrollAmount;
       scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
     }
   };
 
   return (
-    <section className="py-20 bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <div className="flex justify-between items-end mb-10">
+    <section className="py-20 overflow-hidden bg-transparent">
+      <div className="max-w-none ml-0">
+        <div className="flex justify-between items-end mb-10 px-6">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold text-primary mb-2">Discover more</h2>
             <div className="w-20 h-1 bg-accent" />
@@ -31,13 +66,13 @@ const PromotionalCarousel: React.FC = () => {
           <div className="flex gap-3">
             <button 
               onClick={() => scroll('left')}
-              className="p-3 border border-gray-200 rounded-full hover:bg-primary hover:text-white hover:border-primary transition-all group"
+              className="p-3 border border-gray-200 rounded-full hover:bg-primary hover:text-white hover:border-primary transition-all group bg-white/50 backdrop-blur-sm"
             >
               <ChevronLeft size={24} className="text-gray-400 group-hover:text-white" />
             </button>
             <button 
               onClick={() => scroll('right')}
-              className="p-3 border border-gray-200 rounded-full hover:bg-primary hover:text-white hover:border-primary transition-all group"
+              className="p-3 border border-gray-200 rounded-full hover:bg-primary hover:text-white hover:border-primary transition-all group bg-white/50 backdrop-blur-sm"
             >
               <ChevronRight size={24} className="text-gray-400 group-hover:text-white" />
             </button>
@@ -46,34 +81,43 @@ const PromotionalCarousel: React.FC = () => {
 
         <div 
           ref={scrollRef}
-          className="flex gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory"
+          onScroll={handleScroll}
+          className="flex gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory px-6"
         >
-          {promos.map((promo, index) => (
+          {extendedPromos.map((promo, index) => (
             <div 
               key={index}
-              className="min-w-[300px] md:min-w-[380px] snap-start"
+              className="min-w-[300px] md:min-w-[420px] snap-start"
             >
-              <div className="bg-secondary rounded-2xl overflow-hidden group cursor-pointer h-[450px] flex flex-col">
-                <div className="h-64 bg-gray-200 relative overflow-hidden">
-                  {/* Image Placeholder */}
-                  <div className="absolute inset-0 bg-primary/5 group-hover:bg-primary/0 transition-colors duration-500" />
-                  <div className="absolute top-4 left-4">
-                    <span className="bg-white/90 backdrop-blur-sm px-3 py-1 text-[10px] font-bold text-primary tracking-widest rounded-full uppercase">
+              <div className="rounded-3xl overflow-hidden group cursor-pointer h-[500px] flex flex-col transition-all duration-500 hover:translate-y-[-8px]">
+                <div className="h-2/3 relative overflow-hidden">
+                  <img 
+                    src={promo.image} 
+                    alt={promo.title}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+                  <div className="absolute top-6 left-6">
+                    <span className="bg-white/90 backdrop-blur-md px-4 py-1.5 text-[10px] font-bold text-primary tracking-[0.2em] rounded-full uppercase shadow-lg">
                       {promo.category}
                     </span>
                   </div>
                 </div>
-                <div className="p-8 flex-1 flex flex-col justify-between border-t border-gray-100">
+                <div className="p-8 flex-1 flex flex-col justify-between bg-white/80 backdrop-blur-md border border-white/20 border-t-0 rounded-b-3xl">
                   <div>
                     <h3 className="text-2xl font-bold text-primary mb-3 group-hover:text-accent transition-colors">
                       {promo.title}
                     </h3>
-                    <p className="text-gray-500 text-sm leading-relaxed">
+                    <p className="text-gray-600 text-sm leading-relaxed">
                       {promo.desc}
                     </p>
                   </div>
-                  <div className="flex items-center text-accent font-bold text-sm gap-2">
-                    Learn more <ChevronRight size={16} />
+                  <div className="flex items-center text-accent font-bold text-sm gap-2 group/btn">
+                    <span className="relative overflow-hidden">
+                      Learn more
+                      <span className="absolute bottom-0 left-0 w-full h-0.5 bg-accent transform translate-x-[-100%] group-hover/btn:translate-x-0 transition-transform duration-300" />
+                    </span>
+                    <ChevronRight size={16} className="transform group-hover/btn:translate-x-1 transition-transform" />
                   </div>
                 </div>
               </div>
@@ -86,3 +130,5 @@ const PromotionalCarousel: React.FC = () => {
 };
 
 export default PromotionalCarousel;
+
+

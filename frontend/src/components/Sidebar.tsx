@@ -24,17 +24,17 @@ const Sidebar: React.FC = () => {
   return (
     <>
       <button 
-        className="fixed top-4 left-4 z-50 p-2 bg-primary text-accent rounded-md lg:hidden"
+        className="fixed top-4 left-4 z-[160] p-2 bg-primary text-accent rounded-md lg:hidden"
         onClick={() => setSidebarOpen(!isSidebarOpen)}
       >
         {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
       <div 
-        className={`fixed top-0 left-0 h-screen transition-all duration-300 z-40 bg-primary border-r border-white/10
-          ${isSidebarOpen ? 'w-64' : 'w-0 -translate-x-full lg:w-20 lg:translate-x-0'}`}
+        className={`fixed top-0 left-0 h-screen transition-all duration-300 z-[150] bg-primary border-r border-white/10
+          ${isSidebarOpen ? 'w-56' : 'w-0 -translate-x-full lg:w-20 lg:translate-x-0'}`}
       >
-        <div className="flex flex-col h-full overflow-y-auto custom-scrollbar">
+        <div className="flex flex-col h-full overflow-y-auto no-scrollbar">
           {/* Logo Section */}
           <div className="sidebar-brand mt-8 mb-12">
             <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mb-2 shadow-lg shadow-accent/20">

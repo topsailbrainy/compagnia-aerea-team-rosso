@@ -27,7 +27,7 @@ const InfoCards: React.FC = () => {
 
   return (
     <section className="py-20 bg-secondary/50">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
+      <div className="max-w-none ml-0">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {cards.map((card, index) => (
             <div key={index} className="bg-white p-8 rounded-2xl border border-gray-100 hover:shadow-xl transition-all group">

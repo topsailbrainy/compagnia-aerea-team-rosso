@@ -34,7 +34,7 @@ const HeroCarousel: React.FC = () => {
   const prev = () => setCurrentIndex((currentIndex - 1 + images.length) % images.length);
 
   return (
-    <div className="hero-constrained relative">
+    <div className="hero-constrained relative w-full lg:w-[100vw] lg:-ml-[var(--sidebar-width)] overflow-hidden transition-all duration-300">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentIndex}
@@ -53,27 +53,6 @@ const HeroCarousel: React.FC = () => {
         </motion.div>
       </AnimatePresence>
 
-      <div className="absolute inset-0 flex flex-col justify-center px-12 md:px-24 max-w-4xl pointer-events-none">
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          key={`content-${currentIndex}`}
-          transition={{ delay: 0.5, duration: 0.8 }}
-          className="pointer-events-auto"
-        >
-          <span className="text-accent uppercase tracking-widest font-bold mb-4 block">FlyPlus Aviation</span>
-          <h2 className="text-4xl md:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-xl">
-            {images[currentIndex].title}
-          </h2>
-          <p className="text-lg md:text-xl text-white/90 mb-10 max-w-xl leading-relaxed">
-            {images[currentIndex].subtitle}
-          </p>
-          <button className="accent-button text-lg px-10 py-4 shadow-xl shadow-accent/20">
-            Discover Our Fleet
-          </button>
-        </motion.div>
-      </div>
-
       {/* Navigation Controls */}
       <div className="absolute bottom-10 right-10 flex gap-4 z-20">
         <button 
@@ -91,7 +70,7 @@ const HeroCarousel: React.FC = () => {
       </div>
 
       {/* Progress Indicators */}
-      <div className="absolute bottom-12 left-24 flex gap-3">
+      <div className="absolute bottom-12 left-24 lg:left-[calc(24px+var(--sidebar-width))] flex gap-3 transition-all duration-300">
         {images.map((_, i) => (
           <div 
             key={i}
