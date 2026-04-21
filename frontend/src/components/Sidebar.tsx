@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Plane, Briefcase, CheckCircle2, Clock, MapPin, LayoutGrid, Info, Phone, Menu, X, ChevronRight } from 'lucide-react';
 import { useUIStore } from '../store';
-import { GlassCard } from 'react-glass-ui';
+import logoImg from '../assets/logo.png';
 
 const Sidebar: React.FC = () => {
   const { isSidebarOpen, setSidebarOpen } = useUIStore();
@@ -36,13 +36,13 @@ const Sidebar: React.FC = () => {
       >
         <div className="flex flex-col h-full overflow-y-auto no-scrollbar">
           {/* Logo Section */}
-          <div className="sidebar-brand mt-8 mb-12">
-            <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mb-2 shadow-lg shadow-accent/20">
-              <Plane className="text-primary" size={32} />
+          <div className="sidebar-brand mt-8 mb-12 flex flex-col items-center">
+            <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-24 h-24' : 'w-12 h-12'} mb-2`}>
+              <img src={logoImg} alt="FlyPlus Logo" className="w-full h-full object-contain" />
             </div>
             {isSidebarOpen && (
               <div className="text-center">
-                <h1 className="text-2xl font-bold tracking-tighter text-white m-0">FLY<span className="text-accent">PLUS</span></h1>
+                <h1 className="text-2xl font-bold tracking-tighter text-white m-0 uppercase">Fly<span className="text-accent">Plus</span></h1>
                 <p className="text-[10px] uppercase tracking-[0.3em] text-accent/80 -mt-1 font-semibold">Aviation Excellence</p>
               </div>
             )}
@@ -90,15 +90,6 @@ const Sidebar: React.FC = () => {
             ))}
           </nav>
 
-          {/* Bottom Info */}
-          {isSidebarOpen && (
-            <div className="p-6">
-              <GlassCard className="p-4 border-white/5 bg-white/5">
-                <p className="text-[10px] text-white/40 uppercase tracking-wider">Premium Member Support</p>
-                <p className="text-accent font-bold text-sm">+39 02 123 4567</p>
-              </GlassCard>
-            </div>
-          )}
         </div>
       </div>
     </>

@@ -1,13 +1,17 @@
 import React from 'react';
 import { CheckCircle2, QrCode, AlertCircle } from 'lucide-react';
+import gateImg from '../assets/persone/gate.webp';
 
 const CheckIn: React.FC = () => {
   return (
     <div className="p-12 mt-20 max-w-7xl mx-auto">
-      <div className="mb-12 text-center">
-        <h2 className="text-4xl md:text-6xl font-bold text-primary mb-4 tracking-tight">Online Check-in</h2>
-        <p className="text-gray-500 text-xl">Save time at the airport and get your boarding pass now.</p>
-        <div className="w-24 h-1 bg-accent mx-auto mt-6" />
+      <div className="mb-12 text-center relative py-20 rounded-3xl overflow-hidden">
+        <img src={gateImg} className="absolute inset-0 w-full h-full object-cover opacity-20" alt="Gate" />
+        <div className="relative z-10">
+          <h2 className="text-4xl md:text-6xl font-bold text-primary mb-4 tracking-tight">Online Check-in</h2>
+          <p className="text-gray-500 text-xl">Save time at the airport and get your boarding pass now.</p>
+          <div className="w-24 h-1 bg-accent mx-auto mt-6" />
+        </div>
       </div>
 
       <div className="max-w-2xl mx-auto mt-12 bg-white p-10 rounded-3xl shadow-sm border border-gray-100">

@@ -1,12 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import logoImg from '../assets/logo.png';
 
 const Footer: React.FC = () => {
   return (
     <footer className="bg-[#1a2831] text-white/60 py-20 px-12">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
         <div className="col-span-1 md:col-span-1">
-          <h1 className="text-2xl font-bold text-white mb-6">FLY<span className="text-accent">PLUS</span></h1>
+          <div className="w-16 h-16 mb-6">
+            <img src={logoImg} alt="FlyPlus Logo" className="w-full h-full object-contain" />
+          </div>
+          <h1 className="text-2xl font-bold text-white mb-2 uppercase">Fly<span className="text-accent">Plus</span></h1>
           <p className="text-sm leading-relaxed mb-8">
             A premium aviation experience connecting Italy to the world with the youngest and most modern fleet.
           </p>

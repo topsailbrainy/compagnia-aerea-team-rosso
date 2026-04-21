@@ -7,6 +7,11 @@ import InfoCards from '../components/InfoCards';
 import { motion } from 'framer-motion';
 import { Shield, Clock, Award, Globe, ArrowRight, Star } from 'lucide-react';
 
+// Import local assets
+import romaImg from '../assets/destinazioni/roma.avif';
+import genovaImg from '../assets/destinazioni/genova.avif';
+import dubaiImg from '../assets/destinazioni/dubai.avif';
+
 const Book: React.FC = () => {
   const features = [
     { icon: Shield, title: 'Safe & Secure', desc: 'Industry-leading safety protocols and secure booking systems.' },
@@ -21,7 +26,6 @@ const Book: React.FC = () => {
       
       <div className="pl-4 pr-6 md:pr-12">
         <BookingForm />
-        <UtilityNav />
 
         {/* Features Section */}
         <section className="py-24 max-w-none ml-0">
@@ -97,9 +101,9 @@ const Book: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
-                { name: 'Rome, Italy', img: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?q=80&w=1996&auto=format&fit=crop', price: '129' },
-                { name: 'Milan, Italy', img: 'https://images.unsplash.com/photo-1520440229334-962aee4d1b97?q=80&w=1974&auto=format&fit=crop', price: '89' },
-                { name: 'Dubai, UAE', img: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070&auto=format&fit=crop', price: '450' }
+                { name: 'Rome, Italy', img: romaImg, price: '129' },
+                { name: 'Genoa, Italy', img: genovaImg, price: '89' },
+                { name: 'Dubai, UAE', img: dubaiImg, price: '450' }
               ].map((dest, i) => (
                 <div key={i} className="group relative h-[500px] overflow-hidden rounded-2xl cursor-pointer">
                   <div className="absolute inset-0 bg-gray-800 animate-pulse" />

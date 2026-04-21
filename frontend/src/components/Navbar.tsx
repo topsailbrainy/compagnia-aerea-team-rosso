@@ -1,9 +1,11 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { Plane, User, Globe, Bell, Menu } from 'lucide-react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { User, Globe, Bell, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import logoImg from '../assets/logo.png';
 
 const Navbar: React.FC = () => {
+  const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   return (
@@ -15,10 +17,10 @@ const Navbar: React.FC = () => {
       <div className="flex items-center justify-between border-b border-white/10 pb-3">
         <div className="flex items-center gap-4 lg:gap-12">
           <NavLink to="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 md:w-10 md:h-10 bg-accent rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-12 transition-transform duration-300">
-              <Plane className="text-primary fill-primary" size={16} />
+            <div className="w-10 h-10 md:w-12 md:h-12 group-hover:rotate-12 transition-transform duration-300">
+              <img src={logoImg} alt="FlyPlus Logo" className="w-full h-full object-contain" />
             </div>
-            <span className="text-xl md:text-2xl font-black tracking-tighter text-white">FLY<span className="text-accent">PLUS</span></span>
+            <span className="text-xl md:text-2xl font-black tracking-tighter text-white uppercase">Fly<span className="text-accent">Plus</span></span>
           </NavLink>
           
           <div className="hidden lg:flex items-center gap-8">
@@ -71,16 +73,22 @@ const Navbar: React.FC = () => {
           
           <div className="flex items-center gap-2 md:gap-4">
             <NavLink 
-              to="/login"
-              className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 hover:text-accent transition-all flex items-center gap-2 py-2 px-2 md:px-4 rounded-lg hover:bg-white/5"
+              to="/login?tab=login"
+              className={({ isActive }) => `
+                text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-2 py-2 px-2 md:px-4 rounded-lg hover:bg-white/5
+                ${isActive && !location.search.includes('tab=signup') ? 'text-accent bg-white/5' : 'text-white/60 hover:text-accent'}
+              `}
             >
               <User size={14} className="text-accent" />
               <span className="hidden sm:inline">Login</span>
             </NavLink>
             
-            <button className="bg-accent hover:bg-white text-primary px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all shadow-lg shadow-accent/20 active:scale-95">
+            <NavLink 
+              to="/login?tab=signup"
+              className="bg-accent hover:bg-white text-primary px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all shadow-lg shadow-accent/20 active:scale-95 inline-block text-center"
+            >
               Sign Up
-            </button>
+            </NavLink>
             
             <button 
               className="lg:hidden text-white p-2 hover:bg-white/5 rounded-lg transition-colors"

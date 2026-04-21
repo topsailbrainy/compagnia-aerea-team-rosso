@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Search, MapPin, Calendar, ArrowRightLeft, Users, ChevronDown } from 'lucide-react';
 import { useSearchStore } from '../store';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,9 +12,9 @@ const locations = [
 ];
 
 const CustomSelect: React.FC<{
-  value: any;
-  onChange: (val: any) => void;
-  options: { value: any; label: string }[];
+  value: string | number;
+  onChange: (val: string | number) => void;
+  options: { value: string | number; label: string }[];
   icon?: React.ReactNode;
   onOpenStateChange?: (isOpen: boolean) => void;
 }> = ({ value, onChange, options, icon, onOpenStateChange }) => {
@@ -143,16 +143,33 @@ const CustomDatePicker: React.FC<{
   label: string;
   disabled?: boolean;
 }> = ({ value, onChange, label, disabled }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleContainerClick = () => {
+    if (!disabled && inputRef.current) {
+      if ('showPicker' in HTMLInputElement.prototype) {
+        inputRef.current.showPicker();
+      } else {
+        inputRef.current.focus();
+      }
+    }
+  };
+
   return (
     <div className={`flex flex-col gap-1.5 transition-all duration-500 ${disabled ? 'opacity-30 grayscale' : 'opacity-100'}`}>
       <label className="text-[10px] uppercase font-black text-gray-400 tracking-[0.2em] ml-2">{label}</label>
-      <div className="relative group">
+      <div 
+        className={`relative group ${!disabled ? 'cursor-pointer' : ''}`}
+        onClick={handleContainerClick}
+      >
         <Calendar size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-accent group-hover:scale-110 transition-transform pointer-events-none z-10" />
         <input 
+          ref={inputRef}
           type="date"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
+          onClick={(e) => e.stopPropagation()}
           className={`min-w-[180px] w-full md:w-fit pl-12 pr-4 h-[50px] bg-gray-50 border border-gray-100 rounded-2xl transition-all font-black text-xs uppercase tracking-widest text-primary outline-none ${!disabled && 'hover:bg-white hover:border-accent/30 cursor-pointer'}`}
           style={{ colorScheme: 'light' }}
         />
@@ -163,7 +180,7 @@ const CustomDatePicker: React.FC<{
 
 const BookingForm: React.FC = () => {
   const { from, to, departureDate, returnDate, passengers, cabinClass, setSearch } = useSearchStore();
-  const [tripType, setTripType] = React.useState<'return' | 'oneway' | 'multi'>('return');
+  const [tripType, setTripType] = React.useState<'return' | 'oneway'>('return');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -195,13 +212,12 @@ const BookingForm: React.FC = () => {
             <div className="flex gap-10">
               {[
                 { id: 'return', label: 'Return Trip' },
-                { id: 'oneway', label: 'One Way' },
-                { id: 'multi', label: 'Multi-city' }
+                { id: 'oneway', label: 'One Way' }
               ].map((type) => (
                 <button
                   key={type.id}
                   type="button"
-                  onClick={() => setTripType(type.id as 'return' | 'oneway' | 'multi')}
+                  onClick={() => setTripType(type.id as 'return' | 'oneway')}
                   className={`text-[10px] font-black uppercase tracking-[0.3em] pb-3 transition-all relative ${
                     tripType === type.id ? 'text-primary' : 'text-gray-300 hover:text-gray-500'
                   }`}
@@ -287,7 +303,7 @@ const BookingForm: React.FC = () => {
                   { value: 1, label: '1 Passenger' },
                   { value: 2, label: '2 Passengers' },
                   { value: 3, label: '3 Passengers' },
-                  { value: 4, label: '4+ Passengers' },
+                  { value: 4, label: '4 Passengers' },
                 ]}
               />
               <CustomSelect 
@@ -322,7 +338,6 @@ const BookingForm: React.FC = () => {
         </form>
       </div>
     </motion.div>
-
   );
 };
 

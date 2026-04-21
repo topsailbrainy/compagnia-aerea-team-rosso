@@ -1,13 +1,19 @@
 import React from 'react';
 import { Search, PlaneTakeoff, PlaneLanding, Clock } from 'lucide-react';
+import aereoImg from '../assets/aerei/aereo.avif';
 
 const FlightStatus: React.FC = () => {
   return (
     <div className="p-12 mt-20 max-w-7xl mx-auto">
-      <div className="mb-12">
-        <h2 className="text-4xl md:text-6xl font-bold text-primary mb-4 tracking-tight">Flight Status</h2>
-        <p className="text-gray-500 text-xl">Real-time information on all FlyPlus flights.</p>
-        <div className="w-24 h-1 bg-accent mt-6" />
+      <div className="mb-12 flex flex-col md:flex-row justify-between items-end gap-6">
+        <div>
+          <h2 className="text-4xl md:text-6xl font-bold text-primary mb-4 tracking-tight">Flight Status</h2>
+          <p className="text-gray-500 text-xl">Real-time information on all FlyPlus flights.</p>
+          <div className="w-24 h-1 bg-accent mt-6" />
+        </div>
+        <div className="w-full md:w-64 h-32 rounded-2xl overflow-hidden shadow-lg border-4 border-white">
+          <img src={aereoImg} className="w-full h-full object-cover" alt="Flight" />
+        </div>
       </div>
 
       <div className="bg-white p-10 rounded-3xl shadow-sm border border-gray-100 mt-12">

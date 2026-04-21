@@ -1,13 +1,20 @@
 import React from 'react';
 import { Search, Briefcase, ChevronRight } from 'lucide-react';
+import attesaImg from '../assets/persone/attesa.avif';
 
 const Manage: React.FC = () => {
   return (
     <div className="p-12 mt-20 max-w-7xl mx-auto">
-      <div className="mb-12">
-        <h2 className="text-4xl md:text-6xl font-bold text-primary mb-4 tracking-tight">Manage Your Booking</h2>
-        <p className="text-gray-500 text-xl">View, change or upgrade your flight with ease.</p>
-        <div className="w-24 h-1 bg-accent mt-6" />
+      <div className="mb-12 flex flex-col md:flex-row justify-between items-start gap-8">
+        <div className="flex-1">
+          <h2 className="text-4xl md:text-6xl font-bold text-primary mb-4 tracking-tight">Manage Your Booking</h2>
+          <p className="text-gray-500 text-xl">View, change or upgrade your flight with ease.</p>
+          <div className="w-24 h-1 bg-accent mt-6" />
+        </div>
+        <div className="w-full md:w-80 h-48 rounded-3xl overflow-hidden shadow-2xl relative group">
+          <img src={attesaImg} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Manage Booking" />
+          <div className="absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-colors" />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mt-12">

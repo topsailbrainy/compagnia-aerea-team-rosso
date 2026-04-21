@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Headphones, Globe2, CreditCard } from 'lucide-react';
+import { ShieldCheck, Headphones, Globe, CreditCard } from 'lucide-react';
 
 const InfoCards: React.FC = () => {
   const cards = [
@@ -14,7 +14,7 @@ const InfoCards: React.FC = () => {
       desc: 'Our dedicated team is always here to help you with any request, anywhere.'
     },
     {
-      icon: Globe2,
+      icon: Globe,
       title: 'Baggage Info',
       desc: 'Check your allowance and find out what you can bring on your FlyPlus flight.'
     },
