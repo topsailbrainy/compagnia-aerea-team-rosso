@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, MapPin, Calendar, ArrowRightLeft, Users, ChevronDown } from 'lucide-react';
 import { useSearchStore } from '../store';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -179,8 +180,8 @@ const CustomDatePicker: React.FC<{
 };
 
 const BookingForm: React.FC = () => {
-  const { from, to, departureDate, returnDate, passengers, cabinClass, setSearch } = useSearchStore();
-  const [tripType, setTripType] = React.useState<'return' | 'oneway'>('return');
+  const navigate = useNavigate();
+  const { from, to, departureDate, returnDate, passengers, tripType, setSearch } = useSearchStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -189,7 +190,12 @@ const BookingForm: React.FC = () => {
       alert('Please fill in all sections: Origin, Destination, Departure and Return date.');
       return;
     }
-    console.log('Searching flights for:', { tripType, from, to, departureDate, returnDate, passengers, cabinClass });
+    // Reset selected flights when searching again
+    setSearch('outboundFlight', null);
+    setSearch('returnFlight', null);
+    setSearch('outboundPrice', 0);
+    setSearch('returnPrice', 0);
+    navigate('/booking');
   };
 
   const swapLocations = () => {
@@ -217,7 +223,7 @@ const BookingForm: React.FC = () => {
                 <button
                   key={type.id}
                   type="button"
-                  onClick={() => setTripType(type.id as 'return' | 'oneway')}
+                  onClick={() => setSearch('tripType', type.id as 'return' | 'oneway')}
                   className={`text-[10px] font-black uppercase tracking-[0.3em] pb-3 transition-all relative ${
                     tripType === type.id ? 'text-primary' : 'text-gray-300 hover:text-gray-500'
                   }`}
@@ -304,17 +310,6 @@ const BookingForm: React.FC = () => {
                   { value: 2, label: '2 Passengers' },
                   { value: 3, label: '3 Passengers' },
                   { value: 4, label: '4 Passengers' },
-                ]}
-              />
-              <CustomSelect 
-                value={cabinClass}
-                onChange={(val) => setSearch('cabinClass', val)}
-                icon={<ArrowRightLeft size={16} />}
-                onOpenStateChange={setIsDropdownOpen}
-                options={[
-                  { value: 'economy', label: 'Economy' },
-                  { value: 'business', label: 'Business' },
-                  { value: 'first', label: 'First Class' },
                 ]}
               />
             </div>

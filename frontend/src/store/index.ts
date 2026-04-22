@@ -5,6 +5,21 @@ interface UIState {
   setSidebarOpen: (isOpen: boolean) => void;
 }
 
+interface Flight {
+  id: number;
+  flightNumber: string;
+  departure: string;
+  arrival: string;
+  duration: string;
+  from: string;
+  to: string;
+  prices: {
+    economy: number;
+    business: number;
+    first: number;
+  };
+}
+
 interface SearchState {
   from: string;
   to: string;
@@ -12,7 +27,12 @@ interface SearchState {
   returnDate: string;
   passengers: number;
   cabinClass: string;
-  setSearch: (key: keyof Omit<SearchState, 'setSearch'>, value: string | number) => void;
+  tripType: 'oneway' | 'return';
+  outboundFlight: Flight | null;
+  returnFlight: Flight | null;
+  outboundPrice: number;
+  returnPrice: number;
+  setSearch: (key: keyof Omit<SearchState, 'setSearch'>, value: string | number | Flight | null) => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -27,5 +47,10 @@ export const useSearchStore = create<SearchState>((set) => ({
   returnDate: '',
   passengers: 1,
   cabinClass: 'economy',
+  tripType: 'return',
+  outboundFlight: null,
+  returnFlight: null,
+  outboundPrice: 0,
+  returnPrice: 0,
   setSearch: (key, value) => set((state) => ({ ...state, [key]: value })),
 }));

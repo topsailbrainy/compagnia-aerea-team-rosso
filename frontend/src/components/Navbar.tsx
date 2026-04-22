@@ -2,7 +2,6 @@ import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { User, Globe, Bell, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import logoImg from '../assets/logo.png';
 
 const Navbar: React.FC = () => {
   const location = useLocation();
@@ -14,51 +13,7 @@ const Navbar: React.FC = () => {
       animate={{ y: 0, opacity: 1 }}
       className="relative w-full px-4 md:px-8 py-3 bg-transparent"
     >
-      <div className="flex items-center justify-between border-b border-white/10 pb-3">
-        <div className="flex items-center gap-4 lg:gap-12">
-          <NavLink to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 md:w-12 md:h-12 group-hover:rotate-12 transition-transform duration-300">
-              <img src={logoImg} alt="FlyPlus Logo" className="w-full h-full object-contain" />
-            </div>
-            <span className="text-xl md:text-2xl font-black tracking-tighter text-white uppercase">Fly<span className="text-accent">Plus</span></span>
-          </NavLink>
-          
-          <div className="hidden lg:flex items-center gap-8">
-            {[
-              { label: 'Book', path: '/book' },
-              { label: 'Manage', path: '/manage' },
-              { label: 'Check-in', path: '/check-in' },
-              { label: 'Status', path: '/flight-status' }
-            ].map((link) => (
-              <motion.div
-                key={link.path}
-                whileHover={{ y: -2 }}
-                className="relative"
-              >
-                <NavLink 
-                  to={link.path}
-                  className={({ isActive }) => `
-                    text-xs font-black uppercase tracking-[0.2em] transition-all relative py-2 px-3 rounded-lg
-                    ${isActive ? 'text-accent' : 'text-white/60 hover:text-accent hover:bg-white/5'}
-                  `}
-                >
-                  {({ isActive }) => (
-                    <>
-                      {link.label}
-                      {isActive && (
-                        <motion.div 
-                          layoutId="navUnderline"
-                          className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent"
-                        />
-                      )}
-                    </>
-                  )}
-                </NavLink>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
+      <div className="flex items-center justify-end border-b border-white/10 pb-3">
         <div className="flex items-center gap-2">
           <div className="hidden md:flex items-center gap-6 mr-6 pr-6 border-r border-white/10">
             <button className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 hover:text-accent transition-all flex items-center gap-2">
@@ -109,24 +64,6 @@ const Navbar: React.FC = () => {
             className="lg:hidden bg-primary/95 backdrop-blur-xl border-b border-white/10 overflow-hidden"
           >
             <div className="flex flex-col p-6 gap-4">
-              {[
-                { label: 'Book', path: '/book' },
-                { label: 'Manage', path: '/manage' },
-                { label: 'Check-in', path: '/check-in' },
-                { label: 'Status', path: '/flight-status' }
-              ].map((link) => (
-                <NavLink
-                  key={link.path}
-                  to={link.path}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={({ isActive }) => `
-                    text-sm font-black uppercase tracking-[0.2em] py-3 px-4 rounded-xl transition-all
-                    ${isActive ? 'bg-accent text-primary' : 'text-white/60 hover:text-white hover:bg-white/5'}
-                  `}
-                >
-                  {link.label}
-                </NavLink>
-              ))}
               <div className="flex items-center justify-between pt-4 mt-2 border-t border-white/10">
                 <button className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 flex items-center gap-2">
                   <Globe size={14} className="text-accent" /> EN

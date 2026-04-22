@@ -2,6 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Layout from './Layout';
 import Book from './pages/Book';
+import Booking from './pages/Booking';
+import Passenger from './pages/Passenger';
+import Payment from './pages/Payment';
 import Manage from './pages/Manage';
 import CheckIn from './pages/CheckIn';
 import FlightStatus from './pages/FlightStatus';
@@ -128,6 +131,9 @@ const AnimatedRoutes: React.FC = () => {
         <Routes location={location}>
           <Route path="/" element={<Navigate to="/book" replace />} />
           <Route path="/book" element={<Book />} />
+          <Route path="/booking" element={<Booking />} />
+          <Route path="/passenger" element={<Passenger />} />
+          <Route path="/payment" element={<Payment />} />
           <Route path="/manage" element={<Manage />} />
           <Route path="/check-in" element={<CheckIn />} />
           <Route path="/flight-status" element={<FlightStatus />} />
