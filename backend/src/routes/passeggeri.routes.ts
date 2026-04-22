@@ -1,12 +1,14 @@
 import { Router } from "express";
-import { getUsers, createUser } from "../../controllers/users.controller";
-
+import { passeggeriGET, passeggeriPOST, passeggeriPUT, passeggeriDELETE } from "@/controllers/passeggeri.controller";
+import { validationMw } from "@/middlewares/validation.middlewares";
+ 
 const router = Router();
 
-// Endpoint GET /users
-router.get("/", getUsers);  
+router.get("/", passeggeriGET);
+router.post("/", passeggeriPOST);
+router.put("/", passeggeriPUT);
+router.delete("/:id", passeggeriDELETE);
 
-// Endpoint POST /users
-router.post("/", createUser);   
+
 
 export default router;
