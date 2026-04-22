@@ -1,13 +1,30 @@
-import { pool } from "../config/db.config";
-import {AppError} from "../middlewares/error.middlewares";
-import { Aereo, Aeroporto, Gate, Volo, Tratta, Passeggero, Prenotazione} from "@/dtos/entities.types";
-import { Request, Response } from "express";
+import { Request, RequestHandler } from "express";
+import { ZodType } from "zod";
 
-export async function prenotazioniGET(_req: Request, res: Response) {
-    const results = await pool.query<Prenotazione>(`
-        SELECT * FROM prenotazioni
-        ORDER BY data_prenotazione DESC
-    `)
-    res.json(results.rows)
+type RequestSchemas = {
+    body?: ZodType;
+    query?: ZodType;
+    params?: ZodType;
+};
+
+export function validationMw(schemas: RequestSchemas): RequestHandler {
+    return (req, _res, next) => {
+        try {
+            if (schemas.body) {
+                req.body = schemas.body.parse(req.body);
+            }
+
+            if (schemas.query) {
+                req.query = schemas.query.parse(req.query) as Request["query"];
+            }
+
+            if (schemas.params) {
+                req.params = schemas.params.parse(req.params) as Request["params"];
+            }
+
+            next();
+        } catch (error) {
+            next(error);
+        }
+    };
 }
-
