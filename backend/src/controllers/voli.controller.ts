@@ -12,23 +12,23 @@ export async function voliGET(_req: Request, res: Response) {
 }
 
 export async function voliPOST(req: Request, res: Response) {
-    const {nome, cognome, email, telefono} = req.body;
+    const {aereoporto_partenza_id, aereoporto_arrivo_id, data_partenza, data_arrivo, ora_arrivo} = req.body;
     const results = await pool.query<Volo>(`
-        INSERT INTO voli (nome, cognome, email, telefono)
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO voli (aereoporto_partenza_id, aereoporto_arrivo_id, data_partenza, data_arrivo, ora_arrivo)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING *  
-    `, [nome, cognome, email, telefono])
+    `, [aereoporto_partenza_id, aereoporto_arrivo_id, data_partenza, data_arrivo, ora_arrivo])
     res.status(201).json(results.rows[0])
 }
 
 export async function voliPUT(req: Request, res: Response) {
-    const {id, nome, cognome, email, telefono} = req.body;
+    const {aereoporto_partenza_id, aereoporto_arrivo_id, data_partenza, data_arrivo, ora_arrivo} = req.body;
     const results = await pool.query<Volo>(`
         UPDATE voli
         SET nome = $1, cognome = $2, email = $3, telefono = $4
         WHERE id = $5
         RETURNING *  
-    `, [nome, cognome, email, telefono, id])
+    `, [aereoporto_partenza_id, aereoporto_arrivo_id, data_partenza, data_arrivo, ora_arrivo])
     res.status(200).json(results.rows[0])
 }
 
