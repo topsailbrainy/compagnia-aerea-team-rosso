@@ -6,6 +6,7 @@ import PromotionalCarousel from '../components/PromotionalCarousel';
 import InfoCards from '../components/InfoCards';
 import { motion } from 'framer-motion';
 import { Shield, Clock, Award, Globe, ArrowRight, Star } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // Import local assets
 import romaImg from '../assets/destinazioni/roma.avif';
@@ -13,11 +14,12 @@ import genovaImg from '../assets/destinazioni/genova.avif';
 import dubaiImg from '../assets/destinazioni/dubai.avif';
 
 const Book: React.FC = () => {
+  const { t } = useTranslation();
   const features = [
-    { icon: Shield, title: 'Safe & Secure', desc: 'Industry-leading safety protocols and secure booking systems.' },
-    { icon: Clock, title: 'Always On Time', desc: 'Ranked top 5 globally for on-time performance and reliability.' },
-    { icon: Award, title: 'Award Winning', desc: '5-star service recognized by Skytrax for 10 consecutive years.' },
-    { icon: Globe, title: 'Global Network', desc: 'Connecting you to over 150 destinations worldwide from Italy.' }
+    { icon: Shield, title: t('bookPage.safe'), desc: t('bookPage.safeDesc') },
+    { icon: Clock, title: t('bookPage.onTime'), desc: t('bookPage.onTimeDesc') },
+    { icon: Award, title: t('bookPage.award'), desc: t('bookPage.awardDesc') },
+    { icon: Globe, title: t('bookPage.global'), desc: t('bookPage.globalDesc') }
   ];
 
   return (
@@ -30,8 +32,8 @@ const Book: React.FC = () => {
         {/* Features Section */}
         <section className="py-24 max-w-none ml-0">
           <div className="text-left mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-primary mb-4 tracking-tight">Why Choose FlyPlus?</h2>
-            <p className="text-gray-500 max-w-2xl">Discover the difference of flying with a premium carrier dedicated to your comfort and safety.</p>
+            <h2 className="text-3xl md:text-5xl font-bold text-primary mb-4 tracking-tight">{t('bookPage.whyTitle')}</h2>
+            <p className="text-gray-500 max-w-2xl">{t('bookPage.whyDesc')}</p>
             <div className="w-24 h-1 bg-accent mt-6" />
           </div>
 
@@ -67,19 +69,19 @@ const Book: React.FC = () => {
                 <Star size={20} fill="currentColor" />
                 <span className="uppercase tracking-[0.2em] text-sm">FlyPlus Guest</span>
               </div>
-              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Experience more rewards with every flight</h2>
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">{t('bookPage.loyaltyTitle')}</h2>
               <p className="text-white/70 text-lg mb-8 max-w-xl">
-                Join our loyalty program today and start earning miles that you can spend on flights, upgrades, and more.
+                {t('bookPage.loyaltyDesc')}
               </p>
               <div className="flex flex-wrap gap-4">
-                <button className="accent-button px-8 py-3">Join now</button>
-                <button className="text-white border border-white/20 px-8 py-3 rounded hover:bg-white/10 transition-colors">Learn more</button>
+                <button className="accent-button px-8 py-3">{t('bookPage.joinNow')}</button>
+                <button className="text-white border border-white/20 px-8 py-3 rounded hover:bg-white/10 transition-colors">{t('bookPage.learnMore')}</button>
               </div>
             </div>
             <div className="relative z-10 w-full md:w-1/3 aspect-square bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center">
               <Star size={48} className="text-accent mb-4" />
-              <p className="text-white font-bold text-xl mb-2">Member Privileges</p>
-              <p className="text-white/40 text-xs">Unlock exclusive lounge access and priority boarding.</p>
+              <p className="text-white font-bold text-xl mb-2">{t('bookPage.privileges')}</p>
+              <p className="text-white/40 text-xs">{t('bookPage.privilegesDesc')}</p>
             </div>
           </div>
         </section>
@@ -90,11 +92,11 @@ const Book: React.FC = () => {
           <div className="max-w-none ml-0">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
               <div>
-                <span className="text-accent uppercase tracking-[0.3em] font-bold mb-4 block">Destinations</span>
-                <h2 className="text-4xl md:text-6xl font-bold">Explore the World</h2>
+                <span className="text-accent uppercase tracking-[0.3em] font-bold mb-4 block">{t('sidebar.destinations')}</span>
+                <h2 className="text-4xl md:text-6xl font-bold">{t('destinations.exploreWorld')}</h2>
               </div>
               <button className="flex items-center gap-2 bg-accent text-primary font-bold px-8 py-4 rounded hover:bg-white transition-all group">
-                View All Destinations
+                {t('destinations.viewAll')}
                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
@@ -116,7 +118,7 @@ const Book: React.FC = () => {
                   <div className="absolute bottom-8 left-8 right-8 z-30">
                     <h3 className="text-3xl font-bold mb-2">{dest.name}</h3>
                     <div className="flex justify-between items-center">
-                      <p className="text-accent font-semibold tracking-wide">From €{dest.price}</p>
+                      <p className="text-accent font-semibold tracking-wide">{t('destinations.from')} €{dest.price}</p>
                       <button className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center group-hover:bg-accent transition-colors">
                         <ArrowRight size={20} />
                       </button>

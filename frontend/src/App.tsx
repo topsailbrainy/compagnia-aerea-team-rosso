@@ -5,12 +5,14 @@ import Book from './pages/Book';
 import Booking from './pages/Booking';
 import Passenger from './pages/Passenger';
 import Payment from './pages/Payment';
+import Admin from './pages/Admin';
 import Manage from './pages/Manage';
 import CheckIn from './pages/CheckIn';
 import FlightStatus from './pages/FlightStatus';
 import Auth from './pages/Auth';
 import ScrollToTop from './components/ScrollToTop';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 // Import assets for placeholders
 import africaImg from './assets/destinazioni/africa.avif';
@@ -31,20 +33,21 @@ import famigliaImg from './assets/persone/famiglia.webp';
 import gateImg from './assets/persone/gate.webp';
 
 const DestinationsPlaceholder = () => {
+  const { t } = useTranslation();
   const dests = [
-    { name: 'Africa', img: africaImg },
-    { name: 'America', img: americaImg },
-    { name: 'Asia', img: asiaImg },
-    { name: 'Europe', img: europaImg },
-    { name: 'Oceania', img: oceaniaImg },
-    { name: 'Middle East', img: arabiaImg },
+    { name: t('destinations.africa'), img: africaImg },
+    { name: t('destinations.america'), img: americaImg },
+    { name: t('destinations.asia'), img: asiaImg },
+    { name: t('destinations.europe'), img: europaImg },
+    { name: t('destinations.oceania'), img: oceaniaImg },
+    { name: t('destinations.middleEast'), img: arabiaImg },
   ];
 
   return (
     <div className="p-12 mt-20 max-w-7xl mx-auto">
       <div className="mb-12">
-        <h2 className="text-4xl md:text-6xl font-bold text-primary mb-4 tracking-tight">World-Class Destinations</h2>
-        <p className="text-gray-500 text-xl">Discover our global network across 5 continents.</p>
+        <h2 className="text-4xl md:text-6xl font-bold text-primary mb-4 tracking-tight">{t('destinations.title')}</h2>
+        <p className="text-gray-500 text-xl">{t('destinations.subtitle')}</p>
         <div className="w-24 h-1 bg-accent mt-6" />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
@@ -63,18 +66,19 @@ const DestinationsPlaceholder = () => {
 };
 
 const FleetPlaceholder = () => {
+  const { t } = useTranslation();
   const fleet = [
-    { name: 'Our Aircraft', desc: 'Modern and efficient fleet.', img: aereoImg },
-    { name: 'Premium Cabins', desc: 'Unmatched comfort in the sky.', img: sediliImg },
-    { name: 'Exclusive Lounges', desc: 'Relax before your flight.', img: loungeImg },
-    { name: 'Operational Excellence', desc: 'Safety and reliability first.', img: rifornimentoImg },
+    { name: t('fleet.aircraft'), desc: t('fleet.aircraftDesc'), img: aereoImg },
+    { name: t('fleet.cabins'), desc: t('fleet.cabinsDesc'), img: sediliImg },
+    { name: t('fleet.lounges'), desc: t('fleet.loungesDesc'), img: loungeImg },
+    { name: t('fleet.excellence'), desc: t('fleet.excellenceDesc'), img: rifornimentoImg },
   ];
 
   return (
     <div className="p-12 mt-20 max-w-7xl mx-auto">
       <div className="mb-12">
-        <h2 className="text-4xl md:text-6xl font-bold text-primary mb-4 tracking-tight">Our Modern Fleet</h2>
-        <p className="text-gray-500 text-xl">The average age of our aircraft is only 4.5 years.</p>
+        <h2 className="text-4xl md:text-6xl font-bold text-primary mb-4 tracking-tight">{t('fleet.title')}</h2>
+        <p className="text-gray-500 text-xl">{t('fleet.subtitle')}</p>
         <div className="w-24 h-1 bg-accent mt-6" />
       </div>
       <div className="mt-12 space-y-12">
@@ -94,6 +98,7 @@ const FleetPlaceholder = () => {
 };
 
 const InfoPlaceholder = ({ title, subtitle }: { title: string, subtitle: string }) => {
+  const { t } = useTranslation();
   const images = [attesaImg, caneImg, famigliaImg, gateImg];
   const [randomImg] = React.useState(() => images[Math.floor(Math.random() * images.length)]);
 
@@ -107,7 +112,7 @@ const InfoPlaceholder = ({ title, subtitle }: { title: string, subtitle: string 
           <div className="w-full h-[500px] bg-secondary rounded-3xl flex items-center justify-center overflow-hidden relative">
             <img src={randomImg} alt="Info" className="absolute inset-0 w-full h-full object-cover opacity-60" />
             <div className="relative z-10 bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/20">
-              <p className="text-white text-xl font-medium">Content is being prepared by our digital team.</p>
+              <p className="text-white text-xl font-medium">{t('info.contentPrepared')}</p>
             </div>
           </div>
         </div>
@@ -118,6 +123,7 @@ const InfoPlaceholder = ({ title, subtitle }: { title: string, subtitle: string 
 
 const AnimatedRoutes: React.FC = () => {
   const location = useLocation();
+  const { t } = useTranslation();
   
   return (
     <AnimatePresence mode="wait">
@@ -134,18 +140,19 @@ const AnimatedRoutes: React.FC = () => {
           <Route path="/booking" element={<Booking />} />
           <Route path="/passenger" element={<Passenger />} />
           <Route path="/payment" element={<Payment />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="/manage" element={<Manage />} />
           <Route path="/check-in" element={<CheckIn />} />
           <Route path="/flight-status" element={<FlightStatus />} />
           <Route path="/login" element={<Auth />} />
           <Route path="/destinations" element={<DestinationsPlaceholder />} />
           <Route path="/fleet" element={<FleetPlaceholder />} />
-          <Route path="/about" element={<InfoPlaceholder title="Company Excellence" subtitle="Learn about our commitment to premium aviation." />} />
-          <Route path="/contact" element={<InfoPlaceholder title="Get in Touch" subtitle="Our global support team is available 24/7." />} />
+          <Route path="/about" element={<InfoPlaceholder title={t('info.excellence')} subtitle={t('info.excellenceSub')} />} />
+          <Route path="/contact" element={<InfoPlaceholder title={t('info.touch')} subtitle={t('info.touchSub')} />} />
           <Route path="*" element={
             <div className="flex flex-col items-center justify-center min-h-[60vh]">
-              <h2 className="text-2xl font-bold text-primary">Section coming soon</h2>
-              <p className="text-gray-500">We are preparing this premium content for you.</p>
+              <h2 className="text-2xl font-bold text-primary">{t('common.comingSoon')}</h2>
+              <p className="text-gray-500">{t('common.preparing')}</p>
             </div>
           } />
         </Routes>

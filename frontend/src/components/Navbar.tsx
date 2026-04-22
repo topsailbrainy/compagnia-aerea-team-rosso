@@ -2,10 +2,14 @@ import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { User, Globe, Bell, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSearchStore } from '../store';
+import { useTranslation } from 'react-i18next';
 
 const Navbar: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const { alertsEnabled, setSearch } = useSearchStore();
 
   return (
     <motion.nav 
@@ -16,13 +20,28 @@ const Navbar: React.FC = () => {
       <div className="flex items-center justify-end border-b border-white/10 pb-3">
         <div className="flex items-center gap-2">
           <div className="hidden md:flex items-center gap-6 mr-6 pr-6 border-r border-white/10">
-            <button className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 hover:text-accent transition-all flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <Globe size={14} className="text-accent" />
-              EN
-            </button>
-            <button className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 hover:text-accent transition-all flex items-center gap-2">
-              <Bell size={14} className="text-accent" />
-              Alerts
+              <button 
+                onClick={() => i18n.changeLanguage('en')}
+                className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all ${i18n.language.startsWith('en') ? 'text-accent' : 'text-white/60 hover:text-accent'}`}
+              >
+                EN
+              </button>
+              <span className="text-white/20 text-[10px]">|</span>
+              <button 
+                onClick={() => i18n.changeLanguage('it')}
+                className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all ${i18n.language.startsWith('it') ? 'text-accent' : 'text-white/60 hover:text-accent'}`}
+              >
+                IT
+              </button>
+            </div>
+            <button 
+                onClick={() => setSearch('alertsEnabled', !alertsEnabled)}
+                className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-2 ${alertsEnabled ? 'text-accent' : 'text-white/60 hover:text-accent'}`}
+            >
+              <Bell size={14} className={alertsEnabled ? 'text-accent fill-accent/20' : 'text-accent'} />
+              {alertsEnabled ? t('navbar.alertsOn') : t('navbar.alerts')}
             </button>
           </div>
           
@@ -35,14 +54,14 @@ const Navbar: React.FC = () => {
               `}
             >
               <User size={14} className="text-accent" />
-              <span className="hidden sm:inline">Login</span>
+              <span className="hidden sm:inline">{t('navbar.login')}</span>
             </NavLink>
             
             <NavLink 
               to="/login?tab=signup"
               className="bg-accent hover:bg-white text-primary px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all shadow-lg shadow-accent/20 active:scale-95 inline-block text-center"
             >
-              Sign Up
+              {t('navbar.signup')}
             </NavLink>
             
             <button 
@@ -65,11 +84,27 @@ const Navbar: React.FC = () => {
           >
             <div className="flex flex-col p-6 gap-4">
               <div className="flex items-center justify-between pt-4 mt-2 border-t border-white/10">
-                <button className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 flex items-center gap-2">
-                  <Globe size={14} className="text-accent" /> EN
-                </button>
-                <button className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 flex items-center gap-2">
-                  <Bell size={14} className="text-accent" /> Alerts
+                <div className="flex items-center gap-2">
+                  <Globe size={14} className="text-accent" />
+                  <button 
+                    onClick={() => i18n.changeLanguage('en')}
+                    className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all ${i18n.language.startsWith('en') ? 'text-accent' : 'text-white/60'}`}
+                  >
+                    EN
+                  </button>
+                  <span className="text-white/20 text-[10px]">|</span>
+                  <button 
+                    onClick={() => i18n.changeLanguage('it')}
+                    className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all ${i18n.language.startsWith('it') ? 'text-accent' : 'text-white/60'}`}
+                  >
+                    IT
+                  </button>
+                </div>
+                <button 
+                    onClick={() => setSearch('alertsEnabled', !alertsEnabled)}
+                    className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-2 ${alertsEnabled ? 'text-accent' : 'text-white/60'}`}
+                >
+                  <Bell size={14} className={alertsEnabled ? 'text-accent fill-accent/20' : 'text-accent'} /> {alertsEnabled ? t('navbar.alertsOn') : t('navbar.alerts')}
                 </button>
               </div>
             </div>

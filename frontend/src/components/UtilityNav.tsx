@@ -1,13 +1,15 @@
 import React from 'react';
 import { CheckCircle, Briefcase, Clock, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const UtilityNav: React.FC = () => {
+  const { t } = useTranslation();
   const items = [
-    { icon: CheckCircle, label: 'Check-in', desc: 'Fast online check-in' },
-    { icon: Briefcase, label: 'Manage', desc: 'Your bookings' },
-    { icon: Clock, label: 'Flight Status', desc: 'Live updates' },
-    { icon: Calendar, label: 'Timetable', desc: 'Global schedule' },
+    { icon: CheckCircle, label: t('utility.checkin'), desc: t('utility.checkinDesc') },
+    { icon: Briefcase, label: t('utility.manage'), desc: t('utility.manageDesc') },
+    { icon: Clock, label: t('utility.status'), desc: t('utility.statusDesc') },
+    { icon: Calendar, label: t('utility.timetable'), desc: t('utility.timetableDesc') },
   ];
 
   return (

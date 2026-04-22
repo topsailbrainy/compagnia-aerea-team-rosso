@@ -1,27 +1,29 @@
 import React from 'react';
 import { ShieldCheck, Headphones, Globe, CreditCard } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const InfoCards: React.FC = () => {
+  const { t } = useTranslation();
   const cards = [
     {
       icon: ShieldCheck,
-      title: 'Travel Insurance',
-      desc: 'Fly with peace of mind. Protect your journey with our comprehensive coverage.'
+      title: t('info.insurance'),
+      desc: t('info.insuranceDesc')
     },
     {
       icon: Headphones,
-      title: '24/7 Support',
-      desc: 'Our dedicated team is always here to help you with any request, anywhere.'
+      title: t('info.support'),
+      desc: t('info.supportDesc')
     },
     {
       icon: Globe,
-      title: 'Baggage Info',
-      desc: 'Check your allowance and find out what you can bring on your FlyPlus flight.'
+      title: t('info.baggage'),
+      desc: t('info.baggageDesc')
     },
     {
       icon: CreditCard,
-      title: 'Flexible Payment',
-      desc: 'Book now and pay in installments with our partner financial services.'
+      title: t('info.payment'),
+      desc: t('info.paymentDesc')
     }
   ];
 

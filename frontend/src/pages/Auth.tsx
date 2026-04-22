@@ -4,9 +4,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, User, ArrowRight, GitBranch, Globe, Eye, EyeOff } from 'lucide-react';
 import logoImg from '../assets/logo.png';
 
+import { useSearchStore } from '../store';
+
 const Auth: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { setSearch } = useSearchStore();
   const queryParams = new URLSearchParams(location.search);
   const isLogin = queryParams.get('tab') !== 'signup';
 
@@ -29,11 +32,20 @@ const Auth: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log('Form submitted:', isLogin ? 'Login' : 'Signup', formData);
+    
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      navigate('/book');
+      
+      if (isLogin && formData.email === 'ceo@flyplus.com' && formData.password === 'flyplus') {
+        setSearch('isLoggedIn', true);
+        setSearch('userRole', 'admin');
+        navigate('/admin');
+      } else {
+        setSearch('isLoggedIn', true);
+        setSearch('userRole', 'user');
+        navigate('/book');
+      }
     }, 1500);
   };
 

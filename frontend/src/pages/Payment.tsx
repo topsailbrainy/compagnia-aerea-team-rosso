@@ -15,9 +15,9 @@ import {
 const Payment: React.FC = () => {
   const navigate = useNavigate();
   const { 
-    from, to, departureDate, returnDate, tripType,
+    from, to, departureDate, returnDate, 
     outboundFlight, returnFlight, outboundPrice, returnPrice,
-    passengers: passengerCount, cabinClass 
+    passengers: passengerCount, outboundCabin, returnCabin, tripType 
   } = useSearchStore();
   
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal' | 'apple'>('card');
@@ -111,7 +111,8 @@ const Payment: React.FC = () => {
                   </div>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center"><span className="text-white/50 text-sm font-medium">Guests</span><span className="font-bold">{passengerCount} Passenger{passengerCount > 1 ? 's' : ''}</span></div>
-                    <div className="flex justify-between items-center"><span className="text-white/50 text-sm font-medium">Cabin</span><span className="font-bold capitalize">{cabinClass}</span></div>
+                    <div className="flex justify-between items-center"><span className="text-white/50 text-sm font-medium">Outbound Cabin</span><span className="font-bold capitalize">{outboundCabin}</span></div>
+                    {tripType === 'return' && <div className="flex justify-between items-center"><span className="text-white/50 text-sm font-medium">Return Cabin</span><span className="font-bold capitalize">{returnCabin}</span></div>}
                   </div>
                   <div className="pt-6 border-t border-white/10">
                     <div className="flex justify-between items-center"><span className="text-accent font-black uppercase text-[10px] tracking-widest">Total to Pay</span><span className="text-3xl font-bold text-white">€{totalPrice.toFixed(2)}</span></div>

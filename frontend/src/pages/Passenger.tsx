@@ -45,9 +45,9 @@ const months = [
 const Passenger: React.FC = () => {
   const navigate = useNavigate();
   const { 
-    from, to, departureDate, returnDate, tripType, 
+    from, to, departureDate, returnDate, 
     outboundFlight, returnFlight, outboundPrice, returnPrice,
-    passengers: passengerCount, cabinClass 
+    passengers: passengerCount, outboundCabin, returnCabin, tripType 
   } = useSearchStore();
   
   const [passengers, setPassengers] = useState<PassengerDetails[]>([]);
@@ -324,7 +324,8 @@ const Passenger: React.FC = () => {
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <div className="flex justify-between items-center"><span className="text-white/50 text-sm font-medium">Cabin</span><span className="font-bold capitalize">{cabinClass}</span></div>
+                    <div className="flex justify-between items-center"><span className="text-white/50 text-sm font-medium">Outbound Cabin</span><span className="font-bold capitalize">{outboundCabin}</span></div>
+                    {tripType === 'return' && <div className="flex justify-between items-center"><span className="text-white/50 text-sm font-medium">Return Cabin</span><span className="font-bold capitalize">{returnCabin}</span></div>}
                     <div className="flex justify-between items-center"><span className="text-white/50 text-sm font-medium">Guests</span><span className="font-bold">{passengerCount} {passengerCount > 1 ? 'Passengers' : 'Passenger'}</span></div>
                   </div>
                   <div className="pt-6 border-t border-white/10">

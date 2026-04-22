@@ -27,12 +27,17 @@ interface SearchState {
   returnDate: string;
   passengers: number;
   cabinClass: string;
+  outboundCabin: string;
+  returnCabin: string;
   tripType: 'oneway' | 'return';
   outboundFlight: Flight | null;
   returnFlight: Flight | null;
   outboundPrice: number;
   returnPrice: number;
-  setSearch: (key: keyof Omit<SearchState, 'setSearch'>, value: string | number | Flight | null) => void;
+  alertsEnabled: boolean;
+  isLoggedIn: boolean;
+  userRole: 'user' | 'admin' | null;
+  setSearch: (key: keyof Omit<SearchState, 'setSearch'>, value: string | number | Flight | null | boolean | 'user' | 'admin' | null) => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -47,10 +52,15 @@ export const useSearchStore = create<SearchState>((set) => ({
   returnDate: '',
   passengers: 1,
   cabinClass: 'economy',
+  outboundCabin: '',
+  returnCabin: '',
   tripType: 'return',
   outboundFlight: null,
   returnFlight: null,
   outboundPrice: 0,
   returnPrice: 0,
+  alertsEnabled: false,
+  isLoggedIn: false,
+  userRole: null,
   setSearch: (key, value) => set((state) => ({ ...state, [key]: value })),
 }));
