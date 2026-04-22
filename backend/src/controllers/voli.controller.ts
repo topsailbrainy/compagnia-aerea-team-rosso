@@ -25,8 +25,8 @@ export async function voliPUT(req: Request, res: Response) {
     const {aereoporto_partenza_id, aereoporto_arrivo_id, data_partenza, data_arrivo, ora_arrivo} = req.body;
     const results = await pool.query<Volo>(`
         UPDATE voli
-        SET nome = $1, cognome = $2, email = $3, telefono = $4
-        WHERE id = $5
+        SET aereoporto_partenza_id = $1, aereoporto_arrivo_id = $2, data_partenza = $3, data_arrivo = $4, ora_arrivo = $5
+        WHERE id = $6
         RETURNING *  
     `, [aereoporto_partenza_id, aereoporto_arrivo_id, data_partenza, data_arrivo, ora_arrivo])
     res.status(200).json(results.rows[0])
