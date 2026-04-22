@@ -1,7 +1,7 @@
 // Importo il framework 
 import express from 'express';
-import userRoutes from './routes/passeggeri.routes'; // Importo le rotte degli utenti
-import productRoutes from './routes/products.routes'; // Importo le rotte dei prodotti
+import userRoutes from '@/routes/passeggeri.routes'; // Importo le rotte degli utenti
+import productRoutes from '@/routes/products.routes'; // Importo le rotte dei prodotti
 
 
 // Creazione del app
