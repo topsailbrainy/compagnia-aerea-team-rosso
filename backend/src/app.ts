@@ -1,5 +1,4 @@
 import express from "express";
-import "express-async-errors";
 import { errorMw } from "@/middlewares/error.middlewares";
 import { httpLogger } from "@/services/logger.services";
 import passeggeriRoutes from "@/routes/passeggeri.routes";
