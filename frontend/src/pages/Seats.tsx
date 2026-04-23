@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useSearchStore } from '../store';
-import { ChevronLeft, ChevronRight, User, Info, CheckCircle2, Plane } from 'lucide-react';
+import { ChevronLeft, ChevronRight, User, Info, Plane } from 'lucide-react';
 
 const Seats: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { passengers, outboundFlight, returnFlight, outboundPrice, returnPrice, cabinClass, selectedSeats, setSearch, baggageCost, assistanceCost } = useSearchStore();
+  const { passengers, outboundFlight, returnFlight, outboundPrice, returnPrice, selectedSeats, setSearch, baggageCost, assistanceCost } = useSearchStore();
 
   const [currentSelection, setCurrentSelection] = useState<string[]>(selectedSeats);
 

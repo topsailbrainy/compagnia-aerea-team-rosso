@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { User, Globe, Bell, Menu } from 'lucide-react';
+import { User, Globe, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchStore } from '../store';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +9,7 @@ const Navbar: React.FC = () => {
   const { t, i18n } = useTranslation();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
-  const { alertsEnabled, isLoggedIn, userRole, setSearch } = useSearchStore();
+  const { isLoggedIn, userRole } = useSearchStore();
 
   return (
     <motion.nav 

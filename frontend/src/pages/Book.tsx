@@ -1,7 +1,6 @@
 import React from 'react';
 import HeroCarousel from '../components/HeroCarousel';
 import BookingForm from '../components/BookingForm';
-import UtilityNav from '../components/UtilityNav';
 import PromotionalCarousel from '../components/PromotionalCarousel';
 import InfoCards from '../components/InfoCards';
 import { motion } from 'framer-motion';

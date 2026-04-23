@@ -118,7 +118,7 @@ const Admin: React.FC = () => {
               ].map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as 'analytics' | 'flights' | 'passengers')}
                   className={`flex-1 md:flex-none flex items-center gap-2 px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? 'bg-white text-primary shadow-sm' : 'text-gray-400 hover:text-primary'}`}
                 >
                   <tab.icon size={14} />

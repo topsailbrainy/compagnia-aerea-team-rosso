@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, MapPin, Calendar as CalendarIcon, ArrowRightLeft, Users, ChevronDown, AlertCircle, X } from 'lucide-react';
 import { useSearchStore } from '../store';
@@ -7,6 +7,9 @@ import { useTranslation } from 'react-i18next';
 import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
+
+type ValuePiece = Date | null;
+type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 const CustomSelect: React.FC<{
   value: string | number;
@@ -78,11 +81,18 @@ const LocationSelect: React.FC<{
   onOpenStateChange?: (isOpen: boolean) => void;
 }> = ({ value, onChange, label, placeholder, options, onOpenStateChange }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const selectedLabel = options.find(o => o.value === value)?.label || '';
+
+  const filteredOptions = options.filter(opt => 
+    opt.label.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    opt.value.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const toggleOpen = () => {
     const newState = !isOpen;
     setIsOpen(newState);
+    if (newState) setSearchTerm('');
     onOpenStateChange?.(newState);
   };
 
@@ -95,9 +105,21 @@ const LocationSelect: React.FC<{
           onClick={toggleOpen}
           className="w-full pl-14 pr-6 h-[50px] bg-gray-50 border border-transparent rounded-2xl flex items-center cursor-pointer hover:bg-white hover:border-accent/20 transition-all"
         >
-          <span className={`text-sm font-bold ${selectedLabel ? 'text-primary' : 'text-gray-300'}`}>
-            {selectedLabel || placeholder}
-          </span>
+          {isOpen ? (
+            <input
+              autoFocus
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search city or airport..."
+              className="bg-transparent border-none outline-none w-full text-sm font-bold text-primary placeholder:text-gray-300"
+              onClick={(e) => e.stopPropagation()}
+            />
+          ) : (
+            <span className={`text-sm font-bold ${selectedLabel ? 'text-primary' : 'text-gray-300'}`}>
+              {selectedLabel || placeholder}
+            </span>
+          )}
           <ChevronDown size={14} className={`ml-auto text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
         </div>
 
@@ -109,23 +131,27 @@ const LocationSelect: React.FC<{
                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                className="absolute left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl z-[70] overflow-hidden"
+                className="absolute left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl z-[70] overflow-hidden max-h-60 overflow-y-auto"
               >
-                {options.map((opt) => (
-                  <div 
-                    key={opt.value}
-                    onClick={() => {
-                      onChange(opt.value);
-                      setIsOpen(false);
-                      onOpenStateChange?.(false);
-                    }}
-                    className={`px-6 py-4 text-sm font-bold cursor-pointer transition-colors ${
-                      value === opt.value ? 'bg-accent text-primary' : 'hover:bg-gray-50 text-primary'
-                    }`}
-                  >
-                    {opt.label}
-                  </div>
-                ))}
+                {filteredOptions.length > 0 ? (
+                  filteredOptions.map((opt) => (
+                    <div 
+                      key={opt.value}
+                      onClick={() => {
+                        onChange(opt.value);
+                        setIsOpen(false);
+                        onOpenStateChange?.(false);
+                      }}
+                      className={`px-6 py-4 text-sm font-bold cursor-pointer transition-colors ${
+                        value === opt.value ? 'bg-accent text-primary' : 'hover:bg-gray-50 text-primary'
+                      }`}
+                    >
+                      {opt.label}
+                    </div>
+                  ))
+                ) : (
+                  <div className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">No destinations found</div>
+                )}
               </motion.div>
             </>
           )}
@@ -143,7 +169,7 @@ const CustomDatePicker: React.FC<{
 }> = ({ value, onChange, label, disabled }) => {
   const dateValue = value ? new Date(value) : null;
 
-  const handleDateChange = (date: any) => {
+  const handleDateChange: DatePickerProps['onChange'] = (date) => {
     if (date instanceof Date) {
       // Adjust for timezone to get YYYY-MM-DD correctly
       const year = date.getFullYear();
@@ -179,11 +205,22 @@ const BookingForm: React.FC = () => {
   const navigate = useNavigate();
 
   const locations = [
-    { value: 'FCO', label: t('booking.locations.FCO') },
-    { value: 'MXP', label: t('booking.locations.MXP') },
-    { value: 'LHR', label: t('booking.locations.LHR') },
-    { value: 'CDG', label: t('booking.locations.CDG') },
-    { value: 'JFK', label: t('booking.locations.JFK') },
+    { value: 'FCO', label: 'Rome, Italy (FCO)' },
+    { value: 'MXP', label: 'Milan, Italy (MXP)' },
+    { value: 'LHR', label: 'London, UK (LHR)' },
+    { value: 'CDG', label: 'Paris, France (CDG)' },
+    { value: 'JFK', label: 'New York, USA (JFK)' },
+    { value: 'LAX', label: 'Los Angeles, USA (LAX)' },
+    { value: 'YYZ', label: 'Toronto, Canada (YYZ)' },
+    { value: 'GIG', label: 'Rio de Janeiro, Brazil (GIG)' },
+    { value: 'EZE', label: 'Buenos Aires, Argentina (EZE)' },
+    { value: 'NRT', label: 'Tokyo, Japan (NRT)' },
+    { value: 'ICN', label: 'Seoul, South Korea (ICN)' },
+    { value: 'PEK', label: 'Beijing, China (PEK)' },
+    { value: 'SYD', label: 'Sydney, Australia (SYD)' },
+    { value: 'DXB', label: 'Dubai, UAE (DXB)' },
+    { value: 'CAI', label: 'Cairo, Egypt (CAI)' },
+    { value: 'CPT', label: 'Cape Town, South Africa (CPT)' },
   ];
 
   const { from, to, departureDate, returnDate, passengers, tripType, setSearch } = useSearchStore();

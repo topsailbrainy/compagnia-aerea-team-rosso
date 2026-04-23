@@ -16,56 +16,14 @@ import ScrollToTop from './components/ScrollToTop';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
-// Import assets for placeholders
-import africaImg from './assets/destinazioni/africa.avif';
-import americaImg from './assets/destinazioni/america.avif';
-import asiaImg from './assets/destinazioni/asia.avif';
-import europaImg from './assets/destinazioni/europa.avif';
-import oceaniaImg from './assets/destinazioni/oceania.avif';
-import arabiaImg from './assets/destinazioni/arabia.avif';
-
 import aereoImg from './assets/aerei/aereo.avif';
 import sediliImg from './assets/aerei/sedili.avif';
 import loungeImg from './assets/aerei/lounge.avif';
 import rifornimentoImg from './assets/aerei/rifornimento.avif';
 
-import attesaImg from './assets/persone/attesa.avif';
-import caneImg from './assets/persone/cane.avif';
-import famigliaImg from './assets/persone/famiglia.webp';
-import gateImg from './assets/persone/gate.webp';
-
-const DestinationsPlaceholder = () => {
-  const { t } = useTranslation();
-  const dests = [
-    { name: t('destinations.africa'), img: africaImg },
-    { name: t('destinations.america'), img: americaImg },
-    { name: t('destinations.asia'), img: asiaImg },
-    { name: t('destinations.europe'), img: europaImg },
-    { name: t('destinations.oceania'), img: oceaniaImg },
-    { name: t('destinations.middleEast'), img: arabiaImg },
-  ];
-
-  return (
-    <div className="p-12 mt-20 max-w-7xl mx-auto">
-      <div className="mb-12">
-        <h2 className="text-4xl md:text-6xl font-bold text-primary mb-4 tracking-tight">{t('destinations.title')}</h2>
-        <p className="text-gray-500 text-xl">{t('destinations.subtitle')}</p>
-        <div className="w-24 h-1 bg-accent mt-6" />
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-        {dests.map((dest, i) => (
-          <div key={i} className="group relative h-80 bg-gray-100 rounded-2xl overflow-hidden cursor-pointer">
-            <img src={dest.img} alt={dest.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent" />
-            <div className="absolute bottom-6 left-6">
-              <h3 className="text-2xl font-bold text-white">{dest.name}</h3>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
+import About from './pages/About';
+import Contact from './pages/Contact';
+import Destinations from './pages/Destinations';
 
 const FleetPlaceholder = () => {
   const { t } = useTranslation();
@@ -99,30 +57,6 @@ const FleetPlaceholder = () => {
   );
 };
 
-const InfoPlaceholder = ({ title, subtitle }: { title: string, subtitle: string }) => {
-  const { t } = useTranslation();
-  const images = [attesaImg, caneImg, famigliaImg, gateImg];
-  const [randomImg] = React.useState(() => images[Math.floor(Math.random() * images.length)]);
-
-  return (
-    <div className="p-12 mt-20 max-w-7xl mx-auto">
-      <div className="text-center max-w-3xl mx-auto space-y-6">
-        <h2 className="text-4xl md:text-6xl font-bold text-primary tracking-tight">{title}</h2>
-        <p className="text-gray-500 text-xl">{subtitle}</p>
-        <div className="w-24 h-1 bg-accent mx-auto" />
-        <div className="py-20">
-          <div className="w-full h-[500px] bg-secondary rounded-3xl flex items-center justify-center overflow-hidden relative">
-            <img src={randomImg} alt={t('common.info') || 'Info'} className="absolute inset-0 w-full h-full object-cover opacity-60" />
-            <div className="relative z-10 bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/20">
-              <p className="text-white text-xl font-medium">{t('info.contentPrepared')}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const AnimatedRoutes: React.FC = () => {
   const location = useLocation();
   const { t } = useTranslation();
@@ -149,10 +83,10 @@ const AnimatedRoutes: React.FC = () => {
           <Route path="/flight-status" element={<FlightStatus />} />
           <Route path="/login" element={<Auth />} />
           <Route path="/user" element={<User />} />
-          <Route path="/destinations" element={<DestinationsPlaceholder />} />
+          <Route path="/destinations" element={<Destinations />} />
           <Route path="/fleet" element={<FleetPlaceholder />} />
-          <Route path="/about" element={<InfoPlaceholder title={t('info.excellence')} subtitle={t('info.excellenceSub')} />} />
-          <Route path="/contact" element={<InfoPlaceholder title={t('info.touch')} subtitle={t('info.touchSub')} />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="*" element={
             <div className="flex flex-col items-center justify-center min-h-[60vh]">
               <h2 className="text-2xl font-bold text-primary">{t('common.comingSoon')}</h2>
