@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Plane, Briefcase, CheckCircle2, Clock, MapPin, LayoutGrid, Info, Phone, Menu, X, ChevronRight, ShieldCheck } from 'lucide-react';
+import { Plane, Briefcase, CheckCircle2, Clock, MapPin, LayoutGrid, Info, Phone, Menu, X, ChevronRight, ShieldCheck, User } from 'lucide-react';
 import { useUIStore, useSearchStore } from '../store';
 import { useTranslation } from 'react-i18next';
 
@@ -40,7 +40,7 @@ const Sidebar: React.FC = () => {
           {/* Logo Section */}
           <div className="sidebar-brand mt-8 mb-12 flex flex-col items-center">
             <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-24 h-24' : 'w-12 h-12'} mb-2`}>
-              <img src="/logo.png" alt="FlyPlus Logo" className="w-full h-full object-contain" />
+              <img src="/logo.png" alt={t('sidebar.logoAlt')} className="w-full h-full object-contain" />
             </div>
             {isSidebarOpen && (
               <div className="text-center">
@@ -76,6 +76,19 @@ const Sidebar: React.FC = () => {
             <div className="px-4 mb-2 text-[10px] font-bold text-white/30 uppercase tracking-widest">
               {isSidebarOpen ? t('sidebar.services') : ''}
             </div>
+            {isLoggedIn && userRole !== 'admin' && (
+              <NavLink
+                to="/user"
+                className={({ isActive }) => 
+                  `w-full nav-link group ${isActive ? 'active' : ''}`
+                }
+              >
+                <User size={22} className={isSidebarOpen ? 'mr-4' : 'mx-auto text-accent'} />
+                {isSidebarOpen && (
+                  <span className="flex-1 text-left font-bold text-accent">{t('userPage.title')}</span>
+                )}
+              </NavLink>
+            )}
             {navItems.map((item) => (
               <NavLink
                 key={item.id}

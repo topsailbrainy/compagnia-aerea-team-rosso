@@ -20,6 +20,19 @@ interface Flight {
   };
 }
 
+export interface BookedFlight {
+  id: string;
+  flightNumber: string;
+  from: string;
+  to: string;
+  date: string;
+  time: string;
+  status: 'Confirmed' | 'Checked-in' | 'Cancelled';
+  passengerName: string;
+  lastName: string;
+  cabinClass: string;
+}
+
 interface SearchState {
   from: string;
   to: string;
@@ -37,7 +50,17 @@ interface SearchState {
   alertsEnabled: boolean;
   isLoggedIn: boolean;
   userRole: 'user' | 'admin' | null;
-  setSearch: (key: keyof Omit<SearchState, 'setSearch'>, value: string | number | Flight | null | boolean | 'user' | 'admin' | null) => void;
+  userName: string;
+  userEmail: string;
+  userPassword: string;
+  hasSignedUp: boolean;
+  bookings: BookedFlight[];
+  selectedSeats: string[];
+  baggageCost: number;
+  assistanceCost: number;
+  setSearch: (key: keyof Omit<SearchState, 'setSearch' | 'addBooking' | 'updateBookingStatus'>, value: any) => void;
+  addBooking: (booking: BookedFlight) => void;
+  updateBookingStatus: (id: string, status: BookedFlight['status']) => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -62,5 +85,18 @@ export const useSearchStore = create<SearchState>((set) => ({
   alertsEnabled: false,
   isLoggedIn: false,
   userRole: null,
+  userName: '',
+  userEmail: '',
+  userPassword: '',
+  hasSignedUp: false,
+  bookings: [],
+  selectedSeats: [],
+  baggageCost: 0,
+  assistanceCost: 0,
   setSearch: (key, value) => set((state) => ({ ...state, [key]: value })),
+  addBooking: (booking) => set((state) => ({ ...state, bookings: [...state.bookings, booking] })),
+  updateBookingStatus: (id, status) => set((state) => ({
+    ...state,
+    bookings: state.bookings.map(b => b.id === id ? { ...b, status } : b)
+  })),
 }));

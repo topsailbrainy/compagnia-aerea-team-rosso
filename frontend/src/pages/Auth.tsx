@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, User, ArrowRight, GitBranch, Globe, Eye, EyeOff } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Mail, Lock, User, ArrowRight, GitBranch, Globe } from 'lucide-react';
 import logoImg from '../assets/logo.png';
 
 import { useSearchStore } from '../store';
 
 const Auth: React.FC = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  const { setSearch } = useSearchStore();
+  const { setSearch, hasSignedUp, userEmail: storedEmail, userPassword: storedPassword, addBooking } = useSearchStore();
   const queryParams = new URLSearchParams(location.search);
   const isLogin = queryParams.get('tab') !== 'signup';
 
@@ -18,6 +20,7 @@ const Auth: React.FC = () => {
   };
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -32,18 +35,81 @@ const Auth: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
     
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
       
-      if (isLogin && formData.email === 'ceo@flyplus.com' && formData.password === 'flyplus') {
-        setSearch('isLoggedIn', true);
-        setSearch('userRole', 'admin');
-        navigate('/admin');
-      } else {
+      if (isLogin) {
+        if (formData.email === 'ceo@flyplus.com' && formData.password === 'flyplus') {
+          setSearch('isLoggedIn', true);
+          setSearch('userRole', 'admin');
+          navigate('/admin');
+          return;
+        }
+
+        if (!hasSignedUp) {
+          setError(t('authPage.errorNotSignedUp'));
+          return;
+        }
+
+        if (formData.email !== storedEmail || formData.password !== storedPassword) {
+          setError(t('authPage.errorInvalidCredentials'));
+          return;
+        }
+
         setSearch('isLoggedIn', true);
         setSearch('userRole', 'user');
+        navigate('/book');
+      } else {
+        // Signup Validation
+        const nameParts = formData.fullName.trim().split(/\s+/);
+        if (nameParts.length < 2) {
+          setError(t('authPage.errorNameRequired'));
+          return;
+        }
+
+        if (formData.password.length < 8) {
+          setError(t('authPage.errorPasswordLength'));
+          return;
+        }
+
+        // Signup
+        setSearch('hasSignedUp', true);
+        setSearch('userName', formData.fullName);
+        setSearch('userEmail', formData.email);
+        setSearch('userPassword', formData.password);
+        setSearch('isLoggedIn', true);
+        setSearch('userRole', 'user');
+
+        // Generate initial bookings
+        const lastName = nameParts[nameParts.length - 1];
+        addBooking({
+          id: 'FP' + Math.floor(1000 + Math.random() * 9000),
+          flightNumber: 'FP102',
+          from: 'FCO',
+          to: 'LHR',
+          date: '2026-05-15',
+          time: '10:30',
+          status: 'Confirmed',
+          passengerName: formData.fullName,
+          lastName: lastName,
+          cabinClass: 'Business'
+        });
+        addBooking({
+          id: 'FP' + Math.floor(1000 + Math.random() * 9000),
+          flightNumber: 'FP305',
+          from: 'MXP',
+          to: 'JFK',
+          date: '2026-06-20',
+          time: '14:45',
+          status: 'Confirmed',
+          passengerName: formData.fullName,
+          lastName: lastName,
+          cabinClass: 'Economy'
+        });
+
         navigate('/book');
       }
     }, 1500);
@@ -65,11 +131,11 @@ const Auth: React.FC = () => {
             </div>
             
             <h2 className="text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">
-              Experience the <br />
-              <span className="text-accent">Art of Aviation.</span>
+              {t('authPage.experience')} <br />
+              <span className="text-accent">{t('authPage.artOfAviation')}</span>
             </h2>
             <p className="text-white/60 text-lg max-w-md">
-              Join our exclusive circle of travelers and unlock a world of premium benefits, seamless bookings, and personalized experiences.
+              {t('authPage.joinCircle')}
             </p>
           </div>
 
@@ -85,7 +151,7 @@ const Auth: React.FC = () => {
               </div>
             </div>
             <p className="text-white/40 text-sm font-medium tracking-wide">
-              Trusted by over 2,000+ frequent flyers worldwide.
+              {t('authPage.trustedBy')}
             </p>
           </div>
         </div>
@@ -98,23 +164,36 @@ const Auth: React.FC = () => {
                 onClick={() => setIsLogin(true)}
                 className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-[0.2em] transition-all ${isLogin ? 'bg-white text-primary shadow-sm' : 'text-primary/40 hover:text-primary'}`}
               >
-                Login
+                {t('authPage.login')}
               </button>
               <button 
                 onClick={() => setIsLogin(false)}
                 className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-[0.2em] transition-all ${!isLogin ? 'bg-white text-primary shadow-sm' : 'text-primary/40 hover:text-primary'}`}
               >
-                Sign Up
+                {t('authPage.signup')}
               </button>
             </div>
 
             <h1 className="text-3xl font-bold text-primary mb-2">
-              {isLogin ? 'Welcome back' : 'Create account'}
+              {isLogin ? t('authPage.welcomeBack') : t('authPage.createAccount')}
             </h1>
             <p className="text-gray-500">
-              {isLogin ? 'Please enter your details to login.' : 'Join FlyPlus and start your journey today.'}
+              {isLogin ? t('authPage.loginDesc') : t('authPage.signupDesc')}
             </p>
           </div>
+
+          <AnimatePresence>
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-xs font-bold uppercase tracking-wider"
+              >
+                {error}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <AnimatePresence mode="wait">
@@ -130,7 +209,7 @@ const Auth: React.FC = () => {
                     <input 
                       type="text" 
                       name="fullName"
-                      placeholder="Full Name"
+                      placeholder={t('authPage.fullName')}
                       value={formData.fullName}
                       onChange={handleInputChange}
                       required
@@ -146,7 +225,7 @@ const Auth: React.FC = () => {
               <input 
                 type="email" 
                 name="email"
-                placeholder="Email Address"
+                placeholder={t('authPage.email')}
                 value={formData.email}
                 onChange={handleInputChange}
                 required
@@ -159,7 +238,7 @@ const Auth: React.FC = () => {
               <input 
                 type={showPassword ? 'text' : 'password'} 
                 name="password"
-                placeholder="Password"
+                placeholder={t('authPage.password')}
                 value={formData.password}
                 onChange={handleInputChange}
                 required
@@ -168,16 +247,16 @@ const Auth: React.FC = () => {
               <button 
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black uppercase text-accent hover:text-primary transition-colors"
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showPassword ? 'Hide' : 'Show'}
               </button>
             </div>
 
             {isLogin && (
               <div className="flex justify-end">
                 <button type="button" className="text-xs font-bold text-accent hover:text-primary transition-colors uppercase tracking-wider">
-                  Forgot Password?
+                  {t('authPage.forgotPassword')}
                 </button>
               </div>
             )}
@@ -190,7 +269,7 @@ const Auth: React.FC = () => {
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  {isLogin ? 'Login' : 'Create Account'}
+                  {isLogin ? t('authPage.login') : t('authPage.signup')}
                   <ArrowRight size={16} className="text-accent" />
                 </>
               )}
@@ -202,7 +281,7 @@ const Auth: React.FC = () => {
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-100"></div>
               </div>
-              <span className="relative px-4 bg-white text-[10px] font-bold text-gray-400 uppercase tracking-widest">Or continue with</span>
+              <span className="relative px-4 bg-white text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('authPage.orContinueWith')}</span>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -218,12 +297,12 @@ const Auth: React.FC = () => {
           </div>
 
           <p className="mt-8 text-center text-xs text-gray-400 font-medium">
-            {isLogin ? "Don't have an account? " : "Already have an account? "}
+            {isLogin ? t('authPage.dontHaveAccount') : t('authPage.alreadyHaveAccount')}
             <button 
               onClick={() => setIsLogin(!isLogin)}
               className="text-accent hover:text-primary font-bold uppercase tracking-wider transition-colors ml-1"
             >
-              {isLogin ? 'Sign Up' : 'Login'}
+              {isLogin ? t('authPage.signup') : t('authPage.login')}
             </button>
           </p>
         </div>

@@ -10,6 +10,8 @@ import Manage from './pages/Manage';
 import CheckIn from './pages/CheckIn';
 import FlightStatus from './pages/FlightStatus';
 import Auth from './pages/Auth';
+import User from './pages/User';
+import Seats from './pages/Seats';
 import ScrollToTop from './components/ScrollToTop';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -110,7 +112,7 @@ const InfoPlaceholder = ({ title, subtitle }: { title: string, subtitle: string 
         <div className="w-24 h-1 bg-accent mx-auto" />
         <div className="py-20">
           <div className="w-full h-[500px] bg-secondary rounded-3xl flex items-center justify-center overflow-hidden relative">
-            <img src={randomImg} alt="Info" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+            <img src={randomImg} alt={t('common.info') || 'Info'} className="absolute inset-0 w-full h-full object-cover opacity-60" />
             <div className="relative z-10 bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/20">
               <p className="text-white text-xl font-medium">{t('info.contentPrepared')}</p>
             </div>
@@ -140,11 +142,13 @@ const AnimatedRoutes: React.FC = () => {
           <Route path="/booking" element={<Booking />} />
           <Route path="/passenger" element={<Passenger />} />
           <Route path="/payment" element={<Payment />} />
+          <Route path="/seat" element={<Seats />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/manage" element={<Manage />} />
           <Route path="/check-in" element={<CheckIn />} />
           <Route path="/flight-status" element={<FlightStatus />} />
           <Route path="/login" element={<Auth />} />
+          <Route path="/user" element={<User />} />
           <Route path="/destinations" element={<DestinationsPlaceholder />} />
           <Route path="/fleet" element={<FleetPlaceholder />} />
           <Route path="/about" element={<InfoPlaceholder title={t('info.excellence')} subtitle={t('info.excellenceSub')} />} />

@@ -108,11 +108,32 @@
   border: 1px solid #f3f4f6 !important; /* border-gray-100 */
   border-radius: 1rem !important; /* rounded-2xl */
   background-color: #f9fafb !important; /* bg-gray-50 */
-  padding: 0.5rem 1rem 0.5rem 3rem !important;
+  padding: 0 1rem 0 3.5rem !important;
   height: 50px !important;
   transition: all 0.3s ease !important;
   display: flex !important;
   align-items: center !important;
+  box-sizing: border-box !important;
+}
+
+.react-date-picker__inputGroup {
+  min-width: 180px !important;
+  flex-grow: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+}
+
+.react-date-picker__inputGroup__input {
+  font-weight: 700 !important;
+  color: #263A46 !important; /* primary */
+  font-size: 0.875rem !important; /* text-sm */
+}
+
+.react-date-picker__inputGroup__divider {
+  font-weight: 700 !important;
+  color: #263A46 !important;
+  padding: 0 1px !important;
 }
 
 .react-date-picker--disabled .react-date-picker__wrapper {

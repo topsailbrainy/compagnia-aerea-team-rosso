@@ -24,7 +24,8 @@ const resources = {
         "destinations": "Destinations",
         "fleet": "Our Fleet",
         "about": "Company Info",
-        "contact": "Contact Us"
+        "contact": "Contact Us",
+        "logoAlt": "FlyPlus Logo"
       },
       "footer": {
         "desc": "A premium aviation experience connecting Italy to the world with the youngest and most modern fleet.",
@@ -40,7 +41,13 @@ const resources = {
         "dining": "In-flight dining",
         "loyalty": "Sky Loyalty",
         "business": "Business Class",
-        "economy": "Economy Class"
+        "economy": "Economy Class",
+        "bookFlight": "Book a flight",
+        "manageBooking": "Manage booking",
+        "flightStatus": "Flight Status",
+        "checkin": "Check-in",
+        "logoAlt": "FlyPlus Logo",
+        "emailPlaceholder": "Email"
       },
       "utility": {
         "checkin": "Check-in",
@@ -65,7 +72,48 @@ const resources = {
         "searchFlights": "Search Flights",
         "missingInfo": "Missing Information",
         "missingInfoDesc": "Please fill in all sections to search flights.",
-        "select": "Select..."
+        "select": "Select...",
+        "locations": {
+          "FCO": "Rome (FCO)",
+          "MXP": "Milan (MXP)",
+          "LHR": "London (LHR)",
+          "CDG": "Paris (CDG)",
+          "JFK": "New York (JFK)"
+        }
+      },
+      "hero": {
+        "alt": "Experience Unmatched Luxury"
+      },
+      "promotions": {
+        "title": "Discover more",
+        "learnMore": "Learn more",
+        "items": {
+          "deals": {
+            "title": "Book our latest deals",
+            "category": "OFFERS",
+            "desc": "Explore the world with our special fares."
+          },
+          "stopover": {
+            "title": "Italy Stopover",
+            "category": "EXPERIENCE",
+            "desc": "Enjoy a free hotel stay in Rome or Milan."
+          },
+          "loyalty": {
+            "title": "FlyPlus Guest",
+            "category": "LOYALTY",
+            "desc": "Earn miles every time you fly with us."
+          },
+          "suite": {
+            "title": "Sky Suite",
+            "category": "LUXURY",
+            "desc": "Experience the world's most private suite in the sky."
+          },
+          "routes": {
+            "title": "Our New Routes",
+            "category": "EXPLORE",
+            "desc": "Discover our expanding global network."
+          }
+        }
       },
       "destinations": {
         "title": "World-Class Destinations",
@@ -78,7 +126,10 @@ const resources = {
         "middleEast": "Middle East",
         "exploreWorld": "Explore the World",
         "viewAll": "View All Destinations",
-        "from": "From"
+        "from": "From",
+        "rome": "Rome, Italy",
+        "genoa": "Genoa, Italy",
+        "dubai": "Dubai, UAE"
       },
       "fleet": {
         "title": "Our Modern Fleet",
@@ -109,7 +160,22 @@ const resources = {
       },
       "common": {
         "comingSoon": "Section coming soon",
-        "preparing": "We are preparing this premium content for you."
+        "preparing": "We are preparing this premium content for you.",
+        "back": "Back",
+        "cancel": "Cancel",
+        "continue": "Continue",
+        "save": "Save",
+        "edit": "Edit",
+        "delete": "Delete",
+        "search": "Search",
+        "confirm": "Confirm",
+        "guest": "Guest",
+        "guests": "Guests",
+        "total": "Total",
+        "status": "Status",
+        "direct": "Direct",
+        "selectDate": "Select Date",
+        "info": "Info"
       },
       "bookPage": {
         "whyTitle": "Why Choose FlyPlus?",
@@ -127,7 +193,232 @@ const resources = {
         "joinNow": "Join now",
         "learnMore": "Learn more",
         "privileges": "Member Privileges",
-        "privilegesDesc": "Unlock exclusive lounge access and priority boarding."
+        "privilegesDesc": "Unlock exclusive lounge access and priority boarding.",
+        "guestLabel": "FlyPlus Guest"
+      },
+      "bookingPage": {
+        "clearReturn": "Clear Return Selection",
+        "backHome": "Back to Home",
+        "modifySearch": "Modify Search",
+        "updateDetails": "Update your travel details below.",
+        "selectOutbound": "Select Outbound Flight",
+        "selectReturn": "Select Return Flight",
+        "selected": "Selected",
+        "yourSelection": "Your Selection",
+        "outbound": "Outbound",
+        "return": "Return",
+        "totalPrice": "Total Price",
+        "continuePassenger": "Continue to Passenger",
+        "selectReturnToContinue": "Select return flight to continue",
+        "selectOutboundToContinue": "Select outbound flight to continue",
+        "premiumTitle": "FlyPlus Premium",
+        "premiumDesc": "Book with confidence. All our flights include flexible cancellation.",
+        "direct": "Direct",
+        "flightDetails": "Flight Details",
+        "economy": "Economy",
+        "business": "Business",
+        "first": "First Class",
+        "wifi": "Wi-Fi",
+        "meals": "Meals",
+        "entertainment": "In-flight Ent."
+      },
+      "passengerPage": {
+        "backFlights": "Back to Flights",
+        "guestDetails": "Guest Details",
+        "passportDesc": "Please enter the details as they appear on your travel documents.",
+        "requiredInfo": "Required Information",
+        "title": "Title",
+        "firstName": "First name(s)",
+        "lastName": "Last name",
+        "dob": "Date of Birth",
+        "day": "Day",
+        "month": "Month",
+        "year": "Year",
+        "nationality": "Nationality",
+        "passportPlaceholder": "As in passport",
+        "frequentFlyer": "Frequent Flyer",
+        "frequentFlyerDesc": "Add membership details",
+        "specialAssistance": "Special Assistance",
+        "specialAssistanceDesc": "Request medical or mobility aid",
+        "contactDetails": "Contact Details",
+        "contactDesc": "We'll send your ticket and updates here",
+        "email": "Email Address",
+        "phone": "Phone Number",
+        "dataSafe": "Your data is safe with us",
+        "confirmContinue": "Confirm & Continue",
+        "bookingSummary": "Booking Summary",
+        "flights": "Flights",
+        "outboundCabin": "Outbound Cabin",
+        "returnCabin": "Return Cabin",
+        "baseFare": "Base Fare",
+        "taxes": "Taxes & Fees",
+        "adult": "Adult",
+        "child": "Child",
+        "infant": "Infant"
+      },
+      "paymentPage": {
+        "backPassengers": "Back to Passengers",
+        "paymentDetails": "Payment Details",
+        "paymentDesc": "Choose your preferred payment method and complete your booking.",
+        "creditCard": "Credit Card",
+        "paypal": "PayPal",
+        "applePay": "Apple Pay",
+        "secureTransaction": "Secure Transaction",
+        "cardholder": "Cardholder Name",
+        "cardNumber": "Card Number",
+        "expiry": "Expiry Date",
+        "cvv": "CVV",
+        "pci": "PCI-DSS Compliant Payment",
+        "completeBooking": "Complete Booking",
+        "finalSummary": "Final Summary",
+        "totalToPay": "Total to Pay",
+        "confirmed": "Booking Confirmed!",
+        "confirmedDesc": "Your flight to {{to}} has been successfully booked. We've sent the confirmation and e-tickets to your email.",
+        "bookingRef": "Booking Ref",
+        "statusConfirmed": "Confirmed",
+        "returnHome": "Return to Home",
+        "cardholderPlaceholder": "e.g. Leonardo Da Vinci",
+        "emailPlaceholder": "e.g. travel@flyplus.com",
+        "phonePlaceholder": "000 000 0000"
+      },
+      "adminPage": {
+        "dashboard": "CEO Dashboard",
+        "welcome": "Welcome back, Administrator. Here's what's happening today.",
+        "export": "Export Data",
+        "addFlight": "Add New Flight",
+        "totalRevenue": "Total Revenue",
+        "activeBookings": "Active Bookings",
+        "totalPassengers": "Total Passengers",
+        "loadFactor": "Avg. Load Factor",
+        "analytics": "Analytics",
+        "flightManagement": "Flight Management",
+        "passengers": "Passengers",
+        "searchEverything": "Search everything...",
+        "revenueTrend": "Revenue Trend",
+        "popularRoutes": "Popular Routes",
+        "highDemand": "High Demand",
+        "flight": "Flight",
+        "route": "Route",
+        "revenue": "Revenue",
+        "actions": "Actions",
+        "onTime": "On Time",
+        "delayed": "Delayed",
+        "scheduled": "Scheduled"
+      },
+      "authPage": {
+        "artOfAviation": "Art of Aviation.",
+        "experience": "Experience the",
+        "joinCircle": "Join our exclusive circle of travelers and unlock a world of premium benefits, seamless bookings, and personalized experiences.",
+        "trustedBy": "Trusted by over 2,000+ frequent flyers worldwide.",
+        "login": "Login",
+        "signup": "Sign Up",
+        "welcomeBack": "Welcome back",
+        "createAccount": "Create account",
+        "loginDesc": "Please enter your details to login.",
+        "signupDesc": "Join FlyPlus and start your journey today.",
+        "fullName": "Full Name",
+        "email": "Email Address",
+        "password": "Password",
+        "forgotPassword": "Forgot password?",
+        "orContinueWith": "Or continue with",
+        "dontHaveAccount": "Don't have an account?",
+        "alreadyHaveAccount": "Already have an account?",
+        "errorNotSignedUp": "Please sign up first before attempting to login.",
+        "errorInvalidCredentials": "Invalid email or password. Please try again.",
+        "errorNameRequired": "Please enter both your name and surname.",
+        "errorPasswordLength": "Password must be at least 8 characters long."
+      },
+      "managePage": {
+        "title": "Manage Your Booking",
+        "desc": "View, change or upgrade your flight with ease.",
+        "retrieve": "Retrieve your booking",
+        "bookingRef": "Booking Reference",
+        "lastName": "Last Name",
+        "findBooking": "Find Booking",
+        "whyManage": "Why Manage Online?",
+        "manageOptions": {
+          "seats": "Select seats in advance",
+          "baggage": "Add extra baggage",
+          "meals": "Request special meals",
+          "upgrade": "Upgrade to Business Class"
+        },
+        "notFound": "Booking not found. Please check your reference and last name."
+      },
+      "checkinPage": {
+        "title": "Online Check-in",
+        "desc": "Save time at the airport and get your boarding pass now.",
+        "available": "Online check-in is available 48 hours to 90 minutes before departure.",
+        "refOrTicket": "Booking Reference or E-ticket Number",
+        "lastName": "Last Name",
+        "checkinNow": "Check-in Now",
+        "digitalPass": "Digital Boarding Pass",
+        "digitalPassDesc": "Receive your boarding pass directly on your smartphone.",
+        "fastBagDrop": "Fast Bag Drop",
+        "fastBagDropDesc": "Already checked in? Head straight to the bag drop counter.",
+        "alreadyCheckedIn": "You are already checked in for this flight.",
+        "success": "Check-in Successful!",
+        "successDesc": "Your boarding pass is ready. You can find it in your profile."
+      },
+      "statusPage": {
+        "title": "Flight Status",
+        "desc": "Real-time information on all FlyPlus flights.",
+        "byNumber": "By Flight Number",
+        "byRoute": "By Route",
+        "flightNumber": "Flight Number",
+        "departureDate": "Departure Date",
+        "checkStatus": "Check Status",
+        "latestUpdates": "Latest Updates",
+        "to": "to",
+        "from": "from"
+      },
+      "userPage": {
+        "title": "My Profile",
+        "personalInfo": "Personal Information",
+        "bookings": "My Bookings",
+        "fullName": "Full Name",
+        "email": "Email Address",
+        "phone": "Phone Number",
+        "noBookings": "You have no bookings yet.",
+        "logout": "Logout",
+        "upcomingFlights": "Upcoming Flights"
+      },
+      "countries": {
+        "Italy": "Italy",
+        "United Kingdom": "United Kingdom",
+        "United States": "United States",
+        "France": "France",
+        "Germany": "Germany",
+        "Spain": "Spain",
+        "United Arab Emirates": "United Arab Emirates",
+        "Japan": "Japan",
+        "China": "China",
+        "Australia": "Australia",
+        "Canada": "Canada",
+        "Brazil": "Brazil",
+        "India": "India",
+        "Russia": "Russia",
+        "South Africa": "South Africa"
+      },
+      "months": {
+        "January": "January",
+        "February": "February",
+        "March": "March",
+        "April": "April",
+        "May": "May",
+        "June": "June",
+        "July": "July",
+        "August": "August",
+        "September": "September",
+        "October": "October",
+        "November": "November",
+        "December": "December"
+      },
+      "titles": {
+        "Mr": "Mr",
+        "Mrs": "Mrs",
+        "Ms": "Ms",
+        "Miss": "Miss",
+        "Dr": "Dr"
       }
     }
   },
@@ -152,7 +443,8 @@ const resources = {
         "destinations": "Destinazioni",
         "fleet": "La Nostra Flotta",
         "about": "Info Azienda",
-        "contact": "Contattaci"
+        "contact": "Contattaci",
+        "logoAlt": "Logo FlyPlus"
       },
       "footer": {
         "desc": "Un'esperienza aeronautica premium che collega l'Italia al mondo con la flotta più giovane e moderna.",
@@ -168,7 +460,13 @@ const resources = {
         "dining": "Ristorazione a bordo",
         "loyalty": "Sky Loyalty",
         "business": "Business Class",
-        "economy": "Economy Class"
+        "economy": "Economy Class",
+        "bookFlight": "Prenota un volo",
+        "manageBooking": "Gestisci prenotazione",
+        "flightStatus": "Stato del volo",
+        "checkin": "Check-in",
+        "logoAlt": "Logo FlyPlus",
+        "emailPlaceholder": "Email"
       },
       "utility": {
         "checkin": "Check-in",
@@ -193,7 +491,48 @@ const resources = {
         "searchFlights": "Cerca Voli",
         "missingInfo": "Informazioni Mancanti",
         "missingInfoDesc": "Per favore, compila tutte le sezioni per cercare i voli.",
-        "select": "Seleziona..."
+        "select": "Seleziona...",
+        "locations": {
+          "FCO": "Roma (FCO)",
+          "MXP": "Milano (MXP)",
+          "LHR": "Londra (LHR)",
+          "CDG": "Parigi (CDG)",
+          "JFK": "New York (JFK)"
+        }
+      },
+      "hero": {
+        "alt": "Sperimenta il lusso senza pari"
+      },
+      "promotions": {
+        "title": "Scopri di più",
+        "learnMore": "Scopri di più",
+        "items": {
+          "deals": {
+            "title": "Prenota le nostre ultime offerte",
+            "category": "OFFERTE",
+            "desc": "Esplora il mondo con le nostre tariffe speciali."
+          },
+          "stopover": {
+            "title": "Stopover in Italia",
+            "category": "ESPERIENZA",
+            "desc": "Goditi un soggiorno gratuito in hotel a Roma o Milano."
+          },
+          "loyalty": {
+            "title": "Ospite FlyPlus",
+            "category": "FEDELTÀ",
+            "desc": "Guadagna miglia ogni volta che voli con noi."
+          },
+          "suite": {
+            "title": "Sky Suite",
+            "category": "LUSSO",
+            "desc": "Sperimenta la suite più riservata al mondo nel cielo."
+          },
+          "routes": {
+            "title": "Le Nostre Nuove Rotte",
+            "category": "ESPLORA",
+            "desc": "Scopri la nostra rete globale in espansione."
+          }
+        }
       },
       "destinations": {
         "title": "Destinazioni di Classe Mondiale",
@@ -206,7 +545,10 @@ const resources = {
         "middleEast": "Medio Oriente",
         "exploreWorld": "Esplora il Mondo",
         "viewAll": "Vedi Tutte le Destinazioni",
-        "from": "Da"
+        "from": "Da",
+        "rome": "Roma, Italia",
+        "genoa": "Genova, Italia",
+        "dubai": "Dubai, Emirati Arabi Uniti"
       },
       "fleet": {
         "title": "La Nostra Flotta Moderna",
@@ -237,7 +579,22 @@ const resources = {
       },
       "common": {
         "comingSoon": "Sezione in arrivo",
-        "preparing": "Stiamo preparando questo contenuto premium per te."
+        "preparing": "Stiamo preparando questo contenuto premium per te.",
+        "back": "Indietro",
+        "cancel": "Annulla",
+        "continue": "Continua",
+        "save": "Salva",
+        "edit": "Modifica",
+        "delete": "Elimina",
+        "search": "Cerca",
+        "confirm": "Conferma",
+        "guest": "Ospite",
+        "guests": "Ospiti",
+        "total": "Totale",
+        "status": "Stato",
+        "direct": "Diretto",
+        "selectDate": "Seleziona Data",
+        "info": "Informazioni"
       },
       "bookPage": {
         "whyTitle": "Perché Scegliere FlyPlus?",
@@ -255,7 +612,232 @@ const resources = {
         "joinNow": "Iscriviti ora",
         "learnMore": "Scopri di più",
         "privileges": "Privilegi per i Soci",
-        "privilegesDesc": "Sblocca l'accesso esclusivo alle lounge e l'imbarco prioritario."
+        "privilegesDesc": "Sblocca l'accesso esclusivo alle lounge e l'imbarco prioritario.",
+        "guestLabel": "Ospite FlyPlus"
+      },
+      "bookingPage": {
+        "clearReturn": "Cancella Selezione Ritorno",
+        "backHome": "Torna alla Home",
+        "modifySearch": "Modifica Ricerca",
+        "updateDetails": "Aggiorna i dettagli del tuo viaggio qui sotto.",
+        "selectOutbound": "Seleziona Volo di Andata",
+        "selectReturn": "Seleziona Volo di Ritorno",
+        "selected": "Selezionato",
+        "yourSelection": "La Tua Selezione",
+        "outbound": "Andata",
+        "return": "Ritorno",
+        "totalPrice": "Prezzo Totale",
+        "continuePassenger": "Continua ai Passeggeri",
+        "selectReturnToContinue": "Seleziona il volo di ritorno per continuare",
+        "selectOutboundToContinue": "Seleziona il volo di andata per continuare",
+        "premiumTitle": "FlyPlus Premium",
+        "premiumDesc": "Prenota con fiducia. Tutti i nostri voli includono la cancellazione flessibile.",
+        "direct": "Diretto",
+        "flightDetails": "Dettagli Volo",
+        "economy": "Economy",
+        "business": "Business",
+        "first": "Prima Classe",
+        "wifi": "Wi-Fi",
+        "meals": "Pasti",
+        "entertainment": "Intrattenimento"
+      },
+      "passengerPage": {
+        "backFlights": "Torna ai Voli",
+        "guestDetails": "Dettagli Ospiti",
+        "passportDesc": "Inserisci i dettagli come appaiono sui tuoi documenti di viaggio.",
+        "requiredInfo": "Informazioni Richieste",
+        "title": "Titolo",
+        "firstName": "Nome/i",
+        "lastName": "Cognome",
+        "dob": "Data di Nascita",
+        "day": "Giorno",
+        "month": "Mese",
+        "year": "Anno",
+        "nationality": "Nazionalità",
+        "passportPlaceholder": "Come nel passaporto",
+        "frequentFlyer": "Frequent Flyer",
+        "frequentFlyerDesc": "Aggiungi dettagli socio",
+        "specialAssistance": "Assistenza Speciale",
+        "specialAssistanceDesc": "Richiedi assistenza medica o di mobilità",
+        "contactDetails": "Dettagli di Contatto",
+        "contactDesc": "Invieremo il biglietto e gli aggiornamenti qui",
+        "email": "Indirizzo Email",
+        "phone": "Numero di Telefono",
+        "dataSafe": "I tuoi dati sono al sicuro con noi",
+        "confirmContinue": "Conferma e Continua",
+        "bookingSummary": "Riepilogo Prenotazione",
+        "flights": "Voli",
+        "outboundCabin": "Cabina Andata",
+        "returnCabin": "Cabina Ritorno",
+        "baseFare": "Tariffa Base",
+        "taxes": "Tasse e Commissioni",
+        "adult": "Adulto",
+        "child": "Bambino",
+        "infant": "Neonato"
+      },
+      "paymentPage": {
+        "backPassengers": "Torna ai Passeggeri",
+        "paymentDetails": "Dettagli di Pagamento",
+        "paymentDesc": "Scegli il tuo metodo di pagamento preferito e completa la prenotazione.",
+        "creditCard": "Carta di Credito",
+        "paypal": "PayPal",
+        "applePay": "Apple Pay",
+        "secureTransaction": "Transazione Sicura",
+        "cardholder": "Nome Titolare Carta",
+        "cardNumber": "Numero Carta",
+        "expiry": "Data di Scadenza",
+        "cvv": "CVV",
+        "pci": "Pagamento conforme PCI-DSS",
+        "completeBooking": "Completa Prenotazione",
+        "finalSummary": "Riepilogo Finale",
+        "totalToPay": "Totale da Pagare",
+        "confirmed": "Prenotazione Confermata!",
+        "confirmedDesc": "Il tuo volo per {{to}} è stato prenotato con successo. Abbiamo inviato la conferma e i biglietti elettronici alla tua email.",
+        "bookingRef": "Rif. Prenotazione",
+        "statusConfirmed": "Confermato",
+        "returnHome": "Torna alla Home",
+        "cardholderPlaceholder": "es. Leonardo Da Vinci",
+        "emailPlaceholder": "es. travel@flyplus.com",
+        "phonePlaceholder": "000 000 0000"
+      },
+      "adminPage": {
+        "dashboard": "Dashboard CEO",
+        "welcome": "Bentornato, Amministratore. Ecco cosa succede oggi.",
+        "export": "Esporta Dati",
+        "addFlight": "Aggiungi Nuovo Volo",
+        "totalRevenue": "Entrate Totali",
+        "activeBookings": "Prenotazioni Attive",
+        "totalPassengers": "Passeggeri Totali",
+        "loadFactor": "Fattore di Carico Medio",
+        "analytics": "Analisi",
+        "flightManagement": "Gestione Voli",
+        "passengers": "Passeggeri",
+        "searchEverything": "Cerca ovunque...",
+        "revenueTrend": "Andamento Entrate",
+        "popularRoutes": "Rotte Popolari",
+        "highDemand": "Alta Domanda",
+        "flight": "Volo",
+        "route": "Rotta",
+        "revenue": "Entrate",
+        "actions": "Azioni",
+        "onTime": "In Orario",
+        "delayed": "In Ritardo",
+        "scheduled": "Programmato"
+      },
+      "authPage": {
+        "artOfAviation": "L'Arte dell'Aviazione.",
+        "experience": "Vivi",
+        "joinCircle": "Unisciti alla nostra cerchia esclusiva di viaggiatori e sblocca un mondo di vantaggi premium, prenotazioni fluide ed esperienze personalizzate.",
+        "trustedBy": "Scelto da oltre 2.000+ frequent flyer in tutto il mondo.",
+        "login": "Accedi",
+        "signup": "Registrati",
+        "welcomeBack": "Bentornato",
+        "createAccount": "Crea account",
+        "loginDesc": "Inserisci i tuoi dati per accedere.",
+        "signupDesc": "Unisciti a FlyPlus e inizia il tuo viaggio oggi.",
+        "fullName": "Nome Completo",
+        "email": "Indirizzo Email",
+        "password": "Password",
+        "forgotPassword": "Password dimenticata?",
+        "orContinueWith": "O continua con",
+        "dontHaveAccount": "Non hai un account?",
+        "alreadyHaveAccount": "Hai già un account?",
+        "errorNotSignedUp": "Per favore, registrati prima di provare ad accedere.",
+        "errorInvalidCredentials": "Email o password non corretti. Riprova.",
+        "errorNameRequired": "Per favore, inserisci sia il nome che il cognome.",
+        "errorPasswordLength": "La password deve contenere almeno 8 caratteri."
+      },
+      "managePage": {
+        "title": "Gestisci la Tua Prenotazione",
+        "desc": "Visualizza, modifica o aggiorna il tuo volo con facilità.",
+        "retrieve": "Recupera la tua prenotazione",
+        "bookingRef": "Riferimento Prenotazione",
+        "lastName": "Cognome",
+        "findBooking": "Trova Prenotazione",
+        "whyManage": "Perché Gestire Online?",
+        "manageOptions": {
+          "seats": "Seleziona i posti in anticipo",
+          "baggage": "Aggiungi bagaglio extra",
+          "meals": "Richiedi pasti speciali",
+          "upgrade": "Passa alla Business Class"
+        },
+        "notFound": "Prenotazione non trovata. Per favore, controlla il riferimento e il cognome."
+      },
+      "checkinPage": {
+        "title": "Check-in Online",
+        "desc": "Risparmia tempo in aeroporto e ottieni subito la tua carta d'imbarco.",
+        "available": "Il check-in online è disponibile da 48 ore a 90 minuti prima della partenza.",
+        "refOrTicket": "Riferimento Prenotazione o Numero Biglietto Elettronico",
+        "lastName": "Cognome",
+        "checkinNow": "Fai il Check-in Ora",
+        "digitalPass": "Carta d'Imbarco Digitale",
+        "digitalPassDesc": "Ricevi la tua carta d'imbarco direttamente sul tuo smartphone.",
+        "fastBagDrop": "Consegna Bagagli Rapida",
+        "fastBagDropDesc": "Hai già fatto il check-in? Vai direttamente al banco consegna bagagli.",
+        "alreadyCheckedIn": "Hai già effettuato il check-in per questo volo.",
+        "success": "Check-in completato con successo!",
+        "successDesc": "La tua carta d'imbarco è pronta. Puoi trovarla nel tuo profilo."
+      },
+      "statusPage": {
+        "title": "Stato del Volo",
+        "desc": "Informazioni in tempo reale su tutti i voli FlyPlus.",
+        "byNumber": "Per Numero di Volo",
+        "byRoute": "Per Rotta",
+        "flightNumber": "Numero di Volo",
+        "departureDate": "Data di Partenza",
+        "checkStatus": "Controlla Stato",
+        "latestUpdates": "Ultimi Aggiornamenti",
+        "to": "a",
+        "from": "da"
+      },
+      "userPage": {
+        "title": "Il Mio Profilo",
+        "personalInfo": "Informazioni Personali",
+        "bookings": "Le Mie Prenotazioni",
+        "fullName": "Nome Completo",
+        "email": "Indirizzo Email",
+        "phone": "Numero di Telefono",
+        "noBookings": "Non hai ancora nessuna prenotazione.",
+        "logout": "Disconnetti",
+        "upcomingFlights": "Voli in Arrivo"
+      },
+      "countries": {
+        "Italy": "Italia",
+        "United Kingdom": "Regno Unito",
+        "United States": "Stati Uniti",
+        "France": "Francia",
+        "Germany": "Germania",
+        "Spain": "Spagna",
+        "United Arab Emirates": "Emirati Arabi Uniti",
+        "Japan": "Giappone",
+        "China": "Cina",
+        "Australia": "Australia",
+        "Canada": "Canada",
+        "Brazil": "Brasile",
+        "India": "India",
+        "Russia": "Russia",
+        "South Africa": "Sudafrica"
+      },
+      "months": {
+        "January": "Gennaio",
+        "February": "Febbraio",
+        "March": "Marzo",
+        "April": "Aprile",
+        "May": "Maggio",
+        "June": "Giugno",
+        "July": "Luglio",
+        "August": "Agosto",
+        "September": "Settembre",
+        "October": "Ottobre",
+        "November": "Novembre",
+        "December": "Dicembre"
+      },
+      "titles": {
+        "Mr": "Sig.",
+        "Mrs": "Sig.ra",
+        "Ms": "Sig.ra",
+        "Miss": "Sig.na",
+        "Dr": "Dott."
       }
     }
   }

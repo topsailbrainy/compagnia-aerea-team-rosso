@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // Import images from assets
 import aereoImg from '../assets/aerei/aereo.avif';
@@ -9,14 +10,15 @@ import maldiveImg from '../assets/destinazioni/maldive.avif';
 import tokyoImg from '../assets/destinazioni/tokyo.avif';
 
 const PromotionalCarousel: React.FC = () => {
+  const { t } = useTranslation();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const promos = [
-    { title: 'Book our latest deals', category: 'OFFERS', desc: 'Explore the world with our special fares.', image: maldiveImg },
-    { title: 'Italy Stopover', category: 'EXPERIENCE', desc: 'Enjoy a free hotel stay in Rome or Milan.', image: romaImg },
-    { title: 'FlyPlus Guest', category: 'LOYALTY', desc: 'Earn miles every time you fly with us.', image: aereoImg },
-    { title: 'Sky Suite', category: 'LUXURY', desc: 'Experience the world\'s most private suite in the sky.', image: loungeImg },
-    { title: 'Our New Routes', category: 'EXPLORE', desc: 'Discover our expanding global network.', image: tokyoImg },
+    { title: t('promotions.items.deals.title'), category: t('promotions.items.deals.category'), desc: t('promotions.items.deals.desc'), image: maldiveImg },
+    { title: t('promotions.items.stopover.title'), category: t('promotions.items.stopover.category'), desc: t('promotions.items.stopover.desc'), image: romaImg },
+    { title: t('promotions.items.loyalty.title'), category: t('promotions.items.loyalty.category'), desc: t('promotions.items.loyalty.desc'), image: aereoImg },
+    { title: t('promotions.items.suite.title'), category: t('promotions.items.suite.category'), desc: t('promotions.items.suite.desc'), image: loungeImg },
+    { title: t('promotions.items.routes.title'), category: t('promotions.items.routes.category'), desc: t('promotions.items.routes.desc'), image: tokyoImg },
   ];
 
   // Triple the promos to create an infinite loop effect
@@ -60,7 +62,7 @@ const PromotionalCarousel: React.FC = () => {
       <div className="max-w-none ml-0">
         <div className="flex justify-between items-end mb-10 px-6">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-2">Discover more</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-2">{t('promotions.title')}</h2>
             <div className="w-20 h-1 bg-accent" />
           </div>
           <div className="flex gap-3">
@@ -114,7 +116,7 @@ const PromotionalCarousel: React.FC = () => {
                   </div>
                   <div className="flex items-center text-accent font-bold text-sm gap-2 group/btn">
                     <span className="relative overflow-hidden">
-                      Learn more
+                      {t('promotions.learnMore')}
                       <span className="absolute bottom-0 left-0 w-full h-0.5 bg-accent transform translate-x-[-100%] group-hover/btn:translate-x-0 transition-transform duration-300" />
                     </span>
                     <ChevronRight size={16} className="transform group-hover/btn:translate-x-1 transition-transform" />

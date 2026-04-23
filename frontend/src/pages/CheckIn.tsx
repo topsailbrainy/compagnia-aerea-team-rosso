@@ -1,59 +1,155 @@
-import React from 'react';
-import { CheckCircle2, QrCode, AlertCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { CheckCircle2, QrCode, AlertCircle, Plane, Calendar, Clock, Search } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import gateImg from '../assets/persone/gate.webp';
+import { useSearchStore } from '../store';
+import type { BookedFlight } from '../store';
 
 const CheckIn: React.FC = () => {
+  const { t } = useTranslation();
+  const { bookings, updateBookingStatus } = useSearchStore();
+  const [ref, setRef] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [searchResult, setSearchResult] = useState<BookedFlight | null>(null);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  const handleSearch = () => {
+    setError('');
+    setSuccess(false);
+    setSearchResult(null);
+    const result = bookings.find(b => b.id.toUpperCase() === ref.toUpperCase() && b.lastName.toLowerCase() === lastName.toLowerCase());
+    if (result) {
+      if (result.status === 'Checked-in') {
+        setError(t('checkinPage.alreadyCheckedIn') || 'Already checked in');
+        setSearchResult(result);
+      } else {
+        setSearchResult(result);
+      }
+    } else {
+      setError(t('managePage.notFound'));
+    }
+  };
+
+  const handleCheckIn = () => {
+    if (searchResult) {
+      updateBookingStatus(searchResult.id, 'Checked-in');
+      setSuccess(true);
+      setSearchResult({ ...searchResult, status: 'Checked-in' });
+    }
+  };
+
   return (
     <div className="p-12 mt-20 max-w-7xl mx-auto">
-      <div className="mb-12 text-center relative py-20 rounded-3xl overflow-hidden">
-        <img src={gateImg} className="absolute inset-0 w-full h-full object-cover opacity-20" alt="Gate" />
+      <div className="mb-12 text-center relative py-20 rounded-3xl overflow-hidden shadow-2xl bg-primary">
+        <img src={gateImg} className="absolute inset-0 w-full h-full object-cover opacity-30" alt={t('checkinPage.title')} />
         <div className="relative z-10">
-          <h2 className="text-4xl md:text-6xl font-bold text-primary mb-4 tracking-tight">Online Check-in</h2>
-          <p className="text-gray-500 text-xl">Save time at the airport and get your boarding pass now.</p>
-          <div className="w-24 h-1 bg-accent mx-auto mt-6" />
+          <h2 className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight">{t('checkinPage.title')}</h2>
+          <p className="text-white/60 text-xl">{t('checkinPage.desc')}</p>
+          <div className="w-24 h-1 bg-accent mx-auto mt-6 shadow-glow" />
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto mt-12 bg-white p-10 rounded-3xl shadow-sm border border-gray-100">
-        <div className="flex items-center gap-4 p-4 bg-accent/10 rounded-2xl mb-8">
-          <AlertCircle className="text-accent" size={24} />
-          <p className="text-sm text-primary font-medium">
-            Online check-in is available 48 hours to 90 minutes before departure.
-          </p>
-        </div>
+      <div className="max-w-2xl mx-auto mt-12">
+        <div className="bg-white p-10 rounded-[2.5rem] shadow-sm border border-gray-100">
+          <div className="flex items-center gap-4 p-4 bg-accent/5 border border-accent/10 rounded-2xl mb-8">
+            <AlertCircle className="text-accent" size={24} />
+            <p className="text-sm text-primary font-bold uppercase tracking-wide">
+              {t('checkinPage.available')}
+            </p>
+          </div>
 
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Booking Reference or E-ticket Number</label>
-            <input 
-              type="text" 
-              className="w-full bg-gray-50 border-none p-4 rounded-xl focus:ring-2 focus:ring-accent outline-none"
-            />
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">{t('checkinPage.refOrTicket')}</label>
+                <input 
+                  type="text" 
+                  value={ref}
+                  onChange={(e) => setRef(e.target.value)}
+                  placeholder="e.g. FP1234"
+                  className="w-full bg-gray-50 border border-gray-100 p-4 rounded-xl focus:ring-2 focus:ring-accent outline-none font-bold text-primary"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">{t('checkinPage.lastName')}</label>
+                <input 
+                  type="text" 
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="e.g. Rossi"
+                  className="w-full bg-gray-50 border border-gray-100 p-4 rounded-xl focus:ring-2 focus:ring-accent outline-none font-bold text-primary"
+                />
+              </div>
+            </div>
+
+            {error && !success && (
+              <div className="flex items-center gap-3 text-red-500 bg-red-50 p-4 rounded-xl text-sm font-bold uppercase tracking-wider">
+                <AlertCircle size={18} />
+                {error}
+              </div>
+            )}
+
+            {!searchResult && (
+              <button 
+                onClick={handleSearch}
+                className="w-full bg-primary text-accent font-black py-4 rounded-xl hover:bg-primary/90 transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-xs active:scale-[0.98]"
+              >
+                <Search size={18} />
+                {t('managePage.findBooking')}
+              </button>
+            )}
           </div>
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Last Name</label>
-            <input 
-              type="text" 
-              className="w-full bg-gray-50 border-none p-4 rounded-xl focus:ring-2 focus:ring-accent outline-none"
-            />
-          </div>
-          <button className="w-full bg-primary text-accent font-bold py-4 rounded-xl hover:bg-primary/90 transition-all flex items-center justify-center gap-2">
-            Check-in Now
-            <CheckCircle2 size={20} />
-          </button>
+
+          {searchResult && !success && searchResult.status !== 'Checked-in' && (
+            <div className="mt-8 pt-8 border-t border-gray-100 animate-in fade-in slide-in-from-bottom-4">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{searchResult.id}</p>
+                  <p className="text-xl font-bold text-primary">{searchResult.from} → {searchResult.to}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t('booking.departure')}</p>
+                  <p className="text-sm font-bold text-primary">{searchResult.date} | {searchResult.time}</p>
+                </div>
+              </div>
+              <button 
+                onClick={handleCheckIn}
+                className="w-full bg-accent text-primary font-black py-4 rounded-xl hover:bg-accent/90 transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-xs active:scale-[0.98]"
+              >
+                {t('checkinPage.checkinNow')}
+                <CheckCircle2 size={18} />
+              </button>
+            </div>
+          )}
+
+          {success && (
+            <div className="mt-8 p-8 bg-green-50 border border-green-100 rounded-3xl text-center animate-in zoom-in duration-500">
+              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white mx-auto mb-4 shadow-lg shadow-green-500/20">
+                <CheckCircle2 size={32} />
+              </div>
+              <h4 className="text-xl font-bold text-green-800 mb-2">{t('checkinPage.success') || 'Check-in Successful!'}</h4>
+              <p className="text-green-700/70 text-sm font-medium mb-6">
+                {t('checkinPage.successDesc') || 'Your boarding pass is ready. You can find it in your profile.'}
+              </p>
+              <div className="bg-white p-4 rounded-2xl border border-green-100 inline-block">
+                <QrCode size={120} className="text-primary" />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 max-w-2xl mx-auto">
-        <div className="bg-gray-50 p-6 rounded-2xl flex flex-col items-center text-center">
-          <QrCode size={32} className="text-primary mb-4" />
-          <h4 className="font-bold text-primary mb-2">Digital Boarding Pass</h4>
-          <p className="text-xs text-gray-500">Receive your boarding pass directly on your smartphone.</p>
+        <div className="bg-white p-8 rounded-3xl border border-gray-100 flex flex-col items-center text-center shadow-sm">
+          <QrCode size={32} className="text-accent mb-4" />
+          <h4 className="font-black text-primary mb-2 uppercase tracking-widest text-xs">{t('checkinPage.digitalPass')}</h4>
+          <p className="text-xs text-gray-500 font-medium leading-relaxed">{t('checkinPage.digitalPassDesc')}</p>
         </div>
-        <div className="bg-gray-50 p-6 rounded-2xl flex flex-col items-center text-center">
-          <CheckCircle2 size={32} className="text-primary mb-4" />
-          <h4 className="font-bold text-primary mb-2">Fast Bag Drop</h4>
-          <p className="text-xs text-gray-500">Already checked in? Head straight to the bag drop counter.</p>
+        <div className="bg-white p-8 rounded-3xl border border-gray-100 flex flex-col items-center text-center shadow-sm">
+          <CheckCircle2 size={32} className="text-accent mb-4" />
+          <h4 className="font-black text-primary mb-2 uppercase tracking-widest text-xs">{t('checkinPage.fastBagDrop')}</h4>
+          <p className="text-xs text-gray-500 font-medium leading-relaxed">{t('checkinPage.fastBagDropDesc')}</p>
         </div>
       </div>
     </div>

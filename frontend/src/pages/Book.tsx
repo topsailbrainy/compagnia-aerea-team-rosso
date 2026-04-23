@@ -67,7 +67,7 @@ const Book: React.FC = () => {
             <div className="relative z-10 flex-1">
               <div className="flex items-center gap-2 text-accent font-bold mb-4">
                 <Star size={20} fill="currentColor" />
-                <span className="uppercase tracking-[0.2em] text-sm">FlyPlus Guest</span>
+                <span className="uppercase tracking-[0.2em] text-sm">{t('bookPage.guestLabel')}</span>
               </div>
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">{t('bookPage.loyaltyTitle')}</h2>
               <p className="text-white/70 text-lg mb-8 max-w-xl">
@@ -103,9 +103,9 @@ const Book: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
-                { name: 'Rome, Italy', img: romaImg, price: '129' },
-                { name: 'Genoa, Italy', img: genovaImg, price: '89' },
-                { name: 'Dubai, UAE', img: dubaiImg, price: '450' }
+                { name: t('destinations.rome'), img: romaImg, price: '129' },
+                { name: t('destinations.genoa'), img: genovaImg, price: '89' },
+                { name: t('destinations.dubai'), img: dubaiImg, price: '450' }
               ].map((dest, i) => (
                 <div key={i} className="group relative h-[500px] overflow-hidden rounded-2xl cursor-pointer">
                   <div className="absolute inset-0 bg-gray-800 animate-pulse" />

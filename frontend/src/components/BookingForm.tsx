@@ -8,14 +8,6 @@ import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
 
-const locations = [
-  { value: 'FCO', label: 'Rome (FCO)' },
-  { value: 'MXP', label: 'Milan (MXP)' },
-  { value: 'LHR', label: 'London (LHR)' },
-  { value: 'CDG', label: 'Paris (CDG)' },
-  { value: 'JFK', label: 'New York (JFK)' },
-];
-
 const CustomSelect: React.FC<{
   value: string | number;
   onChange: (val: string | number) => void;
@@ -185,6 +177,15 @@ const CustomDatePicker: React.FC<{
 const BookingForm: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  const locations = [
+    { value: 'FCO', label: t('booking.locations.FCO') },
+    { value: 'MXP', label: t('booking.locations.MXP') },
+    { value: 'LHR', label: t('booking.locations.LHR') },
+    { value: 'CDG', label: t('booking.locations.CDG') },
+    { value: 'JFK', label: t('booking.locations.JFK') },
+  ];
+
   const { from, to, departureDate, returnDate, passengers, tripType, setSearch } = useSearchStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showValidationError, setShowValidationError] = useState(false);
