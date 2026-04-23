@@ -1,49 +1,60 @@
-import {pool} from "@/services/db.services";
+import { pool } from "@/services/db.services";
 import { AppError } from "@/middlewares/error.middlewares";
-import  {Volo} from "@/dtos/entities.types";
+import { Volo } from "@/dtos/entities.types";
 import { Request, Response } from "express";
+import { buildUpdateQuery } from "@/utils/sql.utils";
 
 export async function voliGET(_req: Request, res: Response) {
     const results = await pool.query<Volo>(`
         SELECT * FROM voli
-        ORDER BY cognome ASC
+        ORDER BY data_partenza ASC, ora_partenza ASC
     `)
     res.json(results.rows)
 }
 
 export async function voliPOST(req: Request, res: Response) {
-    const {aereoporto_partenza_id, aereoporto_arrivo_id, data_partenza, data_arrivo, ora_arrivo} = req.body;
+    const { aeroporto_partenza_id, aeroporto_arrivo_id, data_partenza, data_arrivo, ora_partenza, ora_arrivo } = req.body;
     const results = await pool.query<Volo>(`
-        INSERT INTO voli (aereoporto_partenza_id, aereoporto_arrivo_id, data_partenza, data_arrivo, ora_arrivo)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO voli (aeroporto_partenza_id, aeroporto_arrivo_id, data_partenza, data_arrivo, ora_partenza, ora_arrivo)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *  
-    `, [aereoporto_partenza_id, aereoporto_arrivo_id, data_partenza, data_arrivo, ora_arrivo])
+    `, [aeroporto_partenza_id, aeroporto_arrivo_id, data_partenza, data_arrivo, ora_partenza, ora_arrivo])
     res.status(201).json(results.rows[0])
 }
 
 export async function voliPUT(req: Request, res: Response) {
-    const {aereoporto_partenza_id, aereoporto_arrivo_id, data_partenza, data_arrivo, ora_arrivo} = req.body;
-    const results = await pool.query<Volo>(`
-        UPDATE voli
-        SET nome = $1, cognome = $2, email = $3, telefono = $4
-        WHERE id = $5
-        RETURNING *  
-    `, [aereoporto_partenza_id, aereoporto_arrivo_id, data_partenza, data_arrivo, ora_arrivo])
+    const { id, ...data } = req.body;
+
+    await ensureVoliExists(id);
+
+    const { text, values } = buildUpdateQuery({
+        table: "voli",
+        idColumn: "id",
+        idValue: id,
+        data,
+        returning: "*"
+    });
+
+    const results = await pool.query<Volo>(text, values);
     res.status(200).json(results.rows[0])
 }
 
-
 export async function voliDELETE(req: Request, res: Response) {
-    const {id} = req.params;
+    const { id } = req.params;
     const results = await pool.query<Volo>(`
         DELETE FROM voli
         WHERE id = $1
         RETURNING *  
     `, [id])
-    res.status(200).json(results.rows[0])
-}   
 
-export async function ensureVoliExists(id: string) {
+    if (results.rows.length === 0) {
+        throw new AppError(404, "Volo non trovato")
+    }
+
+    res.status(200).json(results.rows[0])
+}
+
+export async function ensureVoliExists(id: number) {
     const result = await pool.query<Volo>(`
         SELECT * FROM voli
         WHERE id = $1

@@ -1,17 +1,16 @@
 import { z } from "zod";
 
-const passeggeriBaseSchema = z.object({
-    nome: z.string(),
-    cognome: z.string(),
-    email: z.email(),
-    telefono: z.string(),
+export const addPasseggeroSchema = z.object({
+    nome: z.string().min(2),
+    cognome: z.string().min(2),
+    email: z.string().email(),
+    telefono: z.string().min(5),
 });
 
-export const addPasseggeroSchema = z.object(passeggeriBaseSchema);
-
 export const updatePasseggeroSchema = z.object({
-    nome: passeggeriBaseSchema.shape.nome.optional(),
-    cognome: passeggeriBaseSchema.shape.cognome.optional(),
-    email: passeggeriBaseSchema.shape.email.optional(),
-    telefono: passeggeriBaseSchema.shape.telefono.optional(),
-}).refine((data) => Object.keys(data).length > 0, "At least one field is required");
+    id: z.coerce.number(),
+    nome: z.string().min(2).optional(),
+    cognome: z.string().min(2).optional(),
+    email: z.string().email().optional(),
+    telefono: z.string().min(5).optional(),
+}).refine((data) => Object.keys(data).length > 1, "At least one field to update is required");

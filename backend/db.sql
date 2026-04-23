@@ -9,15 +9,15 @@ CREATE TABLE IF NOT EXISTS aerei (
 CREATE TABLE IF NOT EXISTS aeroporti (
     id SERIAL PRIMARY KEY, -- ID univoco dell'aeroporto
     nome VARCHAR(255) NOT NULL, -- Nome dell'aeroporto
-    citta VARCHAR(255) NOT NULL, -- CittÃ  dell'aeroporto
-)
+    citta VARCHAR(255) NOT NULL -- Città dell'aeroporto
+);
 
 CREATE TABLE IF NOT EXISTS gates (
     id SERIAL PRIMARY KEY, -- ID univoco del gate
     numero VARCHAR(255) NOT NULL, -- Numero del gate
     aeroporto_id INTEGER NOT NULL, -- ID dell'aeroporto
     FOREIGN KEY (aeroporto_id) REFERENCES aeroporti(id)
-)
+);
 
 CREATE TABLE IF NOT EXISTS voli (
     id SERIAL PRIMARY KEY, -- ID univoco della tratta
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS voli (
     ora_arrivo TIME NOT NULL, -- Ora di arrivo
 	FOREIGN KEY (aeroporto_partenza_id) REFERENCES aeroporti(id), 
     FOREIGN KEY (aeroporto_arrivo_id) REFERENCES aeroporti(id)
-)
+);
 
 CREATE TABLE IF NOT EXISTS tratte (
     id SERIAL PRIMARY KEY, -- ID univoco del volo
@@ -37,15 +37,15 @@ CREATE TABLE IF NOT EXISTS tratte (
     aereo_id INTEGER NOT NULL, -- ID dell'aereo
     FOREIGN KEY (volo_id) REFERENCES voli(id),
     FOREIGN KEY (aereo_id) REFERENCES aerei(id) 
-)
+);
 
 CREATE TABLE IF NOT EXISTS passeggeri (
     id SERIAL PRIMARY KEY, -- ID univoco del passeggero
     nome VARCHAR(255) NOT NULL, -- Nome del passeggero
     cognome VARCHAR(255) NOT NULL, -- Cognome del passeggero
     email VARCHAR(255) NOT NULL, -- Email del passeggero
-    telefono VARCHAR(255) NOT NULL, -- Telefono del passeggero
-)
+    telefono VARCHAR(255) NOT NULL -- Telefono del passeggero
+);
 
 CREATE TABLE IF NOT EXISTS prenotazioni (
 	id SERIAL PRIMARY KEY, -- ID univoco della prenotazione
@@ -58,5 +58,4 @@ CREATE TABLE IF NOT EXISTS prenotazioni (
 	tipo_bagaglio VARCHAR(255) NOT NULL, -- Tipo di bagaglio
 	FOREIGN KEY (passeggero_id) REFERENCES passeggeri(id),
 	FOREIGN KEY (volo_id) REFERENCES voli(id)
-)
-
+);
