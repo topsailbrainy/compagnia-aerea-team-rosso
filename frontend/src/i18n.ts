@@ -382,6 +382,73 @@ const resources = {
         "logout": "Logout",
         "upcomingFlights": "Upcoming Flights"
       },
+      "aboutPage": {
+        "heroTitle": "THE ART OF FLIGHT",
+        "heroSubtitle": "We are the spirit of Italy in the sky, connecting cultures and people with elegance, passion, and precision.",
+        "identityTag": "Our Identity",
+        "identityTitle": "Italian Excellence, Global Vision",
+        "identityDesc1": "FlyPlus was born from a vision to redefine premium aviation. As Italy's leading global carrier, we carry the legacy of Italian craftsmanship and hospitality to every corner of the world.",
+        "identityDesc2": "From our hub in Rome, we operate one of the world's youngest and most technologically advanced fleets. Every journey with us is a celebration of style, comfort, and the timeless beauty of the Italian way of life.",
+        "destinationsLabel": "Global Destinations",
+        "fleetAgeLabel": "Avg Fleet Age",
+        "serviceTitle": "World Class Service",
+        "serviceSub": "Skytrax 5-Star Rated",
+        "commitmentTag": "Our Commitment",
+        "commitmentQuote": "\"To provide a travel experience that is as memorable as the destination itself, through innovation and sustainable growth.\"",
+        "purposeTitle": "Driven by Purpose",
+        "values": {
+          "safety": {
+            "title": "Safety & Reliability",
+            "desc": "Uncompromising standards in maintenance and operations, ensuring the highest level of safety for every guest."
+          },
+          "sustainability": {
+            "title": "Sustainability",
+            "desc": "Leading the industry towards a greener future with next-generation aircraft and carbon reduction initiatives."
+          },
+          "guest": {
+            "title": "Guest-Centricity",
+            "desc": "Every detail of our service is designed around the needs and comfort of our international travelers."
+          }
+        },
+        "skyHome": "THE SKY IS HOME",
+        "comfortTitle": "Signature Comfort",
+        "comfortSub": "Premium Experience",
+        "hubTitle": "Global Hub",
+        "hubSub": "Strategic Operations"
+      },
+      "contactPage": {
+        "title": "GET IN TOUCH",
+        "subtitle": "We are here to assist your premium journey",
+        "methods": {
+          "call": {
+            "title": "Call Us",
+            "desc": "Available 24/7 for premium support"
+          },
+          "email": {
+            "title": "Email Us",
+            "desc": "Response within 2 hours"
+          },
+          "visit": {
+            "title": "Visit Us",
+            "desc": "FlyPlus Executive HQ"
+          }
+        },
+        "form": {
+          "sendMsg": "Send a Message",
+          "question": "Have a Question?",
+          "help": "We'll fly to your help.",
+          "fullName": "Full Name",
+          "email": "Email Address",
+          "subject": "Subject",
+          "message": "Your Message",
+          "send": "Send Message"
+        },
+        "operatingHours": "Operating Hours",
+        "monFri": "Monday - Friday",
+        "satSun": "Saturday - Sunday",
+        "h24": "24 Hours",
+        "globalOffices": "Global Offices"
+      },
       "countries": {
         "Italy": "Italy",
         "United Kingdom": "United Kingdom",
@@ -800,6 +867,73 @@ const resources = {
         "noBookings": "Non hai ancora nessuna prenotazione.",
         "logout": "Disconnetti",
         "upcomingFlights": "Voli in Arrivo"
+      },
+      "aboutPage": {
+        "heroTitle": "L'ARTE DEL VOLO",
+        "heroSubtitle": "Siamo lo spirito dell'Italia nel cielo, collegando culture e persone con eleganza, passione e precisione.",
+        "identityTag": "La Nostra Identità",
+        "identityTitle": "Eccellenza Italiana, Visione Globale",
+        "identityDesc1": "FlyPlus nasce da una visione per ridefinire l'aviazione premium. Come principale vettore globale italiano, portiamo l'eredità dell'artigianato e dell'ospitalità italiana in ogni angolo del mondo.",
+        "identityDesc2": "Dal nostro hub di Roma, operiamo una delle flotte più giovani e tecnologicamente avanzate al mondo. Ogni viaggio con noi è una celebrazione dello stile, del comfort e della bellezza senza tempo dello stile di vita italiano.",
+        "destinationsLabel": "Destinazioni Globali",
+        "fleetAgeLabel": "Età Media Flotta",
+        "serviceTitle": "Servizio di Classe Mondiale",
+        "serviceSub": "Valutazione Skytrax 5 Stelle",
+        "commitmentTag": "Il Nostro Impegno",
+        "commitmentQuote": "\"Fornire un'esperienza di viaggio memorabile quanto la destinazione stessa, attraverso l'innovazione e la crescita sostenibile.\"",
+        "purposeTitle": "Guidati da uno Scopo",
+        "values": {
+          "safety": {
+            "title": "Sicurezza e Affidabilità",
+            "desc": "Standard senza compromessi nella manutenzione e nelle operazioni, garantendo il massimo livello di sicurezza per ogni ospite."
+          },
+          "sustainability": {
+            "title": "Sostenibilità",
+            "desc": "Guidare l'industria verso un futuro più verde con aeromobili di nuova generazione e iniziative di riduzione del carbonio."
+          },
+          "guest": {
+            "title": "Centralità dell'Ospite",
+            "desc": "Ogni dettaglio del nostro servizio è progettato attorno alle esigenze e al comfort dei nostri viaggiatori internazionali."
+          }
+        },
+        "skyHome": "IL CIELO È CASA",
+        "comfortTitle": "Comfort d'Autore",
+        "comfortSub": "Esperienza Premium",
+        "hubTitle": "Hub Globale",
+        "hubSub": "Operazioni Strategiche"
+      },
+      "contactPage": {
+        "title": "METTITI IN CONTATTO",
+        "subtitle": "Siamo qui per assisterti nel tuo viaggio premium",
+        "methods": {
+          "call": {
+            "title": "Chiamaci",
+            "desc": "Disponibile 24/7 per supporto premium"
+          },
+          "email": {
+            "title": "Scrivici",
+            "desc": "Risposta entro 2 ore"
+          },
+          "visit": {
+            "title": "Vieni a trovarci",
+            "desc": "FlyPlus Executive HQ"
+          }
+        },
+        "form": {
+          "sendMsg": "Invia un Messaggio",
+          "question": "Hai una Domanda?",
+          "help": "Voleremo in tuo aiuto.",
+          "fullName": "Nome Completo",
+          "email": "Indirizzo Email",
+          "subject": "Oggetto",
+          "message": "Il Tuo Messaggio",
+          "send": "Invia Messaggio"
+        },
+        "operatingHours": "Orari di Apertura",
+        "monFri": "Lunedì - Venerdì",
+        "satSun": "Sabato - Domenica",
+        "h24": "24 Ore",
+        "globalOffices": "Uffici Globali"
       },
       "countries": {
         "Italy": "Italia",

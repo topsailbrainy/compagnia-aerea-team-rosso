@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useSearchStore } from '../store';
-import { ChevronLeft, ChevronRight, User, Info, Plane } from 'lucide-react';
+import { ChevronRight, Info } from 'lucide-react';
 
 const Seats: React.FC = () => {
   const { t } = useTranslation();
@@ -69,13 +69,13 @@ const Seats: React.FC = () => {
               
               {/* Animated Airplane Background Shape - Adjusted to show from tail up to cockpit, avoiding the nose overflow */}
               <div className="absolute inset-0 flex justify-center pt-0 opacity-[0.04] pointer-events-none">
-                <svg width="800" height="2000" viewBox="0 0 600 1200" fill="none" xmlns="http://www.w3.org/2000/svg" className="scale-[2.2] origin-top translate-y-[-150px]">
+                <svg width="800" height="2000" viewBox="0 0 600 1200" fill="none" xmlns="http://www.w3.org/2000/svg" className="scale-[2.2] origin-top translate-y-[-250px]">
                   <path d="M300 20C240 20 180 80 180 200V400L20 600V700L180 650V900L100 1000V1080L300 1040L500 1080V1000L420 900V650L580 700V600L420 400V200C420 80 360 20 300 20Z" fill="currentColor" className="text-primary"/>
                 </svg>
               </div>
 
               {/* Seats Content - Centered in the body of the plane */}
-              <div className="relative z-10 w-full max-w-md space-y-12 mt-64">
+              <div className="relative z-10 w-full max-w-md space-y-12 mt-20">
                 
                 {/* First Class */}
                 <div className="space-y-4">

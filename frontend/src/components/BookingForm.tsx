@@ -35,7 +35,7 @@ const CustomSelect: React.FC<{
         className="flex items-center gap-3 px-6 py-3 bg-gray-50 hover:bg-white border border-gray-100 hover:border-accent/30 rounded-2xl cursor-pointer transition-all group h-[48px]"
       >
         {icon && <div className="text-accent group-hover:scale-110 transition-transform flex-shrink-0">{icon}</div>}
-        <span className="text-[10px] font-black uppercase tracking-widest text-primary flex-1 truncate">{selectedLabel || t('booking.select')}</span>
+        <span className="text-[0.85rem] font-black uppercase tracking-tight text-primary flex-1 truncate">{selectedLabel || t('booking.select')}</span>
         <ChevronDown size={14} className={`text-gray-400 flex-shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
       </div>
 
@@ -100,10 +100,10 @@ const LocationSelect: React.FC<{
     <div className="flex flex-col gap-1.5 w-full">
       <label className="text-[10px] uppercase font-black text-gray-400 tracking-[0.2em] ml-2">{label}</label>
       <div className="relative group">
-        <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 text-accent group-hover:scale-110 transition-transform z-10" size={18} />
+        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-accent group-hover:scale-110 transition-transform z-10" size={16} />
         <div 
           onClick={toggleOpen}
-          className="w-full pl-14 pr-6 h-[50px] bg-gray-50 border border-transparent rounded-2xl flex items-center cursor-pointer hover:bg-white hover:border-accent/20 transition-all"
+          className="w-full pl-12 pr-6 h-[50px] bg-gray-50 border border-gray-100 rounded-2xl flex items-center cursor-pointer hover:bg-white hover:border-accent/20 transition-all"
         >
           {isOpen ? (
             <input
@@ -112,11 +112,11 @@ const LocationSelect: React.FC<{
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search city or airport..."
-              className="bg-transparent border-none outline-none w-full text-sm font-bold text-primary placeholder:text-gray-300"
+              className="bg-transparent border-none outline-none w-full text-[0.85rem] font-black text-primary placeholder:text-gray-300"
               onClick={(e) => e.stopPropagation()}
             />
           ) : (
-            <span className={`text-sm font-bold ${selectedLabel ? 'text-primary' : 'text-gray-300'}`}>
+            <span className={`text-[0.85rem] font-black ${selectedLabel ? 'text-primary' : 'text-gray-300'}`}>
               {selectedLabel || placeholder}
             </span>
           )}

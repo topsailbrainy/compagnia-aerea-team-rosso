@@ -9,21 +9,21 @@ const Contact: React.FC = () => {
   const contactMethods = [
     {
       icon: Phone,
-      title: "Call Us",
+      title: t('contactPage.methods.call.title'),
       value: "+39 02 123 4567",
-      desc: "Available 24/7 for premium support"
+      desc: t('contactPage.methods.call.desc')
     },
     {
       icon: Mail,
-      title: "Email Us",
+      title: t('contactPage.methods.email.title'),
       value: "support@flyplus.it",
-      desc: "Response within 2 hours"
+      desc: t('contactPage.methods.email.desc')
     },
     {
       icon: MapPin,
-      title: "Visit Us",
+      title: t('contactPage.methods.visit.title'),
       value: "Via Montenapoleone 1, Milano, Italy",
-      desc: "FlyPlus Executive HQ"
+      desc: t('contactPage.methods.visit.desc')
     }
   ];
 
@@ -36,10 +36,10 @@ const Contact: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-5xl md:text-6xl font-black text-primary uppercase tracking-tighter mb-4"
           >
-            GET IN <span className="text-accent italic">TOUCH</span>
+            {t('contactPage.title').split(' ').slice(0, -1).join(' ')} <span className="text-accent italic">{t('contactPage.title').split(' ').pop()}</span>
           </motion.h1>
           <p className="text-gray-500 font-bold uppercase tracking-[0.3em] text-xs">
-            We are here to assist your premium journey
+            {t('contactPage.subtitle')}
           </p>
           <div className="w-24 h-1 bg-accent mx-auto mt-8" />
         </header>
@@ -67,38 +67,38 @@ const Contact: React.FC = () => {
           <div className="p-12 lg:p-20 flex-1">
             <div className="flex items-center gap-3 text-accent font-black uppercase tracking-[0.4em] text-xs mb-6">
               <MessageSquare size={16} />
-              Send a Message
+              {t('contactPage.form.sendMsg')}
             </div>
             <h2 className="text-4xl font-black text-white uppercase tracking-tight mb-12">
-              Have a Question? <br/>
-              <span className="text-white/40 italic">We'll fly to your help.</span>
+              {t('contactPage.form.question')} <br/>
+              <span className="text-white/40 italic">{t('contactPage.form.help')}</span>
             </h2>
             
             <form className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <input 
                   type="text" 
-                  placeholder="Full Name"
+                  placeholder={t('contactPage.form.fullName')}
                   className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white font-bold outline-none focus:border-accent transition-colors"
                 />
                 <input 
                   type="email" 
-                  placeholder="Email Address"
+                  placeholder={t('contactPage.form.email')}
                   className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white font-bold outline-none focus:border-accent transition-colors"
                 />
               </div>
               <input 
                 type="text" 
-                placeholder="Subject"
+                placeholder={t('contactPage.form.subject')}
                 className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white font-bold outline-none focus:border-accent transition-colors"
               />
               <textarea 
-                placeholder="Your Message"
+                placeholder={t('contactPage.form.message')}
                 rows={5}
                 className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white font-bold outline-none focus:border-accent transition-colors resize-none"
               />
               <button className="w-full bg-accent text-primary font-black uppercase tracking-widest py-6 rounded-2xl hover:bg-white transition-all shadow-xl shadow-accent/20">
-                Send Message
+                {t('contactPage.form.send')}
               </button>
             </form>
           </div>
@@ -108,15 +108,15 @@ const Contact: React.FC = () => {
               <div>
                 <h4 className="text-primary font-black uppercase tracking-widest text-xs mb-6 flex items-center gap-2">
                   <Clock size={16} />
-                  Operating Hours
+                  {t('contactPage.operatingHours')}
                 </h4>
                 <div className="space-y-2">
                   <div className="flex justify-between font-bold text-primary/80">
-                    <span>Monday - Friday</span>
-                    <span>24 Hours</span>
+                    <span>{t('contactPage.monFri')}</span>
+                    <span>{t('contactPage.h24')}</span>
                   </div>
                   <div className="flex justify-between font-bold text-primary/80">
-                    <span>Saturday - Sunday</span>
+                    <span>{t('contactPage.satSun')}</span>
                     <span>08:00 - 22:00</span>
                   </div>
                 </div>
@@ -125,7 +125,7 @@ const Contact: React.FC = () => {
               <div>
                 <h4 className="text-primary font-black uppercase tracking-widest text-xs mb-6 flex items-center gap-2">
                   <Globe size={16} />
-                  Global Offices
+                  {t('contactPage.globalOffices')}
                 </h4>
                 <ul className="space-y-4 font-bold text-primary">
                   <li>Milan (HQ)</li>
