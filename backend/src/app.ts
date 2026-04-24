@@ -15,6 +15,9 @@ const app = express();
 app.use(httpLogger);
 app.use(express.json());
 
+app.get("/health", (req, res) => {
+    res.sendStatus(200);
+})
 app.use("/auth", authRoutes);
 app.use("/aeroporti", aeroportiRoutes);
 app.use("/voli", voliRoutes);

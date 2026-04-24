@@ -19,9 +19,9 @@ export function errorMw(
     res: Response,
     next: NextFunction
 ) {
-    if (res.headersSent) {
-        return next(error);
-    }
+    // if (res.headersSent) {
+    //     return next(error);
+    // }
 
     if (error instanceof ZodError) {
         req.log.warn(
@@ -72,7 +72,7 @@ export function errorMw(
         }
     }
 
-    req.log.error({ err: error }, "Unhandled error");
+    req.log.error({ err: (error as Error).message }, "Unhandled error");
 
     return res.status(500).json({
         error: "Internal Server Error",

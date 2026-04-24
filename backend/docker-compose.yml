@@ -1,0 +1,38 @@
+# PER WINDOWS: ricorda di avviare Docker Desktop
+services:
+  dbms:
+    # image: postgres:latest # Mai usare latest
+    image: postgres:18.3-alpine3.23 # Link alle altre versioni https://hub.docker.com/_/postgres
+    container_name: dbms
+    environment:
+      - POSTGRES_DB=${DB_NAME:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
+      - POSTGRES_USER=${DB_USER:-postgres}
+    volumes:
+      - pgdata:/var/lib/postgresql/18/docker
+      - ./0_db.sql:/docker-entrypoint-initdb.d/0_db.sql # ./0_db.sql:/docker-entrypoint-initdb.d/0_db.sql
+      - ./1_dati.sql:/docker-entrypoint-initdb.d/1_dati.sql # ./1_dati.sql:/docker-entrypoint-initdb.d/1_dati.sql
+    ports:
+      - 5432:5432
+    restart: unless-stopped
+    networks:
+      db-net:
+        aliases:
+          - dbms.local
+
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    networks:
+      db-net:
+        aliases:
+          - adminer.local
+
+volumes:
+  pgdata:
+
+networks:
+  db-net:
+    driver: bridge

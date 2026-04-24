@@ -13,3 +13,5 @@ router.get("/:id", getPrenotazioneById);
 router.post("/", validationMw({ body: prenotazioneInputSchema }), createPrenotazione);
 
 export default router;
+
+

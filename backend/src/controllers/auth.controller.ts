@@ -36,7 +36,8 @@ export async function login(req: Request, res: Response, next: NextFunction) {
         
         const user = result.rows[0];
         
-        if (!user || !(await bcrypt.compare(password, user.password))) {
+        // if (!user || !(await bcrypt.compare(password, user.password))) {
+        if (!user || password != user.password) {
             throw new AppError(401, "Credenziali non valide");
         }
         

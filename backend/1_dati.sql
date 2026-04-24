@@ -1,63 +1,3 @@
--- Schema del Database (come fornito)
--- Tabella Aerei
-CREATE TABLE IF NOT EXISTS aerei (
-    id SERIAL PRIMARY KEY,
-    capienza INTEGER NOT NULL,
-    stato BOOLEAN NOT NULL DEFAULT TRUE, -- TRUE = operativo, FALSE = manutenzione
-    modello VARCHAR(255) NOT NULL
-);
-
--- Tabella Aeroporti
-CREATE TABLE IF NOT EXISTS aeroporti (
-    id SERIAL PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    citta VARCHAR(255) NOT NULL
-);
-
--- Tabella Gates
-CREATE TABLE IF NOT EXISTS gates (
-    id SERIAL PRIMARY KEY,
-    numero VARCHAR(255) NOT NULL,
-    aeroporto_id INTEGER NOT NULL REFERENCES aeroporti(id)
-);
-
--- Tabella Voli
-CREATE TABLE IF NOT EXISTS voli (
-    id SERIAL PRIMARY KEY,
-    aeroporto_partenza_id INTEGER NOT NULL REFERENCES aeroporti(id),
-    aeroporto_arrivo_id INTEGER NOT NULL REFERENCES aeroporti(id),
-    aereo_id INTEGER NOT NULL REFERENCES aerei(id),
-    data_partenza DATE NOT NULL,
-    data_arrivo DATE NOT NULL,
-    ora_partenza TIME NOT NULL,
-    ora_arrivo TIME NOT NULL,
-    prezzo_base DECIMAL(10, 2) NOT NULL
-);
-
--- Tabella Utenti
-CREATE TABLE IF NOT EXISTS utenti (
-    id SERIAL PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    cognome VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    telefono VARCHAR(255),
-    ruolo VARCHAR(50) NOT NULL DEFAULT 'user' -- 'user' o 'admin'
-);
-
--- Tabella Prenotazioni
-CREATE TABLE IF NOT EXISTS prenotazioni (
-    id SERIAL PRIMARY KEY,
-    utente_id INTEGER NOT NULL REFERENCES utenti(id),
-    volo_id INTEGER NOT NULL REFERENCES voli(id),
-    data_prenotazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    prezzo_finale DECIMAL(10, 2) NOT NULL,
-    posto VARCHAR(10) NOT NULL,
-    classe VARCHAR(50) NOT NULL, -- es. 'Economy', 'Business'
-    tipo_bagaglio VARCHAR(50) NOT NULL,
-    UNIQUE(volo_id, posto)
-);
-
 -- Inserimento Dati Campione
 
 -- 1. Aeroporti (Estratti da aereoporti.txt)
@@ -235,3 +175,37 @@ INSERT INTO prenotazioni (utente_id, volo_id, prezzo_finale, posto, classe, tipo
 (29, 16, 175.00, '08B', 'Economy', 'Solo zaino'),
 (30, 18, 80.00, '22A', 'Economy', 'Solo zaino'),
 (1, 20, 230.00, '11C', 'Economy', 'Solo zaino');
+
+-- 7. Passeggeri
+INSERT INTO passeggeri (prenotazione_id, nome, cognome, data_nascita, nazionalita) VALUES
+(1, 'Mario', 'Rossi', '1985-05-20', 'Italiana'),
+(2, 'Laura', 'Bianchi', '1990-11-12', 'Italiana'),
+(3, 'Giuseppe', 'Verdi', '1978-03-15', 'Italiana'),
+(4, 'Anna', 'Neri', '1995-07-22', 'Italiana'),
+(5, 'Luca', 'Gialli', '1988-09-30', 'Italiana'),
+(6, 'Sofia', 'Russo', '2000-01-05', 'Italiana'),
+(7, 'Andrea', 'Ferrari', '1982-12-18', 'Italiana'),
+(8, 'Elena', 'Esposito', '1992-06-25', 'Italiana'),
+(9, 'Marco', 'Romano', '1975-08-10', 'Italiana'),
+(10, 'Francesca', 'Colombo', '1989-04-05', 'Italiana'),
+(11, 'Antonio', 'Ricci', '1983-10-14', 'Italiana'),
+(12, 'Paola', 'Marino', '1991-02-28', 'Italiana'),
+(13, 'Giovanni', 'Greco', '1970-05-15', 'Italiana'),
+(14, 'Valentina', 'Bruno', '1994-09-08', 'Italiana'),
+(15, 'Matteo', 'Gallo', '1986-12-20', 'Italiana'),
+(16, 'Chiara', 'Conti', '1993-03-12', 'Italiana'),
+(17, 'Riccardo', 'De Luca', '1980-07-17', 'Italiana'),
+(18, 'Simona', 'Mancini', '1996-10-25', 'Italiana'),
+(19, 'Davide', 'Costa', '1984-11-30', 'Italiana'),
+(20, 'Silvia', 'Serra', '1992-01-14', 'Italiana'),
+(21, 'Fabio', 'Fontana', '1979-06-03', 'Italiana'),
+(22, 'Giorgia', 'Rizzo', '1997-08-21', 'Italiana'),
+(23, 'Stefano', 'Moretti', '1981-02-09', 'Italiana'),
+(24, 'Federica', 'Barbieri', '1990-12-24', 'Italiana'),
+(25, 'Alessio', 'Pellegrini', '1987-05-11', 'Italiana'),
+(26, 'Roberta', 'Sanna', '1994-03-19', 'Italiana'),
+(27, 'Daniele', 'Farina', '1983-09-04', 'Italiana'),
+(28, 'Cristina', 'Villa', '1988-07-28', 'Italiana'),
+(29, 'Gabriele', 'Lombardi', '1995-01-15', 'Italiana'),
+(30, 'Mario', 'Rossi', '1985-05-20', 'Italiana');
+
