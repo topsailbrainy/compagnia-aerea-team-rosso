@@ -21,22 +21,31 @@ services:
       context: ../backend
       dockerfile: Dockerfile
     depends_on:
-      - mongodb
+      - dbms
     environment:
       PORT: 3000
-      MONGODB_URI: mongodb://root:password@mongodb:27017/todolist?authSource=admin
+      DB_HOST: dbms
+      DB_PORT: 5432
+      DB_USER: admin
+      DB_PASSWORD: admin
+      DB_NAME: postgres
     expose:
       - "3000"
 
-  mongodb:
-    image: mongo:8.2
-    ports:
-      - 27017:27017
+  dbms:
+    image: postgres:18.3-alpine3.23
+    container_name: dbms
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: password
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=admin
     volumes:
-      - mongodb_data:/data/db
+      - pgdata:/var/lib/postgresql/18/docker
+      - ../backend/0_db.sql:/docker-entrypoint-initdb.d/0_db.sql
+      - ../backend/1_dati.sql:/docker-entrypoint-initdb.d/1_dati.sql
+    ports:
+      - 5432:5432
+    restart: unless-stopped
 
 volumes:
-  mongodb_data:
+  pgdata:

@@ -50,6 +50,7 @@ interface SearchState {
   alertsEnabled: boolean;
   isLoggedIn: boolean;
   userRole: 'user' | 'admin' | null;
+  userId: number | null;
   userName: string;
   userEmail: string;
   userPassword: string;
@@ -59,6 +60,7 @@ interface SearchState {
   selectedSeats: string[];
   baggageCosts: Record<number, number>;
   assistanceCosts: Record<number, number>;
+  passengerDetails: any[];
   setSearch: (key: keyof Omit<SearchState, 'setSearch' | 'addBooking' | 'updateBookingStatus'>, value: any) => void;
   setPassengerCost: (key: 'baggageCosts' | 'assistanceCosts', passengerId: number, cost: number) => void;
   addBooking: (booking: BookedFlight) => void;
@@ -87,6 +89,7 @@ export const useSearchStore = create<SearchState>((set) => ({
   alertsEnabled: false,
   isLoggedIn: false,
   userRole: null,
+  userId: null,
   userName: '',
   userEmail: '',
   userPassword: '',
@@ -96,6 +99,7 @@ export const useSearchStore = create<SearchState>((set) => ({
   selectedSeats: [],
   baggageCosts: {},
   assistanceCosts: {},
+  passengerDetails: [],
   setSearch: (key, value) => set((state) => ({ ...state, [key]: value })),
   setPassengerCost: (key, passengerId, cost) => set((state) => ({
     ...state,

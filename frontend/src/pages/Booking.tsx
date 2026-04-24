@@ -17,39 +17,6 @@ import {
 } from 'lucide-react';
 import BookingForm from '../components/BookingForm';
 
-const flights = [
-  {
-    id: 1,
-    flightNumber: 'FP 102',
-    departure: '08:30',
-    arrival: '10:45',
-    duration: '2h 15m',
-    from: 'FCO',
-    to: 'LHR',
-    prices: { economy: 125, business: 450, first: 890 }
-  },
-  {
-    id: 2,
-    flightNumber: 'FP 205',
-    departure: '12:15',
-    arrival: '14:30',
-    duration: '2h 15m',
-    from: 'FCO',
-    to: 'LHR',
-    prices: { economy: 145, business: 480, first: 920 }
-  },
-  {
-    id: 3,
-    flightNumber: 'FP 308',
-    departure: '18:50',
-    arrival: '21:05',
-    duration: '2h 15m',
-    from: 'FCO',
-    to: 'LHR',
-    prices: { economy: 95, business: 390, first: 850 }
-  }
-];
-
 const FlightCard: React.FC<{
   flight: any;
   isSelected: boolean;
@@ -119,14 +86,85 @@ const Booking: React.FC = () => {
   
   const [isModifying, setIsModifying] = useState(false);
   const [selectingReturn, setSelectingReturn] = useState(false);
+  const [outboundFlightsList, setOutboundFlightsList] = useState<any[]>([]);
+  const [returnFlightsList, setReturnFlightsList] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const outboundFlightsList = useMemo(() => {
-    return flights.map(f => ({ ...f, from, to }));
-  }, [from, to]);
+  const mapFlight = (f: any) => {
+    const departureTime = f.ora_partenza.slice(0, 5);
+    const arrivalTime = f.ora_arrivo.slice(0, 5);
+    
+    // Simple duration calculation (for display)
+    const [dH, dM] = departureTime.split(':').map(Number);
+    const [aH, aM] = arrivalTime.split(':').map(Number);
+    let durationH = aH - dH;
+    let durationM = aM - dM;
+    if (durationM < 0) {
+      durationM += 60;
+      durationH -= 1;
+    }
+    const duration = `${durationH}h ${durationM}m`;
 
-  const returnFlightsList = useMemo(() => {
-    return flights.map(f => ({ ...f, from: to, to: from, flightNumber: f.flightNumber.replace('FP', 'FP-R') }));
-  }, [from, to]);
+    return {
+      id: f.id,
+      flightNumber: `FP ${100 + f.id}`,
+      departure: departureTime,
+      arrival: arrivalTime,
+      duration,
+      from: String(f.aeroporto_partenza_id),
+      to: String(f.aeroporto_arrivo_id),
+      prices: {
+        economy: Number(f.prezzo_base),
+        business: Math.round(Number(f.prezzo_base) * 2.5),
+        first: Math.round(Number(f.prezzo_base) * 5)
+      }
+    };
+  };
+
+  React.useEffect(() => {
+    const fetchFlights = async () => {
+      if (!from || !to || !departureDate) return;
+      setIsLoading(true);
+      try {
+        // Fetch outbound
+        const outRes = await fetch('/api/voli/ricerca', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            aeroporto_partenza: Number(from),
+            aeroporto_arrivo: Number(to),
+            data_partenza: departureDate
+          })
+        });
+        if (outRes.ok) {
+          const data = await outRes.json();
+          setOutboundFlightsList(data.map(mapFlight));
+        }
+
+        // Fetch return
+        if (tripType === 'return' && returnDate) {
+          const retRes = await fetch('/api/voli/ricerca', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              aeroporto_partenza: Number(to),
+              aeroporto_arrivo: Number(from),
+              data_partenza: returnDate
+            })
+          });
+          if (retRes.ok) {
+            const data = await retRes.json();
+            setReturnFlightsList(data.map(mapFlight));
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch flights:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchFlights();
+  }, [from, to, departureDate, returnDate, tripType]);
 
   const handleSelectOutbound = (flight: any, cabin: string, price: number) => {
     setSearch('outboundFlight', flight);

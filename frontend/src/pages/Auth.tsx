@@ -32,99 +32,79 @@ const Auth: React.FC = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      
+    try {
       if (isLogin) {
-        if (formData.email === 'ceo@flyplus.com' && formData.password === 'flyplus') {
-          setSearch('isLoggedIn', true);
-          setSearch('userRole', 'admin');
-          setSearch('userName', 'FlyPlus CEO');
-          setSearch('userEmail', 'ceo@flyplus.com');
-          navigate('/admin');
-          return;
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password
+          })
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.message || t('authPage.errorInvalidCredentials'));
         }
 
-        // Check for test user
-        if (formData.email === 'test@user.com' && formData.password === 'password123') {
-           setSearch('isLoggedIn', true);
-           setSearch('userRole', 'user');
-           setSearch('userName', 'Test User');
-           setSearch('userEmail', 'test@user.com');
-           navigate('/book');
-           return;
-        }
-
-        if (!hasSignedUp && formData.email !== 'ceo@flyplus.com') {
-          setError(t('authPage.errorNotSignedUp'));
-          return;
-        }
-
-        if (formData.email !== storedEmail || formData.password !== storedPassword) {
-          setError(t('authPage.errorInvalidCredentials'));
-          return;
-        }
-
+        const { token, user } = await response.json();
         setSearch('isLoggedIn', true);
-        setSearch('userRole', 'user');
-        navigate('/book');
+        setSearch('userRole', user.ruolo);
+        setSearch('userId', user.id);
+        setSearch('userName', `${user.nome} ${user.cognome}`);
+        setSearch('userEmail', user.email);
+        
+        if (user.ruolo === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/book');
+        }
       } else {
-        // Signup Validation
         const nameParts = formData.fullName.trim().split(/\s+/);
         if (nameParts.length < 2) {
-          setError(t('authPage.errorNameRequired'));
-          return;
+          throw new Error(t('authPage.errorNameRequired'));
         }
 
-        if (formData.password.length < 8) {
-          setError(t('authPage.errorPasswordLength'));
-          return;
+        const nome = nameParts[0];
+        const cognome = nameParts.slice(1).join(' ');
+
+        const response = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nome,
+            cognome,
+            email: formData.email,
+            password: formData.password,
+            telefono: '' // Optional
+          })
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.message || 'Signup failed');
         }
 
-        // Signup
-        setSearch('hasSignedUp', true);
-        setSearch('userName', formData.fullName);
-        setSearch('userEmail', formData.email);
-        setSearch('userPassword', formData.password);
+        const user = await response.json();
         setSearch('isLoggedIn', true);
-        setSearch('userRole', 'user');
-
-        // Generate initial bookings
-        const lastName = nameParts[nameParts.length - 1];
-        addBooking({
-          id: 'FP' + Math.floor(1000 + Math.random() * 9000),
-          flightNumber: 'FP102',
-          from: 'FCO',
-          to: 'LHR',
-          date: '2026-05-15',
-          time: '10:30',
-          status: 'Confirmed',
-          passengerName: formData.fullName,
-          lastName: lastName,
-          cabinClass: 'Business'
-        });
-        addBooking({
-          id: 'FP' + Math.floor(1000 + Math.random() * 9000),
-          flightNumber: 'FP305',
-          from: 'MXP',
-          to: 'JFK',
-          date: '2026-06-20',
-          time: '14:45',
-          status: 'Confirmed',
-          passengerName: formData.fullName,
-          lastName: lastName,
-          cabinClass: 'Economy'
-        });
-
+        setSearch('userRole', user.ruolo);
+        setSearch('userId', user.id);
+        setSearch('userName', `${user.nome} ${user.cognome}`);
+        setSearch('userEmail', user.email);
+        
         navigate('/book');
       }
-    }, 1500);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

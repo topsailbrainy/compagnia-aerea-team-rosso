@@ -13,7 +13,7 @@ const Manage: React.FC = () => {
   const [searchResult, setSearchResult] = useState<BookedFlight | null>(null);
   const [error, setError] = useState('');
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     setError('');
     setSearchResult(null);
 
@@ -22,11 +22,50 @@ const Manage: React.FC = () => {
       return;
     }
 
-    const result = bookings.find(b => b.id.toUpperCase() === ref.toUpperCase() && b.lastName.toLowerCase() === lastName.toLowerCase());
-    if (result) {
-      setSearchResult(result);
-    } else {
-      setError(t('managePage.notFound'));
+    // Extract ID from ref (e.g. FP-123 -> 123)
+    const id = ref.replace(/[^0-9]/g, '');
+    if (!id) {
+        setError(t('managePage.notFound'));
+        return;
+    }
+
+    try {
+      const response = await fetch(`/api/prenotazioni/${id}`);
+      if (!response.ok) {
+        if (response.status === 401) {
+            setError('Please login to manage your bookings');
+        } else {
+            setError(t('managePage.notFound'));
+        }
+        return;
+      }
+
+      const data = await response.json();
+      
+      // Basic last name verification (check main user or any passenger)
+      const matchesLastName = 
+        data.utente_cognome?.toLowerCase() === lastName.toLowerCase() ||
+        data.passeggeri?.some((p: any) => p.cognome.toLowerCase() === lastName.toLowerCase());
+
+      if (!matchesLastName) {
+        setError(t('managePage.notFound'));
+        return;
+      }
+
+      setSearchResult({
+        id: `FP-${data.id}`,
+        flightNumber: `FP ${100 + data.volo_id}`,
+        from: String(data.aeroporto_partenza_id),
+        to: String(data.aeroporto_arrivo_id),
+        date: new Date(data.data_prenotazione).toLocaleDateString(),
+        time: data.ora_partenza.slice(0, 5),
+        status: 'Confirmed',
+        passengerName: `${data.utente_nome} ${data.utente_cognome}`,
+        lastName: data.utente_cognome,
+        cabinClass: data.classe
+      });
+    } catch (err) {
+      setError('An error occurred during search');
     }
   };
 

@@ -47,7 +47,8 @@ export async function login(req: Request, res: Response, next: NextFunction) {
             { expiresIn: "1d" }
         );
         
-        res.json({ token });
+        const { password: _, ...userWithoutPassword } = user;
+        res.json({ token, user: userWithoutPassword });
     } catch (error) {
         next(error);
     }

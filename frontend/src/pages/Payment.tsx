@@ -44,6 +44,8 @@ const Payment: React.FC = () => {
     assistanceCosts,
     selectedSeats = [],
     isFlyPlusGuest,
+    userId,
+    passengerDetails,
     setSearch
   } = useSearchStore();
 
@@ -67,23 +69,19 @@ const Payment: React.FC = () => {
     ? membershipFee 
     : (totalBasePrice + totalTaxes + totalBaggageCost + totalAssistanceCost);
 
-  const flightSteps = [
+  const steps = isMembershipPurchase ? [
+    "FlyPlus: Opening Priority Gates...",
+    "Validating Excellence Status...",
+    "Activating Lounge Credentials...",
+    "Securing Premium Benefits...",
+    "Finalizing Membership Elite...",
+  ] : [
     "FlyPlus: Fueling the transaction...",
     "Clearing weather for payment...",
     "Requesting clearance from Tower...",
     "FlyPlus: Preparing for takeoff...",
     "Lining up on the runway...",
   ];
-
-  const membershipSteps = [
-    "FlyPlus: Opening Priority Gates...",
-    "Validating Excellence Status...",
-    "Activating Lounge Credentials...",
-    "Securing Premium Benefits...",
-    "Finalizing Membership Elite...",
-  ];
-
-  const steps = isMembershipPurchase ? membershipSteps : flightSteps;
 
   const [formData, setFormData] = useState({
     cardholder: "",
@@ -150,7 +148,7 @@ const Payment: React.FC = () => {
     }
   };
 
-  const handlePayment = (e: React.FormEvent) => {
+  const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validation based on method
@@ -170,23 +168,68 @@ const Payment: React.FC = () => {
     setIsProcessing(true);
     setProcessingStep(0);
 
-    const interval = setInterval(() => {
-      setProcessingStep((prev) => {
-        if (prev >= steps.length - 1) {
-          clearInterval(interval);
-          setTimeout(() => {
-            setIsProcessing(false);
-            setIsSuccess(true);
-            if (isMembershipPurchase) {
-              setSearch('isFlyPlusGuest', true);
-            }
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }, 500);
-          return prev;
+    const mappedPassengers = passengerDetails.map(p => ({
+      nome: p.firstName,
+      cognome: p.lastName,
+      data_nascita: `${p.dobYear}-${String(p.dobMonth).padStart(2, '0')}-${String(p.dobDay).padStart(2, '0')}`,
+      nazionalita: p.nationality
+    }));
+
+    try {
+      if (!isMembershipPurchase && outboundFlight) {
+        // Create outbound booking
+        const outRes = await fetch('/api/prenotazioni', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            utente_id: userId || 1, // Fallback to 1 for demo if not logged in
+            volo_id: outboundFlight.id,
+            prezzo_finale: (outboundPrice + taxesPerFlight) * passengerCount,
+            posto: selectedSeats[0] || '12A',
+            classe: outboundCabin,
+            tipo_bagaglio: baggageCosts[0] > 0 ? 'Da stiva 20kg' : 'Solo zaino',
+            passeggeri: mappedPassengers
+          })
+        });
+
+        if (!outRes.ok) throw new Error('Failed to create outbound booking');
+
+        if (tripType === 'return' && returnFlight) {
+          // Create return booking
+          const retRes = await fetch('/api/prenotazioni', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              utente_id: userId || 1,
+              volo_id: returnFlight.id,
+              prezzo_finale: (returnPrice + taxesPerFlight) * passengerCount,
+              posto: selectedSeats[1] || '12B',
+              classe: returnCabin,
+              tipo_bagaglio: baggageCosts[0] > 0 ? 'Da stiva 20kg' : 'Solo zaino',
+              passeggeri: mappedPassengers
+            })
+          });
+          if (!retRes.ok) throw new Error('Failed to create return booking');
         }
-        return prev + 1;
-      });
-    }, 1000);
+      }
+
+      // Simulate step progression for UX
+      for (let i = 0; i < steps.length; i++) {
+        setProcessingStep(i);
+        await new Promise(resolve => setTimeout(resolve, 800));
+      }
+
+      setIsProcessing(false);
+      setIsSuccess(true);
+      if (isMembershipPurchase) {
+        setSearch('isFlyPlusGuest', true);
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (error) {
+      console.error('Payment/Booking failed:', error);
+      setIsProcessing(false);
+      alert('An error occurred during booking. Please try again.');
+    }
   };
 
   const getPaymentMethodAnimation = () => {

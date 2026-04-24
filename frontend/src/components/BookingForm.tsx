@@ -204,24 +204,26 @@ const BookingForm: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const locations = [
-    { value: 'FCO', label: 'Rome, Italy (FCO)' },
-    { value: 'MXP', label: 'Milan, Italy (MXP)' },
-    { value: 'LHR', label: 'London, UK (LHR)' },
-    { value: 'CDG', label: 'Paris, France (CDG)' },
-    { value: 'JFK', label: 'New York, USA (JFK)' },
-    { value: 'LAX', label: 'Los Angeles, USA (LAX)' },
-    { value: 'YYZ', label: 'Toronto, Canada (YYZ)' },
-    { value: 'GIG', label: 'Rio de Janeiro, Brazil (GIG)' },
-    { value: 'EZE', label: 'Buenos Aires, Argentina (EZE)' },
-    { value: 'NRT', label: 'Tokyo, Japan (NRT)' },
-    { value: 'ICN', label: 'Seoul, South Korea (ICN)' },
-    { value: 'PEK', label: 'Beijing, China (PEK)' },
-    { value: 'SYD', label: 'Sydney, Australia (SYD)' },
-    { value: 'DXB', label: 'Dubai, UAE (DXB)' },
-    { value: 'CAI', label: 'Cairo, Egypt (CAI)' },
-    { value: 'CPT', label: 'Cape Town, South Africa (CPT)' },
-  ];
+  const [locations, setLocations] = useState<{ value: string; label: string }[]>([]);
+
+  React.useEffect(() => {
+    const fetchAirports = async () => {
+      try {
+        const response = await fetch('/api/aeroporti');
+        if (response.ok) {
+          const data = await response.json();
+          const mapped = data.map((a: any) => ({
+            value: String(a.id),
+            label: `${a.citta}, ${a.nome}`
+          }));
+          setLocations(mapped);
+        }
+      } catch (error) {
+        console.error('Failed to fetch airports:', error);
+      }
+    };
+    fetchAirports();
+  }, []);
 
   const { from, to, departureDate, returnDate, passengers, tripType, setSearch } = useSearchStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

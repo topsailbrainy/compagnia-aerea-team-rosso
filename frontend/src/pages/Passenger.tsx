@@ -152,6 +152,7 @@ const Passenger: React.FC = () => {
       return;
     }
 
+    setSearch('passengerDetails', passengers);
     navigate('/seat');
   };
 

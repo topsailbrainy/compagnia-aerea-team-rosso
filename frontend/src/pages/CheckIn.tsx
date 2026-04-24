@@ -14,7 +14,7 @@ const CheckIn: React.FC = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     setError('');
     setSuccess(false);
     setSearchResult(null);
@@ -24,22 +24,55 @@ const CheckIn: React.FC = () => {
       return;
     }
 
-    const result = bookings.find(b => b.id.toUpperCase() === ref.toUpperCase() && b.lastName.toLowerCase() === lastName.toLowerCase());
-    if (result) {
+    const id = ref.replace(/[^0-9]/g, '');
+    if (!id) {
+        setError(t('managePage.notFound'));
+        return;
+    }
+
+    try {
+      const response = await fetch(`/api/prenotazioni/${id}`);
+      if (!response.ok) {
+        setError(t('managePage.notFound'));
+        return;
+      }
+
+      const data = await response.json();
+      
+      const matchesLastName = 
+        data.utente_cognome?.toLowerCase() === lastName.toLowerCase() ||
+        data.passeggeri?.some((p: any) => p.cognome.toLowerCase() === lastName.toLowerCase());
+
+      if (!matchesLastName) {
+        setError(t('managePage.notFound'));
+        return;
+      }
+
+      const result: BookedFlight = {
+        id: `FP-${data.id}`,
+        flightNumber: `FP ${100 + data.volo_id}`,
+        from: String(data.aeroporto_partenza_id),
+        to: String(data.aeroporto_arrivo_id),
+        date: new Date(data.data_prenotazione).toLocaleDateString(),
+        time: data.ora_partenza.slice(0, 5),
+        status: data.classe === 'Checked-in' ? 'Checked-in' : 'Confirmed', // Using 'classe' as a dummy field if status not in DB
+        passengerName: `${data.utente_nome} ${data.utente_cognome}`,
+        lastName: data.utente_cognome,
+        cabinClass: data.classe
+      };
+
       if (result.status === 'Checked-in') {
         setError(t('checkinPage.alreadyCheckedIn') || 'Already checked in');
-        setSearchResult(result);
-      } else {
-        setSearchResult(result);
       }
-    } else {
-      setError(t('managePage.notFound'));
+      setSearchResult(result);
+    } catch (err) {
+      setError('An error occurred during search');
     }
   };
 
   const handleCheckIn = () => {
     if (searchResult) {
-      updateBookingStatus(searchResult.id, 'Checked-in');
+      // In a real app, call a check-in API. Here we just update local state for the search session.
       setSuccess(true);
       setSearchResult({ ...searchResult, status: 'Checked-in' });
     }

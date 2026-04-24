@@ -21,37 +21,37 @@ const Destinations: React.FC = () => {
     { 
       name: t('destinations.africa'), 
       img: africaImg, 
-      cities: ['CAI', 'CPT'],
+      cities: ['16', '30'], // Athens, Tel-aviv as placeholders for Africa/nearby
       subtitle: 'Wild landscapes and ancient wonders'
     },
     { 
       name: t('destinations.america'), 
       img: americaImg, 
-      cities: ['LAX', 'JFK', 'YYZ', 'GIG', 'EZE'],
+      cities: ['4', '6', '12'], // Paris, London, Amsterdam as placeholders
       subtitle: 'From North to South, discover the New World'
     },
     { 
       name: t('destinations.asia'), 
       img: asiaImg, 
-      cities: ['NRT', 'ICN', 'PEK'],
+      cities: ['29'], // Istanbul as placeholder
       subtitle: 'Technological marvels and deep traditions'
     },
     { 
       name: t('destinations.europe'), 
       img: europaImg, 
-      cities: ['FCO', 'MXP', 'LHR', 'CDG'],
+      cities: ['1', '2', '4', '6', '10', '16'], // Rome, Milan, Paris, London, Madrid, Athens
       subtitle: 'History, culture and art at every corner'
     },
     { 
       name: t('destinations.oceania'), 
       img: oceaniaImg, 
-      cities: ['SYD'],
+      cities: ['17'], // Lisbon as placeholder
       subtitle: 'Unexplored nature and vibrant cities'
     },
     { 
       name: t('destinations.middleEast'), 
       img: arabiaImg, 
-      cities: ['DXB'],
+      cities: ['29', '30'], // Istanbul, Tel-aviv
       subtitle: 'Luxury and modernity in the desert'
     },
   ];
@@ -60,8 +60,8 @@ const Destinations: React.FC = () => {
     // Select a random city from the list
     const randomCity = cities[Math.floor(Math.random() * cities.length)];
     setSearch('to', randomCity);
-    // Set a default from if not set
-    setSearch('from', 'FCO');
+    // Set a default from if not set (Rome ID is 1)
+    setSearch('from', '1');
     navigate('/book');
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'instant' });

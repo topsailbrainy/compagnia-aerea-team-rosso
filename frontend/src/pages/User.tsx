@@ -28,8 +28,33 @@ const User: React.FC = () => {
   React.useEffect(() => {
     if (!isLoggedIn) {
       navigate('/login');
+    } else {
+      const fetchBookings = async () => {
+        try {
+          const response = await fetch('/api/prenotazioni');
+          if (response.ok) {
+            const data = await response.json();
+            const mappedBookings = data.map((b: any) => ({
+              id: `FP-${b.id}`,
+              flightNumber: `FP ${100 + b.volo_id}`,
+              from: String(b.aeroporto_partenza_id),
+              to: String(b.aeroporto_arrivo_id),
+              date: new Date(b.data_prenotazione).toLocaleDateString(),
+              time: b.ora_partenza ? b.ora_partenza.slice(0, 5) : '10:00',
+              status: b.classe === 'Checked-in' ? 'Checked-in' : 'Confirmed',
+              passengerName: userName,
+              lastName: userName.split(' ').pop() || '',
+              cabinClass: b.classe
+            }));
+            setSearch('bookings', mappedBookings);
+          }
+        } catch (error) {
+          console.error('Failed to fetch bookings:', error);
+        }
+      };
+      fetchBookings();
     }
-  }, [isLoggedIn, navigate]);
+  }, [isLoggedIn, navigate, userName, setSearch]);
 
   const handleLogout = () => {
     setSearch('isLoggedIn', false);
