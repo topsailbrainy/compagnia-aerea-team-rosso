@@ -1,11 +1,13 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import HeroCarousel from '../components/HeroCarousel';
 import BookingForm from '../components/BookingForm';
 import PromotionalCarousel from '../components/PromotionalCarousel';
 import InfoCards from '../components/InfoCards';
-import { motion } from 'framer-motion';
-import { Shield, Clock, Award, Globe, ArrowRight, Star } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Shield, Clock, Award, Globe, ArrowRight, Star, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useSearchStore } from '../store';
 
 // Import local assets
 import romaImg from '../assets/destinazioni/roma.avif';
@@ -14,6 +16,30 @@ import dubaiImg from '../assets/destinazioni/dubai.avif';
 
 const Book: React.FC = () => {
   const { t } = useTranslation();
+  const { setSearch, isLoggedIn, isFlyPlusGuest } = useSearchStore();
+  const navigate = useNavigate();
+  const [showAlreadyGuestMsg, setShowAlreadyGuestMsg] = React.useState(false);
+
+  const handleJoinNow = () => {
+    if (!isLoggedIn) {
+      navigate('/login?tab=signup&option=flyplus-guest');
+    } else {
+      // Membership must be activated in profile now
+      navigate('/user', { state: { promptJoin: !isFlyPlusGuest } });
+    }
+  };
+
+  const handleDestinationClick = (destName: string) => {
+    const cityMap: Record<string, string> = {
+      [t('destinations.rome')]: 'FCO',
+      [t('destinations.genoa')]: 'MXP', // Mapping to Milan as fallback for Italian airports in existing list
+      [t('destinations.dubai')]: 'DXB'
+    };
+    
+    setSearch('to', cityMap[destName] || destName);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const features = [
     { icon: Shield, title: t('bookPage.safe'), desc: t('bookPage.safeDesc') },
     { icon: Clock, title: t('bookPage.onTime'), desc: t('bookPage.onTimeDesc') },
@@ -72,9 +98,28 @@ const Book: React.FC = () => {
               <p className="text-white/70 text-lg mb-8 max-w-xl">
                 {t('bookPage.loyaltyDesc')}
               </p>
+              
+              <AnimatePresence>
+                {showAlreadyGuestMsg && (
+                  <motion.div 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    className="mb-4 text-accent font-black uppercase tracking-widest text-xs flex items-center gap-2"
+                  >
+                    <Info size={14} />
+                    You are already a FlyPlus Guest!
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               <div className="flex flex-wrap gap-4">
-                <button className="accent-button px-8 py-3">{t('bookPage.joinNow')}</button>
-                <button className="text-white border border-white/20 px-8 py-3 rounded hover:bg-white/10 transition-colors">{t('bookPage.learnMore')}</button>
+                <button 
+                  onClick={handleJoinNow}
+                  className="accent-button px-12 py-4 h-[54px] flex items-center justify-center"
+                >
+                  {isFlyPlusGuest ? 'View Profile' : t('bookPage.joinNow')}
+                </button>
               </div>
             </div>
             <div className="relative z-10 w-full md:w-1/3 aspect-square bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center">
@@ -94,10 +139,6 @@ const Book: React.FC = () => {
                 <span className="text-accent uppercase tracking-[0.3em] font-bold mb-4 block">{t('sidebar.destinations')}</span>
                 <h2 className="text-4xl md:text-6xl font-bold">{t('destinations.exploreWorld')}</h2>
               </div>
-              <button className="flex items-center gap-2 bg-accent text-primary font-bold px-8 py-4 rounded hover:bg-white transition-all group">
-                {t('destinations.viewAll')}
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-              </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -106,7 +147,11 @@ const Book: React.FC = () => {
                 { name: t('destinations.genoa'), img: genovaImg, price: '89' },
                 { name: t('destinations.dubai'), img: dubaiImg, price: '450' }
               ].map((dest, i) => (
-                <div key={i} className="group relative h-[500px] overflow-hidden rounded-2xl cursor-pointer">
+                <div 
+                  key={i} 
+                  onClick={() => handleDestinationClick(dest.name)}
+                  className="group relative h-[500px] overflow-hidden rounded-2xl cursor-pointer"
+                >
                   <div className="absolute inset-0 bg-gray-800 animate-pulse" />
                   <img 
                     src={dest.img} 
@@ -118,9 +163,9 @@ const Book: React.FC = () => {
                     <h3 className="text-3xl font-bold mb-2">{dest.name}</h3>
                     <div className="flex justify-between items-center">
                       <p className="text-accent font-semibold tracking-wide">{t('destinations.from')} €{dest.price}</p>
-                      <button className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center group-hover:bg-accent transition-colors">
+                      <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center group-hover:bg-accent transition-colors">
                         <ArrowRight size={20} />
-                      </button>
+                      </div>
                     </div>
                   </div>
                 </div>

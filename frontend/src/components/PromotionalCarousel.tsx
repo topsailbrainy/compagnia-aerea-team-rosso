@@ -1,6 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { useSearchStore } from '../store';
 
 // Import images from assets
 import aereoImg from '../assets/aerei/aereo.avif';
@@ -11,14 +13,60 @@ import tokyoImg from '../assets/destinazioni/tokyo.avif';
 
 const PromotionalCarousel: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { setSearch } = useSearchStore();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const promos = [
-    { title: t('promotions.items.deals.title'), category: t('promotions.items.deals.category'), desc: t('promotions.items.deals.desc'), image: maldiveImg },
-    { title: t('promotions.items.stopover.title'), category: t('promotions.items.stopover.category'), desc: t('promotions.items.stopover.desc'), image: romaImg },
-    { title: t('promotions.items.loyalty.title'), category: t('promotions.items.loyalty.category'), desc: t('promotions.items.loyalty.desc'), image: aereoImg },
-    { title: t('promotions.items.suite.title'), category: t('promotions.items.suite.category'), desc: t('promotions.items.suite.desc'), image: loungeImg },
-    { title: t('promotions.items.routes.title'), category: t('promotions.items.routes.category'), desc: t('promotions.items.routes.desc'), image: tokyoImg },
+    { 
+      id: 'deals',
+      title: t('promotions.items.deals.title'), 
+      category: t('promotions.items.deals.category'), 
+      desc: t('promotions.items.deals.desc'), 
+      image: maldiveImg,
+      action: () => {
+        setSearch('to', 'MLE'); // Maldives
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    },
+    { 
+      id: 'stopover',
+      title: t('promotions.items.stopover.title'), 
+      category: t('promotions.items.stopover.category'), 
+      desc: t('promotions.items.stopover.desc'), 
+      image: romaImg,
+      action: () => {
+        setSearch('to', 'FCO'); // Rome
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    },
+    { 
+      id: 'loyalty',
+      title: t('promotions.items.loyalty.title'), 
+      category: t('promotions.items.loyalty.category'), 
+      desc: t('promotions.items.loyalty.desc'), 
+      image: aereoImg,
+      action: () => navigate('/login?tab=signup')
+    },
+    { 
+      id: 'suite',
+      title: t('promotions.items.suite.title'), 
+      category: t('promotions.items.suite.category'), 
+      desc: t('promotions.items.suite.desc'), 
+      image: loungeImg,
+      action: () => navigate('/about')
+    },
+    { 
+      id: 'routes',
+      title: t('promotions.items.routes.title'), 
+      category: t('promotions.items.routes.category'), 
+      desc: t('promotions.items.routes.desc'), 
+      image: tokyoImg,
+      action: () => {
+        setSearch('to', 'NRT'); // Tokyo
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    },
   ];
 
   // Triple the promos to create an infinite loop effect
@@ -91,7 +139,10 @@ const PromotionalCarousel: React.FC = () => {
               key={index}
               className="min-w-[300px] md:min-w-[420px] snap-start"
             >
-              <div className="rounded-3xl overflow-hidden group cursor-pointer h-[500px] flex flex-col transition-all duration-500 hover:translate-y-[-8px]">
+              <div 
+                onClick={promo.action}
+                className="rounded-3xl overflow-hidden group cursor-pointer h-[500px] flex flex-col transition-all duration-500 hover:translate-y-[-8px]"
+              >
                 <div className="h-2/3 relative overflow-hidden">
                   <img 
                     src={promo.image} 
@@ -132,5 +183,3 @@ const PromotionalCarousel: React.FC = () => {
 };
 
 export default PromotionalCarousel;
-
-

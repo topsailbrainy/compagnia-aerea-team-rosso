@@ -18,6 +18,12 @@ const CheckIn: React.FC = () => {
     setError('');
     setSuccess(false);
     setSearchResult(null);
+    
+    if (!ref.trim() || !lastName.trim()) {
+      setError(t('managePage.missingInfo') || 'Please enter both booking reference and last name');
+      return;
+    }
+
     const result = bookings.find(b => b.id.toUpperCase() === ref.toUpperCase() && b.lastName.toLowerCase() === lastName.toLowerCase());
     if (result) {
       if (result.status === 'Checked-in') {

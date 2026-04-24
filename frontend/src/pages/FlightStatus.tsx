@@ -52,6 +52,7 @@ const FlightStatus: React.FC = () => {
   const [flightNum, setFlightNum] = useState('');
   const [searchResult, setSearchResult] = useState<any>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [error, setError] = useState('');
 
   const locations = [
     { value: 'FCO', label: t('booking.locations.FCO') },
@@ -63,6 +64,21 @@ const FlightStatus: React.FC = () => {
 
   const handleSearch = () => {
     if (!flightNum || !date) return;
+    setError('');
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const searchDate = new Date(date);
+    searchDate.setHours(0, 0, 0, 0);
+
+    const diffTime = searchDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < -3 || diffDays > 7) {
+      setError("Flight status is only available for dates between 3 days ago and 7 days from now.");
+      return;
+    }
+
     setIsSearching(true);
     setSearchResult(null);
 
@@ -122,6 +138,12 @@ const FlightStatus: React.FC = () => {
                 onChange={(val) => setDate(val)}
               />
             </div>
+
+            {error && (
+              <div className="p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 font-bold uppercase tracking-widest text-[10px]">
+                {error}
+              </div>
+            )}
             
             <button 
               onClick={handleSearch}

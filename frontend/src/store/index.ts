@@ -54,11 +54,13 @@ interface SearchState {
   userEmail: string;
   userPassword: string;
   hasSignedUp: boolean;
+  isFlyPlusGuest: boolean;
   bookings: BookedFlight[];
   selectedSeats: string[];
-  baggageCost: number;
-  assistanceCost: number;
+  baggageCosts: Record<number, number>;
+  assistanceCosts: Record<number, number>;
   setSearch: (key: keyof Omit<SearchState, 'setSearch' | 'addBooking' | 'updateBookingStatus'>, value: any) => void;
+  setPassengerCost: (key: 'baggageCosts' | 'assistanceCosts', passengerId: number, cost: number) => void;
   addBooking: (booking: BookedFlight) => void;
   updateBookingStatus: (id: string, status: BookedFlight['status']) => void;
 }
@@ -89,11 +91,16 @@ export const useSearchStore = create<SearchState>((set) => ({
   userEmail: '',
   userPassword: '',
   hasSignedUp: false,
+  isFlyPlusGuest: false,
   bookings: [],
   selectedSeats: [],
-  baggageCost: 0,
-  assistanceCost: 0,
+  baggageCosts: {},
+  assistanceCosts: {},
   setSearch: (key, value) => set((state) => ({ ...state, [key]: value })),
+  setPassengerCost: (key, passengerId, cost) => set((state) => ({
+    ...state,
+    [key]: { ...state[key], [passengerId]: cost }
+  })),
   addBooking: (booking) => set((state) => ({ ...state, bookings: [...state.bookings, booking] })),
   updateBookingStatus: (id, status) => set((state) => ({
     ...state,

@@ -225,15 +225,60 @@ const BookingForm: React.FC = () => {
 
   const { from, to, departureDate, returnDate, passengers, tripType, setSearch } = useSearchStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [showValidationError, setShowValidationError] = useState(false);
+  const [validationError, setValidationError] = useState<{ title: string; desc: string } | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check for missing fields
     if (!from || !to || !departureDate || (tripType === 'return' && !returnDate)) {
-      setShowValidationError(true);
+      setValidationError({
+        title: t('booking.missingInfo'),
+        desc: t('booking.missingInfoDesc')
+      });
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
+
+    // Validation: Origin and Destination must be different
+    if (from === to) {
+      setValidationError({
+        title: "Invalid Destination",
+        desc: "Origin and destination cannot be the same city."
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const depDate = new Date(departureDate);
+    depDate.setHours(0, 0, 0, 0);
+
+    // Validation: Departure date cannot be in the past
+    if (depDate < today) {
+      setValidationError({
+        title: "Invalid Departure Date",
+        desc: "Departure date cannot be in the past."
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // Validation: Return date cannot be before departure date
+    if (tripType === 'return' && returnDate) {
+      const retDate = new Date(returnDate);
+      retDate.setHours(0, 0, 0, 0);
+      if (retDate < depDate) {
+        setValidationError({
+          title: "Invalid Return Date",
+          desc: "Return date cannot be earlier than departure date."
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+    }
+
     // Reset selected flights when searching again
     setSearch('outboundFlight', null);
     setSearch('returnFlight', null);
@@ -251,7 +296,7 @@ const BookingForm: React.FC = () => {
   return (
     <div className="relative">
       <AnimatePresence>
-        {showValidationError && (
+        {validationError && (
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -264,12 +309,12 @@ const BookingForm: React.FC = () => {
                   <AlertCircle size={20} />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-red-900">{t('booking.missingInfo')}</h4>
-                  <p className="text-xs text-red-700">{t('booking.missingInfoDesc')}</p>
+                  <h4 className="text-sm font-bold text-red-900">{validationError.title}</h4>
+                  <p className="text-xs text-red-700">{validationError.desc}</p>
                 </div>
               </div>
               <button 
-                onClick={() => setShowValidationError(false)}
+                onClick={() => setValidationError(null)}
                 className="p-2 hover:bg-red-100 rounded-lg transition-colors text-red-400"
               >
                 <X size={18} />

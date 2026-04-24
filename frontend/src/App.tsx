@@ -13,6 +13,7 @@ import Auth from './pages/Auth';
 import User from './pages/User';
 import Seats from './pages/Seats';
 import ScrollToTop from './components/ScrollToTop';
+import ErrorBoundary from './components/ErrorBoundary';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
@@ -101,12 +102,14 @@ const AnimatedRoutes: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <Router>
-      <ScrollToTop />
-      <Layout>
-        <AnimatedRoutes />
-      </Layout>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <ScrollToTop />
+        <Layout>
+          <AnimatedRoutes />
+        </Layout>
+      </Router>
+    </ErrorBoundary>
   );
 };
 

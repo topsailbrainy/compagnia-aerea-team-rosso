@@ -136,12 +136,22 @@
   text-align: center !important;
   padding: 0 !important;
   margin: 0 !important;
-  letter-spacing: 0 !important; /* CRITICAL: Fixes gaps like 0  8 */
-  font-variant-numeric: tabular-nums lining-nums !important; /* CRITICAL: Fixes 0 character appearance and width */
+  letter-spacing: 0 !important;
+  font-variant-numeric: tabular-nums lining-nums !important;
   appearance: none !important;
   -moz-appearance: textfield !important;
-  /* Use ch units for perfect character-based sizing */
   width: 2.2ch !important;
+}
+
+.react-date-picker__inputGroup__leadingZero {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 700 !important;
+  color: var(--primary) !important;
+  font-size: 0.9rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-variant-numeric: tabular-nums lining-nums !important;
+  opacity: 1 !important;
 }
 
 .react-date-picker__inputGroup__year {

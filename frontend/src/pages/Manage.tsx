@@ -16,6 +16,12 @@ const Manage: React.FC = () => {
   const handleSearch = () => {
     setError('');
     setSearchResult(null);
+
+    if (!ref.trim() || !lastName.trim()) {
+      setError(t('managePage.missingInfo') || 'Please enter both booking reference and last name');
+      return;
+    }
+
     const result = bookings.find(b => b.id.toUpperCase() === ref.toUpperCase() && b.lastName.toLowerCase() === lastName.toLowerCase());
     if (result) {
       setSearchResult(result);

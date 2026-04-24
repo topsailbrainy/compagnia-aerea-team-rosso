@@ -18,7 +18,9 @@ import {
   CreditCard,
   HeartPulse,
   CheckCircle2,
-  Briefcase
+  Briefcase,
+  Star,
+  Award
 } from 'lucide-react';
 
 interface PassengerDetails {
@@ -52,7 +54,8 @@ const Passenger: React.FC = () => {
     from, to, departureDate, returnDate, 
     outboundFlight, returnFlight, outboundPrice, returnPrice,
     passengers: passengerCount, outboundCabin, returnCabin, tripType,
-    baggageCost, assistanceCost, setSearch 
+    baggageCosts, assistanceCosts, setSearch, setPassengerCost,
+    isFlyPlusGuest
   } = useSearchStore();
   
   const [passengers, setPassengers] = useState<PassengerDetails[]>([]);
@@ -63,6 +66,7 @@ const Passenger: React.FC = () => {
   });
   
   const [expandedSections, setExpandedSections] = useState<Record<number, boolean>>({});
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const count = passengerCount || 1;
@@ -94,24 +98,71 @@ const Passenger: React.FC = () => {
     setExpandedSections(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const toggleBaggage = () => {
-    setSearch('baggageCost', baggageCost === 0 ? 45 * (passengerCount || 1) : 0);
+  const toggleBaggage = (pid: number) => {
+    const currentCost = baggageCosts[pid] || 0;
+    setPassengerCost('baggageCosts', pid, currentCost === 0 ? 45 : 0);
   };
 
-  const toggleAssistance = () => {
-    setSearch('assistanceCost', assistanceCost === 0 ? 25 * (passengerCount || 1) : 0);
+  const toggleAssistance = (pid: number) => {
+    const currentCost = assistanceCosts[pid] || 0;
+    setPassengerCost('assistanceCosts', pid, currentCost === 0 ? 25 : 0);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+
+    // Comprehensive validation
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    for (const p of passengers) {
+      if (!p.firstName.trim() || !p.lastName.trim()) {
+        setError(`${t('passengerPage.guest')} ${p.id + 1}: ${t('passengerPage.requiredInfo')}`);
+        setExpandedSections(prev => ({ ...prev, [p.id]: true }));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      if (!p.dobDay || !p.dobMonth || !p.dobYear) {
+        setError(`${t('passengerPage.guest')} ${p.id + 1}: Please complete date of birth`);
+        setExpandedSections(prev => ({ ...prev, [p.id]: true }));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      const birthDate = new Date(parseInt(p.dobYear), parseInt(p.dobMonth) - 1, parseInt(p.dobDay));
+      if (birthDate > today) {
+        setError(`${t('passengerPage.guest')} ${p.id + 1}: Date of birth cannot be in the future`);
+        setExpandedSections(prev => ({ ...prev, [p.id]: true }));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+    }
+
+    if (!/^\d{10}$/.test(contactInfo.phone)) {
+      setError('Phone number must be exactly 10 digits (numbers only, no spaces or dashes)');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (!contactInfo.email.trim() || !contactInfo.phone.trim()) {
+      setError('Please complete contact information');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     navigate('/seat');
   };
+
+  const totalBaggageCost = Object.values(baggageCosts || {}).reduce((acc, curr) => acc + (curr || 0), 0);
+  const totalAssistanceCost = Object.values(assistanceCosts || {}).reduce((acc, curr) => acc + (curr || 0), 0);
 
   const taxesPerFlight = 34.20;
   const flightsCount = tripType === 'return' ? 2 : 1;
   const totalTaxes = taxesPerFlight * flightsCount * (passengerCount || 1);
   const totalBasePrice = (outboundPrice + returnPrice) * (passengerCount || 1);
-  const totalPrice = totalBasePrice + totalTaxes + baggageCost + assistanceCost;
+  const totalPrice = totalBasePrice + totalTaxes + totalBaggageCost + totalAssistanceCost;
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24 pb-12 px-4 md:px-12">
@@ -131,6 +182,17 @@ const Passenger: React.FC = () => {
               <p className="text-gray-500">{t('passengerPage.passportDesc')}</p>
             </header>
 
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-600 font-bold uppercase tracking-widest text-xs"
+              >
+                <Info size={18} />
+                {error}
+              </motion.div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
               {passengers.map((p, idx) => (
                 <motion.div 
@@ -149,7 +211,7 @@ const Passenger: React.FC = () => {
                         <User size={24} />
                       </div>
                       <div>
-                        <h2 className="text-xl font-bold text-primary">{t(`passengerPage.${p.type.toLowerCase()}`)} {idx + 1}</h2>
+                        <h2 className="text-xl font-bold text-primary">{t(`passengerPage.${p.type?.toLowerCase() || 'adult'}`)} {idx + 1}</h2>
                         <p className="text-xs text-gray-400 font-medium uppercase tracking-widest mt-1">
                           {p.firstName && p.lastName ? `${t(`titles.${p.title}`)} ${p.firstName} ${p.lastName}` : t('passengerPage.requiredInfo')}
                         </p>
@@ -264,31 +326,31 @@ const Passenger: React.FC = () => {
                           <div className="pt-6 border-t border-gray-50 grid grid-cols-1 md:grid-cols-2 gap-6">
                             <button 
                                 type="button" 
-                                onClick={toggleBaggage}
-                                className={`flex items-center gap-4 p-4 rounded-2xl border transition-all group text-left ${baggageCost > 0 ? 'border-accent bg-accent/5' : 'border-gray-100 hover:border-accent/30 hover:bg-gray-50'}`}
+                                onClick={() => toggleBaggage(p.id)}
+                                className={`flex items-center gap-4 p-4 rounded-2xl border transition-all group text-left ${(baggageCosts?.[p.id] || 0) > 0 ? 'border-accent bg-accent/5' : 'border-gray-100 hover:border-accent/30 hover:bg-gray-50'}`}
                             >
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${baggageCost > 0 ? 'bg-accent text-primary' : 'bg-accent/5 text-accent'}`}>
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${(baggageCosts?.[p.id] || 0) > 0 ? 'bg-accent text-primary' : 'bg-accent/5 text-accent'}`}>
                                     <Briefcase size={18} />
                                 </div>
                                 <div>
                                     <span className="block text-[10px] font-black uppercase tracking-widest text-primary">Extra Baggage</span>
                                     <span className="text-xs text-gray-400 font-medium">Add 23kg checked bag</span>
                                 </div>
-                                {baggageCost > 0 ? <CheckCircle2 size={16} className="ml-auto text-accent" /> : <Plus size={14} className="ml-auto text-gray-300" />}
+                                {(baggageCosts?.[p.id] || 0) > 0 ? <CheckCircle2 size={16} className="ml-auto text-accent" /> : <Plus size={14} className="ml-auto text-gray-300" />}
                             </button>
                             <button 
                                 type="button" 
-                                onClick={toggleAssistance}
-                                className={`flex items-center gap-4 p-4 rounded-2xl border transition-all group text-left ${assistanceCost > 0 ? 'border-red-200 bg-red-50' : 'border-gray-100 hover:border-accent/30 hover:bg-gray-50'}`}
+                                onClick={() => toggleAssistance(p.id)}
+                                className={`flex items-center gap-4 p-4 rounded-2xl border transition-all group text-left ${(assistanceCosts?.[p.id] || 0) > 0 ? 'border-red-200 bg-red-50' : 'border-gray-100 hover:border-accent/30 hover:bg-gray-50'}`}
                             >
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${assistanceCost > 0 ? 'bg-red-400 text-white' : 'bg-red-50 text-red-400'}`}>
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${(assistanceCosts?.[p.id] || 0) > 0 ? 'bg-red-400 text-white' : 'bg-red-50 text-red-400'}`}>
                                     <HeartPulse size={18} />
                                 </div>
                                 <div>
                                     <span className="block text-[10px] font-black uppercase tracking-widest text-primary">{t('passengerPage.specialAssistance')}</span>
                                     <span className="text-xs text-gray-400 font-medium">{t('passengerPage.specialAssistanceDesc')}</span>
                                 </div>
-                                {assistanceCost > 0 ? <CheckCircle2 size={16} className="ml-auto text-red-400" /> : <Plus size={14} className="ml-auto text-gray-300" />}
+                                {(assistanceCosts?.[p.id] || 0) > 0 ? <CheckCircle2 size={16} className="ml-auto text-red-400" /> : <Plus size={14} className="ml-auto text-gray-300" />}
                             </button>
                           </div>
                         </div>
@@ -358,8 +420,29 @@ const Passenger: React.FC = () => {
                     <div className="flex justify-between items-center"><span className="text-white/50 text-sm font-medium">{t('passengerPage.outboundCabin')}</span><span className="font-bold capitalize">{t(`bookingPage.${outboundCabin}`)}</span></div>
                     {tripType === 'return' && <div className="flex justify-between items-center"><span className="text-white/50 text-sm font-medium">{t('passengerPage.returnCabin')}</span><span className="font-bold capitalize">{t(`bookingPage.${returnCabin}`)}</span></div>}
                     <div className="flex justify-between items-center"><span className="text-white/50 text-sm font-medium">{t('common.guests')}</span><span className="font-bold">{passengerCount} {passengerCount > 1 ? t('passengerPage.passengers') : t('passengerPage.passenger')}</span></div>
-                    {baggageCost > 0 && <div className="flex justify-between items-center animate-in fade-in"><span className="text-white/50 text-sm font-medium">Extra Baggage</span><span className="font-bold">€{baggageCost.toFixed(2)}</span></div>}
-                    {assistanceCost > 0 && <div className="flex justify-between items-center animate-in fade-in"><span className="text-white/50 text-sm font-medium">Special Assistance</span><span className="font-bold">€{assistanceCost.toFixed(2)}</span></div>}
+                    {totalBaggageCost > 0 && <div className="flex justify-between items-center animate-in fade-in"><span className="text-white/50 text-sm font-medium">Extra Baggage</span><span className="font-bold">€{totalBaggageCost.toFixed(2)}</span></div>}
+                    {totalAssistanceCost > 0 && <div className="flex justify-between items-center animate-in fade-in"><span className="text-white/50 text-sm font-medium">Special Assistance</span><span className="font-bold">€{totalAssistanceCost.toFixed(2)}</span></div>}
+                    
+                    {isFlyPlusGuest && (
+                      <motion.div 
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="p-4 bg-accent/10 border border-accent/20 rounded-2xl space-y-2 mt-4"
+                      >
+                        <div className="flex items-center gap-2 text-accent">
+                          <Star size={14} fill="currentColor" />
+                          <span className="text-[10px] font-black uppercase tracking-widest">FlyPlus Guest Member</span>
+                        </div>
+                        <div className="space-y-1.5">
+                          <div className="flex items-center gap-2 text-[9px] font-bold text-white/70 uppercase">
+                            <ShieldCheck size={10} className="text-accent" /> Lounge Access Included
+                          </div>
+                          <div className="flex items-center gap-2 text-[9px] font-bold text-white/70 uppercase">
+                            <Award size={10} className="text-accent" /> Priority Boarding Active
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
                   </div>
                   <div className="pt-6 border-t border-white/10">
                     <div className="flex justify-between items-center mb-2"><span className="text-white/50 text-sm">{t('passengerPage.baseFare')}</span><span className="font-bold">€{totalBasePrice.toFixed(2)}</span></div>

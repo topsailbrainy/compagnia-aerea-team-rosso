@@ -8,9 +8,15 @@ import { ChevronRight, Info } from 'lucide-react';
 const Seats: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { passengers, outboundFlight, returnFlight, outboundPrice, returnPrice, selectedSeats, setSearch, baggageCost, assistanceCost } = useSearchStore();
+  const { passengers, outboundFlight, returnFlight, outboundPrice, returnPrice, selectedSeats, setSearch, baggageCosts, assistanceCosts, outboundCabin, isFlyPlusGuest } = useSearchStore();
 
   const [currentSelection, setCurrentSelection] = useState<string[]>(selectedSeats);
+
+  // Fallback to 'economy' if cabin not selected (for safety)
+  const activeCabin = outboundCabin || 'economy';
+
+  const totalBaggageCost = Object.values(baggageCosts || {}).reduce((acc, curr) => acc + (curr || 0), 0);
+  const totalAssistanceCost = Object.values(assistanceCosts || {}).reduce((acc, curr) => acc + (curr || 0), 0);
 
   const seatClasses = {
     first: { rows: [1, 2], cols: ['A', 'B', 'E', 'F'], price: 150 },
@@ -22,7 +28,7 @@ const Seats: React.FC = () => {
     if (currentSelection.includes(seatId)) {
       setCurrentSelection(prev => prev.filter(s => s !== seatId));
     } else {
-      if (currentSelection.length < passengers) {
+      if (currentSelection.length < (passengers || 1)) {
         setCurrentSelection(prev => [...prev, seatId]);
       }
     }
@@ -36,7 +42,7 @@ const Seats: React.FC = () => {
   const taxesPerFlight = 34.20;
   const flightsCount = returnFlight ? 2 : 1;
   const totalTaxes = taxesPerFlight * flightsCount * (passengers || 1);
-  const totalPrice = ((outboundPrice + returnPrice) * (passengers || 1)) + totalTaxes + baggageCost + assistanceCost;
+  const totalPrice = ((outboundPrice + returnPrice) * (passengers || 1)) + totalTaxes + totalBaggageCost + totalAssistanceCost;
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24 pb-12 px-4 md:px-12">
@@ -51,6 +57,9 @@ const Seats: React.FC = () => {
                 <p className="text-gray-400 text-sm font-bold uppercase tracking-widest mt-1">
                   {outboundFlight?.from} → {outboundFlight?.to} | {passengers} {t('booking.passengers')}
                 </p>
+                <div className="mt-2 inline-block px-3 py-1 bg-accent/10 rounded-full border border-accent/20">
+                  <span className="text-[10px] font-black text-accent uppercase tracking-widest">{activeCabin} Class</span>
+                </div>
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
@@ -64,99 +73,121 @@ const Seats: React.FC = () => {
               </div>
             </div>
 
-            {/* Airplane Layout with Background Shape */}
-            <div className="relative bg-gray-50 rounded-[4rem] p-16 overflow-hidden border border-gray-100 min-h-[1200px] flex justify-center">
+            {/* Airplane Layout */}
+            <div className="relative bg-gray-50 rounded-[4rem] p-16 overflow-hidden border border-gray-100 flex flex-col items-center">
               
-              {/* Animated Airplane Background Shape - Adjusted to show from tail up to cockpit, avoiding the nose overflow */}
-              <div className="absolute inset-0 flex justify-center pt-0 opacity-[0.04] pointer-events-none">
-                <svg width="800" height="2000" viewBox="0 0 600 1200" fill="none" xmlns="http://www.w3.org/2000/svg" className="scale-[2.2] origin-top translate-y-[-250px]">
-                  <path d="M300 20C240 20 180 80 180 200V400L20 600V700L180 650V900L100 1000V1080L300 1040L500 1080V1000L420 900V650L580 700V600L420 400V200C420 80 360 20 300 20Z" fill="currentColor" className="text-primary"/>
-                </svg>
+              {/* Cockpit Indicator */}
+              <div className="w-32 h-16 bg-white border border-gray-100 rounded-t-full mb-12 flex items-center justify-center">
+                <span className="text-[8px] font-black text-gray-300 uppercase tracking-widest">Cockpit</span>
               </div>
 
-              {/* Seats Content - Centered in the body of the plane */}
-              <div className="relative z-10 w-full max-w-md space-y-12 mt-20">
+              {/* Column Labels (Window/Aisle) */}
+              <div className="w-full max-w-md flex justify-between px-4 mb-4 text-[9px] font-black text-gray-300 uppercase tracking-widest">
+                <div className="flex gap-12"><span>Window</span><span>Window</span></div>
+                <div className="flex gap-12"><span>Window</span><span>Window</span></div>
+              </div>
+
+              {/* Seats Content */}
+              <div className="relative z-10 w-full max-w-md space-y-12">
                 
                 {/* First Class */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between px-4">
-                    <span className="text-[10px] font-black text-accent uppercase tracking-[0.3em]">First Class</span>
-                    <div className="h-[1px] flex-1 bg-accent/20 mx-4" />
-                  </div>
-                  {seatClasses.first.rows.map(row => (
-                    <div key={row} className="flex justify-center gap-4">
-                      {seatClasses.first.cols.map(col => {
-                        const id = `${row}${col}`;
-                        const isSelected = currentSelection.includes(id);
-                        return (
-                          <button
-                            key={id}
-                            onClick={() => toggleSeat(id)}
-                            className={`w-12 h-12 rounded-xl flex items-center justify-center text-xs font-black transition-all ${isSelected ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-110' : 'bg-white text-primary border border-gray-100 hover:border-accent'}`}
-                          >
-                            {id}
-                          </button>
-                        );
-                      })}
+                {(activeCabin === 'first') && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between px-4">
+                      <span className="text-[10px] font-black text-accent uppercase tracking-[0.3em]">First Class</span>
+                      <div className="h-[1px] flex-1 bg-accent/20 mx-4" />
                     </div>
-                  ))}
-                </div>
+                    {seatClasses.first.rows.map(row => (
+                      <div key={row} className="flex justify-center gap-4 relative">
+                        <span className="absolute -left-8 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-300">{row}</span>
+                        {seatClasses.first.cols.map((col, idx) => {
+                          const id = `${row}${col}`;
+                          const isSelected = currentSelection.includes(id);
+                          return (
+                            <React.Fragment key={id}>
+                              <button
+                                onClick={() => toggleSeat(id)}
+                                className={`w-12 h-12 rounded-xl flex items-center justify-center text-xs font-black transition-all ${isSelected ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-110' : 'bg-white text-primary border border-gray-100 hover:border-accent'}`}
+                              >
+                                {id}
+                              </button>
+                              {idx === 1 && <div className="w-12 flex items-center justify-center"><span className="text-[8px] font-black text-gray-200 rotate-90">AISLE</span></div>}
+                            </React.Fragment>
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                )}
 
                 {/* Business Class */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between px-4">
-                    <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em]">Business</span>
-                    <div className="h-[1px] flex-1 bg-blue-100 mx-4" />
-                  </div>
-                  {seatClasses.business.rows.map(row => (
-                    <div key={row} className="flex justify-center gap-2">
-                      {seatClasses.business.cols.map((col, idx) => {
-                        const id = `${row}${col}`;
-                        const isSelected = currentSelection.includes(id);
-                        return (
-                          <React.Fragment key={id}>
-                            <button
-                              onClick={() => toggleSeat(id)}
-                              className={`w-10 h-10 rounded-lg flex items-center justify-center text-[10px] font-black transition-all ${isSelected ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-110' : 'bg-white text-primary border border-gray-100 hover:border-blue-400'}`}
-                            >
-                              {id}
-                            </button>
-                            {idx === 2 && <div className="w-8" />}
-                          </React.Fragment>
-                        );
-                      })}
+                {(activeCabin === 'business') && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between px-4">
+                      <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em]">Business</span>
+                      <div className="h-[1px] flex-1 bg-blue-100 mx-4" />
                     </div>
-                  ))}
-                </div>
+                    {seatClasses.business.rows.map(row => (
+                      <div key={row} className="flex justify-center gap-2 relative">
+                        <span className="absolute -left-8 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-300">{row}</span>
+                        {seatClasses.business.cols.map((col, idx) => {
+                          const id = `${row}${col}`;
+                          const isSelected = currentSelection.includes(id);
+                          return (
+                            <React.Fragment key={id}>
+                              <button
+                                onClick={() => toggleSeat(id)}
+                                className={`w-10 h-10 rounded-lg flex items-center justify-center text-[10px] font-black transition-all ${isSelected ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-110' : 'bg-white text-primary border border-gray-100 hover:border-blue-400'}`}
+                              >
+                                {id}
+                              </button>
+                              {idx === 2 && <div className="w-8 flex items-center justify-center"><span className="text-[7px] font-black text-gray-200 rotate-90 tracking-tighter">AISLE</span></div>}
+                            </React.Fragment>
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                )}
 
                 {/* Economy Class */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between px-4">
-                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Economy</span>
-                    <div className="h-[1px] flex-1 bg-gray-200 mx-4" />
-                  </div>
-                  {seatClasses.economy.rows.map(row => (
-                    <div key={row} className="flex justify-center gap-2">
-                      {seatClasses.economy.cols.map((col, idx) => {
-                        const id = `${row}${col}`;
-                        const isSelected = currentSelection.includes(id);
-                        return (
-                          <React.Fragment key={id}>
-                            <button
-                              onClick={() => toggleSeat(id)}
-                              className={`w-10 h-10 rounded-lg flex items-center justify-center text-[10px] font-black transition-all ${isSelected ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-110' : 'bg-white text-primary border border-gray-100 hover:border-primary'}`}
-                            >
-                              {id}
-                            </button>
-                            {idx === 2 && <div className="w-8" />}
-                          </React.Fragment>
-                        );
-                      })}
+                {(activeCabin === 'economy') && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between px-4">
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Economy</span>
+                      <div className="h-[1px] flex-1 bg-gray-200 mx-4" />
                     </div>
-                  ))}
-                </div>
+                    {seatClasses.economy.rows.map(row => (
+                      <div key={row} className="flex justify-center gap-2 relative">
+                        <span className="absolute -left-8 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-300">{row}</span>
+                        {seatClasses.economy.cols.map((col, idx) => {
+                          const id = `${row}${col}`;
+                          const isSelected = currentSelection.includes(id);
+                          return (
+                            <React.Fragment key={id}>
+                              <button
+                                onClick={() => toggleSeat(id)}
+                                className={`w-10 h-10 rounded-lg flex items-center justify-center text-[10px] font-black transition-all ${isSelected ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-110' : 'bg-white text-primary border border-gray-100 hover:border-primary'}`}
+                              >
+                                {id}
+                              </button>
+                              {idx === 2 && <div className="w-8 flex items-center justify-center"><span className="text-[7px] font-black text-gray-200 rotate-90 tracking-tighter">AISLE</span></div>}
+                            </React.Fragment>
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                )}
 
               </div>
+              
+              {/* Tail Indicator */}
+              <div className="w-48 h-32 bg-white border border-gray-100 rounded-b-[4rem] mt-12 flex flex-col items-center justify-center gap-4">
+                 <div className="w-16 h-1 bg-gray-100 rounded-full" />
+                 <span className="text-[8px] font-black text-gray-300 uppercase tracking-widest">Rear of Aircraft</span>
+              </div>
+
             </div>
           </div>
         </div>
@@ -186,8 +217,26 @@ const Seats: React.FC = () => {
                 </div>
               </div>
               
-              {baggageCost > 0 && <div className="flex justify-between items-center px-2 animate-in fade-in"><span className="text-[10px] font-black uppercase text-gray-400">Extra Baggage</span><span className="text-xs font-bold text-primary">€{baggageCost.toFixed(2)}</span></div>}
-              {assistanceCost > 0 && <div className="flex justify-between items-center px-2 animate-in fade-in"><span className="text-[10px] font-black uppercase text-gray-400">Assistance</span><span className="text-xs font-bold text-primary">€{assistanceCost.toFixed(2)}</span></div>}
+              {totalBaggageCost > 0 && <div className="flex justify-between items-center px-2 animate-in fade-in"><span className="text-[10px] font-black uppercase text-gray-400">Extra Baggage</span><span className="text-xs font-bold text-primary">€{totalBaggageCost.toFixed(2)}</span></div>}
+              {totalAssistanceCost > 0 && <div className="flex justify-between items-center px-2 animate-in fade-in"><span className="text-[10px] font-black uppercase text-gray-400">Assistance</span><span className="text-xs font-bold text-primary">€{totalAssistanceCost.toFixed(2)}</span></div>}
+              
+              {isFlyPlusGuest && (
+                <motion.div 
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="p-4 bg-accent/10 border border-accent/20 rounded-2xl space-y-2 mt-2"
+                >
+                  <div className="flex items-center gap-2 text-accent">
+                    <Star size={12} fill="currentColor" />
+                    <span className="text-[9px] font-black uppercase tracking-widest">FlyPlus Guest Member</span>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 text-[8px] font-bold text-primary/60 uppercase">
+                      <ShieldCheck size={10} className="text-accent" /> Lounge Access Included
+                    </div>
+                  </div>
+                </motion.div>
+              )}
             </div>
 
             <div className="border-t border-gray-100 pt-6 mb-8">
