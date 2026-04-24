@@ -6,7 +6,7 @@ export async function getPrenotazioniUser(req: Request, res: Response, next: Nex
     try {
         const utenteId = (req as any).user.id;
         const result = await pool.query(
-            "SELECT * FROM prenotazioni WHERE utente_id = $1 ORDER BY data_prenotazione DESC",
+            "SELECT id, utente_id as passeggero_id, volo_id, data_prenotazione, prezzo_finale as prezzo, posto, classe, tipo_bagaglio FROM prenotazioni WHERE utente_id = $1 ORDER BY data_prenotazione DESC",
             [utenteId]
         );
         res.json(result.rows);
@@ -21,7 +21,7 @@ export async function getPrenotazioneById(req: Request, res: Response, next: Nex
         const utenteId = (req as any).user.id;
         const ruolo = (req as any).user.ruolo;
         
-        let query = "SELECT * FROM prenotazioni WHERE id = $1";
+        let query = "SELECT id, utente_id as passeggero_id, volo_id, data_prenotazione, prezzo_finale as prezzo, posto, classe, tipo_bagaglio FROM prenotazioni WHERE id = $1";
         let params: any[] = [id];
         
         if (ruolo !== 'admin') {
@@ -57,7 +57,7 @@ export async function createPrenotazione(req: Request, res: Response, next: Next
         const result = await pool.query(
             `INSERT INTO prenotazioni (utente_id, volo_id, prezzo_finale, posto, classe, tipo_bagaglio)
              VALUES ($1, $2, $3, $4, $5, $6)
-             RETURNING *`,
+             RETURNING id, utente_id as passeggero_id, volo_id, data_prenotazione, prezzo_finale as prezzo, posto, classe, tipo_bagaglio`,
             [utenteId, volo_id, prezzo_finale, posto, classe, tipo_bagaglio]
         );
         
@@ -69,7 +69,7 @@ export async function createPrenotazione(req: Request, res: Response, next: Next
 
 export async function getPrenotazioniAdmin(_req: Request, res: Response, next: NextFunction) {
     try {
-        const result = await pool.query("SELECT * FROM prenotazioni ORDER BY data_prenotazione DESC");
+        const result = await pool.query("SELECT id, utente_id as passeggero_id, volo_id, data_prenotazione, prezzo_finale as prezzo, posto, classe, tipo_bagaglio FROM prenotazioni ORDER BY data_prenotazione DESC");
         res.json(result.rows);
     } catch (error) {
         next(error);

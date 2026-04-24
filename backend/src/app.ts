@@ -8,6 +8,7 @@ import voliRoutes from '@/routes/voli.routes';
 import prenotazioniRoutes from '@/routes/prenotazioni.routes';
 import adminRoutes from '@/routes/admin.routes';
 import aereiRoutes from '@/routes/aerei.routes';
+import passeggeriRoutes from '@/routes/passeggeri.routes';
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use("/voli", voliRoutes);
 app.use("/prenotazioni", prenotazioniRoutes);
 app.use("/admin", adminRoutes);
 app.use("/aerei", aereiRoutes);
+app.use("/passeggeri", passeggeriRoutes);
 
 app.use(errorMw);
 
