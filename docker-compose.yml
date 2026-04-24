@@ -10,6 +10,7 @@ services:
       - POSTGRES_USER=${DB_USER:-postgres}
     volumes:
       - pgdata:/var/lib/postgresql/18/docker
+      - ./backend/db.sql:/docker-entrypoint-initdb.d/db.sql
     ports:
       - 5432:5432
     restart: unless-stopped
