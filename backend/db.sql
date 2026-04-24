@@ -1,62 +1,237 @@
-
+-- Schema del Database (come fornito)
+-- Tabella Aerei
 CREATE TABLE IF NOT EXISTS aerei (
-    id SERIAL PRIMARY KEY, -- ID univoco dell'aereo
-    capienza INTEGER NOT NULL, -- Numero massimo di passeggeri
+    id SERIAL PRIMARY KEY,
+    capienza INTEGER NOT NULL,
     stato BOOLEAN NOT NULL DEFAULT TRUE, -- TRUE = operativo, FALSE = manutenzione
-    modello VARCHAR(255) NOT NULL -- Modello dell'aereo
+    modello VARCHAR(255) NOT NULL
 );
 
+-- Tabella Aeroporti
 CREATE TABLE IF NOT EXISTS aeroporti (
-    id SERIAL PRIMARY KEY, -- ID univoco dell'aeroporto
-    nome VARCHAR(255) NOT NULL, -- Nome dell'aeroporto
-    citta VARCHAR(255) NOT NULL, -- CittÃ  dell'aeroporto
-)
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    citta VARCHAR(255) NOT NULL
+);
 
+-- Tabella Gates
 CREATE TABLE IF NOT EXISTS gates (
-    id SERIAL PRIMARY KEY, -- ID univoco del gate
-    numero VARCHAR(255) NOT NULL, -- Numero del gate
-    aeroporto_id INTEGER NOT NULL, -- ID dell'aeroporto
-    FOREIGN KEY (aeroporto_id) REFERENCES aeroporti(id)
-)
+    id SERIAL PRIMARY KEY,
+    numero VARCHAR(255) NOT NULL,
+    aeroporto_id INTEGER NOT NULL REFERENCES aeroporti(id)
+);
 
+-- Tabella Voli
 CREATE TABLE IF NOT EXISTS voli (
-    id SERIAL PRIMARY KEY, -- ID univoco della tratta
-    aeroporto_partenza_id INTEGER NOT NULL, -- ID dell'aeroporto di partenza
-    aeroporto_arrivo_id INTEGER NOT NULL, -- ID dell'aeroporto di arrivo
-    data_partenza DATE NOT NULL, -- Data di partenza
-	data_arrivo DATE NOT NULL, -- Data di arrivo
-    ora_partenza TIME NOT NULL, -- Ora di partenza
-    ora_arrivo TIME NOT NULL, -- Ora di arrivo
-	FOREIGN KEY (aeroporto_partenza_id) REFERENCES aeroporti(id), 
-    FOREIGN KEY (aeroporto_arrivo_id) REFERENCES aeroporti(id)
-)
+    id SERIAL PRIMARY KEY,
+    aeroporto_partenza_id INTEGER NOT NULL REFERENCES aeroporti(id),
+    aeroporto_arrivo_id INTEGER NOT NULL REFERENCES aeroporti(id),
+    aereo_id INTEGER NOT NULL REFERENCES aerei(id),
+    data_partenza DATE NOT NULL,
+    data_arrivo DATE NOT NULL,
+    ora_partenza TIME NOT NULL,
+    ora_arrivo TIME NOT NULL,
+    prezzo_base DECIMAL(10, 2) NOT NULL
+);
 
-CREATE TABLE IF NOT EXISTS tratte (
-    id SERIAL PRIMARY KEY, -- ID univoco del volo
-    volo_id INTEGER NOT NULL, -- ID della tratta
-    aereo_id INTEGER NOT NULL, -- ID dell'aereo
-    FOREIGN KEY (volo_id) REFERENCES voli(id),
-    FOREIGN KEY (aereo_id) REFERENCES aerei(id) 
-)
+-- Tabella Utenti
+CREATE TABLE IF NOT EXISTS utenti (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    cognome VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    telefono VARCHAR(255),
+    ruolo VARCHAR(50) NOT NULL DEFAULT 'user' -- 'user' o 'admin'
+);
 
-CREATE TABLE IF NOT EXISTS passeggeri (
-    id SERIAL PRIMARY KEY, -- ID univoco del passeggero
-    nome VARCHAR(255) NOT NULL, -- Nome del passeggero
-    cognome VARCHAR(255) NOT NULL, -- Cognome del passeggero
-    email VARCHAR(255) NOT NULL, -- Email del passeggero
-    telefono VARCHAR(255) NOT NULL, -- Telefono del passeggero
-)
-
+-- Tabella Prenotazioni
 CREATE TABLE IF NOT EXISTS prenotazioni (
-	id SERIAL PRIMARY KEY, -- ID univoco della prenotazione
-	passeggero_id INTEGER NOT NULL, -- ID dell'utente
-	volo_id INTEGER NOT NULL, -- ID della tratta
-	data_prenotazione DATE NOT NULL, -- Data della prenotazione
-	prezzo DECIMAL(10, 2) NOT NULL, -- Prezzo della prenotazione
-	posto VARCHAR(255) NOT NULL, -- Posto della prenotazione
-	classe VARCHAR(255) NOT NULL, -- Classe della prenotazione
-	tipo_bagaglio VARCHAR(255) NOT NULL, -- Tipo di bagaglio
-	FOREIGN KEY (passeggero_id) REFERENCES passeggeri(id),
-	FOREIGN KEY (volo_id) REFERENCES voli(id)
-)
+    id SERIAL PRIMARY KEY,
+    utente_id INTEGER NOT NULL REFERENCES utenti(id),
+    volo_id INTEGER NOT NULL REFERENCES voli(id),
+    data_prenotazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    prezzo_finale DECIMAL(10, 2) NOT NULL,
+    posto VARCHAR(10) NOT NULL,
+    classe VARCHAR(50) NOT NULL, -- es. 'Economy', 'Business'
+    tipo_bagaglio VARCHAR(50) NOT NULL,
+    UNIQUE(volo_id, posto)
+);
 
+-- Inserimento Dati Campione
+
+-- 1. Aeroporti (Estratti da aereoporti.txt)
+INSERT INTO aeroporti (nome, citta) VALUES
+('Fiumicino - Leonardo da Vinci International Airport', 'Rome'),
+('Malpensa International Airport', 'Milan'),
+('Linate Airport', 'Milan'),
+('Charles de Gaulle International Airport', 'Paris'),
+('Orly Airport', 'Paris'),
+('Heathrow Airport', 'London'),
+('Gatwick Airport', 'London'),
+('Frankfurt am Main Airport', 'Frankfurt'),
+('Munich Airport', 'Munich'),
+('Adolfo Suárez Madrid–Barajas Airport', 'Madrid'),
+('Barcelona International Airport', 'Barcelona'),
+('Amsterdam Airport Schiphol', 'Amsterdam'),
+('Brussels Airport', 'Brussels'),
+('Zurich Airport', 'Zurich'),
+('Vienna International Airport', 'Vienna'),
+('Athens International Airport', 'Athens'),
+('Lisbon Humberto Delgado Airport', 'Lisbon'),
+('Copenhagen Kastrup Airport', 'Copenhagen'),
+('Oslo Lufthavn', 'Oslo'),
+('Stockholm-Arlanda Airport', 'Stockholm'),
+('Helsinki Vantaa Airport', 'Helsinki'),
+('Warsaw Chopin Airport', 'Warsaw'),
+('Prague Václav Havel Airport', 'Prague'),
+('Budapest Liszt Ferenc International Airport', 'Budapest'),
+('Dublin Airport', 'Dublin'),
+('Porto Francisco de Sá Carneiro Airport', 'Porto'),
+('Nice-Côte d''Azur Airport', 'Nice'),
+('Berlin-Tegel Airport', 'Berlin'),
+('Istanbul Atatürk International Airport', 'Istanbul'),
+('Ben Gurion International Airport', 'Tel-aviv');
+
+-- 2. Aerei
+INSERT INTO aerei (capienza, stato, modello) VALUES
+(180, TRUE, 'Airbus A320'),
+(180, TRUE, 'Airbus A320'),
+(150, TRUE, 'Airbus A319'),
+(220, TRUE, 'Airbus A321neo'),
+(300, TRUE, 'Airbus A330-900'),
+(189, TRUE, 'Boeing 737-800'),
+(189, TRUE, 'Boeing 737-800'),
+(230, TRUE, 'Boeing 737 MAX 9'),
+(290, TRUE, 'Boeing 787-9 Dreamliner'),
+(350, TRUE, 'Boeing 777-300ER'),
+(180, FALSE, 'Airbus A320'), -- In manutenzione
+(70, TRUE, 'Embraer E175'),
+(110, TRUE, 'Embraer E190'),
+(180, TRUE, 'Airbus A320'),
+(189, TRUE, 'Boeing 737-800'),
+(150, TRUE, 'Airbus A319'),
+(300, TRUE, 'Airbus A330-300'),
+(189, TRUE, 'Boeing 737-800'),
+(220, TRUE, 'Airbus A321'),
+(180, TRUE, 'Airbus A320neo'),
+(180, TRUE, 'Airbus A320'),
+(189, TRUE, 'Boeing 737-800'),
+(150, TRUE, 'Airbus A319'),
+(220, TRUE, 'Airbus A321neo'),
+(300, TRUE, 'Airbus A330-900'),
+(189, TRUE, 'Boeing 737-800'),
+(189, TRUE, 'Boeing 737-800'),
+(230, TRUE, 'Boeing 737 MAX 9'),
+(290, TRUE, 'Boeing 787-9 Dreamliner'),
+(350, TRUE, 'Boeing 777-300ER');
+
+-- 3. Gates (2 per aeroporto per semplicità)
+INSERT INTO gates (numero, aeroporto_id) VALUES
+('A1', 1), ('A2', 1), ('B1', 2), ('B2', 2), ('C1', 3), ('C2', 3), ('D1', 4), ('D2', 4),
+('E1', 5), ('E2', 5), ('F1', 6), ('F2', 6), ('G1', 7), ('G2', 7), ('H1', 8), ('H2', 8),
+('I1', 9), ('I2', 9), ('J1', 10), ('J2', 10), ('K1', 11), ('K2', 11), ('L1', 12), ('L2', 12),
+('M1', 13), ('M2', 13), ('N1', 14), ('N2', 14), ('O1', 15), ('O2', 15), ('P1', 16), ('P2', 16),
+('Q1', 17), ('Q2', 17), ('R1', 18), ('R2', 18), ('S1', 19), ('S2', 19), ('T1', 20), ('T2', 20),
+('U1', 21), ('U2', 21), ('V1', 22), ('V2', 22), ('W1', 23), ('W2', 23), ('X1', 24), ('X2', 24),
+('Y1', 25), ('Y2', 25), ('Z1', 26), ('Z2', 26), ('AA1', 27), ('AA2', 27), ('AB1', 28), ('AB2', 28),
+('AC1', 29), ('AC2', 29), ('AD1', 30), ('AD2', 30);
+
+-- 4. Voli
+INSERT INTO voli (aeroporto_partenza_id, aeroporto_arrivo_id, aereo_id, data_partenza, data_arrivo, ora_partenza, ora_arrivo, prezzo_base) VALUES
+(1, 4, 1, '2026-05-10', '2026-05-10', '08:30:00', '10:45:00', 120.00),
+(4, 1, 1, '2026-05-10', '2026-05-10', '12:00:00', '14:15:00', 115.00),
+(2, 6, 6, '2026-05-11', '2026-05-11', '09:00:00', '11:20:00', 145.00),
+(6, 2, 6, '2026-05-11', '2026-05-11', '13:00:00', '15:20:00', 130.00),
+(1, 10, 4, '2026-05-12', '2026-05-12', '07:15:00', '09:45:00', 95.00),
+(10, 1, 4, '2026-05-12', '2026-05-12', '11:00:00', '13:30:00', 89.00),
+(12, 1, 14, '2026-05-13', '2026-05-13', '14:20:00', '16:50:00', 110.00),
+(1, 12, 14, '2026-05-13', '2026-05-13', '18:00:00', '20:30:00', 105.00),
+(8, 2, 8, '2026-05-14', '2026-05-14', '06:45:00', '08:15:00', 75.00),
+(2, 8, 8, '2026-05-14', '2026-05-14', '10:00:00', '11:30:00', 79.00),
+(3, 14, 12, '2026-05-15', '2026-05-15', '09:30:00', '10:45:00', 150.00),
+(14, 3, 12, '2026-05-15', '2026-05-15', '12:15:00', '13:30:00', 140.00),
+(15, 9, 20, '2026-05-16', '2026-05-16', '15:00:00', '16:30:00', 100.00),
+(9, 15, 20, '2026-05-16', '2026-05-16', '18:30:00', '20:00:00', 95.00),
+(17, 1, 15, '2026-05-17', '2026-05-17', '10:10:00', '13:00:00', 180.00),
+(1, 17, 15, '2026-05-17', '2026-05-17', '14:30:00', '17:20:00', 175.00),
+(18, 12, 19, '2026-05-18', '2026-05-18', '08:00:00', '09:30:00', 85.00),
+(12, 18, 19, '2026-05-18', '2026-05-18', '11:00:00', '12:30:00', 80.00),
+(1, 29, 10, '2026-05-19', '2026-05-19', '14:00:00', '17:45:00', 250.00),
+(29, 1, 10, '2026-05-19', '2026-05-19', '19:15:00', '23:00:00', 230.00),
+(30, 2, 9, '2026-05-20', '2026-05-20', '06:00:00', '10:30:00', 320.00),
+(2, 30, 9, '2026-05-20', '2026-05-20', '12:00:00', '16:30:00', 310.00),
+(4, 13, 2, '2026-05-21', '2026-05-21', '09:15:00', '10:15:00', 65.00),
+(13, 4, 2, '2026-05-21', '2026-05-21', '11:45:00', '12:45:00', 60.00),
+(1, 16, 23, '2026-05-22', '2026-05-22', '16:40:00', '18:50:00', 135.00),
+(16, 1, 23, '2026-05-22', '2026-05-22', '20:20:00', '22:30:00', 125.00),
+(11, 4, 28, '2026-05-23', '2026-05-23', '07:30:00', '09:00:00', 88.00),
+(4, 11, 28, '2026-05-23', '2026-05-23', '10:30:00', '12:00:00', 85.00),
+(1, 25, 7, '2026-05-24', '2026-05-24', '13:50:00', '16:45:00', 200.00),
+(25, 1, 7, '2026-05-24', '2026-05-24', '18:15:00', '21:10:00', 190.00);
+
+-- 5. Utenti
+INSERT INTO utenti (nome, cognome, email, password, telefono, ruolo) VALUES
+('Mario', 'Rossi', 'mario.rossi@example.com', 'password123', '3331234567', 'user'),
+('Laura', 'Bianchi', 'laura.bianchi@example.com', 'securepass', '3337654321', 'user'),
+('Admin', 'TeamRosso', 'admin@compagnia.aerea', 'admin2026', '3330000000', 'admin'),
+('Giuseppe', 'Verdi', 'g.verdi@music.it', 'operapass', '3471112223', 'user'),
+('Anna', 'Neri', 'anna.neri@email.com', 'annapass', '3484445556', 'user'),
+('Luca', 'Gialli', 'luca.g@provider.com', 'lucapass123', '3497778889', 'user'),
+('Sofia', 'Russo', 'sofia.r@test.com', 'sofiasecure', '3351239876', 'user'),
+('Andrea', 'Ferrari', 'a.ferrari@motors.it', 'vroomvroom', '3315556667', 'user'),
+('Elena', 'Esposito', 'e.esposito@work.com', 'elenapass', '3398887776', 'user'),
+('Marco', 'Romano', 'm.romano@libero.it', 'marcoroma', '3341113335', 'user'),
+('Francesca', 'Colombo', 'f.colombo@travel.it', 'francypass', '3362224446', 'user'),
+('Antonio', 'Ricci', 'a.ricci@scientist.com', 'physics99', '3373335557', 'user'),
+('Paola', 'Marino', 'p.marino@ocean.org', 'blueplanet', '3384446668', 'user'),
+('Giovanni', 'Greco', 'g.greco@philosophy.gr', 'platone2026', '3395557779', 'user'),
+('Valentina', 'Bruno', 'v.bruno@design.it', 'artpass', '3406668880', 'user'),
+('Matteo', 'Gallo', 'm.gallo@farm.it', 'rooster1', '3417779991', 'user'),
+('Chiara', 'Conti', 'c.conti@bank.it', 'moneysecure', '3428880002', 'user'),
+('Riccardo', 'De Luca', 'r.deluca@law.it', 'legalservices', '3439991113', 'user'),
+('Simona', 'Mancini', 's.mancini@fashion.fr', 'couture26', '3440002224', 'user'),
+('Davide', 'Costa', 'd.costa@it.com', 'bitbybit', '3451113335', 'user'),
+('Silvia', 'Serra', 's.serra@nature.com', 'greenlife', '3462224446', 'user'),
+('Fabio', 'Fontana', 'f.fontana@arch.it', 'buildingdreams', '3473335557', 'user'),
+('Giorgia', 'Rizzo', 'g.rizzo@news.it', 'reporter26', '3484446668', 'user'),
+('Stefano', 'Moretti', 's.moretti@sport.it', 'athletelife', '3495557779', 'user'),
+('Federica', 'Barbieri', 'f.barbieri@style.com', 'chicpass', '3506668880', 'user'),
+('Alessio', 'Pellegrini', 'a.pellegrini@trekking.it', 'mountainpeak', '3517779991', 'user'),
+('Roberta', 'Sanna', 'r.sanna@island.it', 'sardegna26', '3528880002', 'user'),
+('Daniele', 'Farina', 'd.farina@chef.it', 'cookingmaster', '3539991113', 'user'),
+('Cristina', 'Villa', 'c.villa@realty.com', 'homekey', '3540002224', 'user'),
+('Gabriele', 'Lombardi', 'g.lombardi@tech.it', 'cybersecure', '3551113335', 'user');
+
+-- 6. Prenotazioni
+INSERT INTO prenotazioni (utente_id, volo_id, prezzo_finale, posto, classe, tipo_bagaglio) VALUES
+(1, 1, 145.00, '12A', 'Economy', 'Da stiva 20kg'),
+(2, 1, 130.00, '12B', 'Economy', 'Solo zaino'),
+(4, 3, 195.00, '1A', 'Business', 'Da stiva 30kg'),
+(5, 3, 145.00, '14C', 'Economy', 'Trolley 10kg'),
+(6, 5, 95.00, '22D', 'Economy', 'Solo zaino'),
+(7, 5, 115.00, '22E', 'Economy', 'Trolley 10kg'),
+(8, 7, 110.00, '05F', 'Economy', 'Solo zaino'),
+(9, 7, 135.00, '05E', 'Economy', 'Da stiva 20kg'),
+(10, 9, 75.00, '18A', 'Economy', 'Solo zaino'),
+(11, 9, 75.00, '18B', 'Economy', 'Solo zaino'),
+(12, 11, 210.00, '2C', 'Business', 'Da stiva 30kg'),
+(13, 13, 100.00, '10A', 'Economy', 'Solo zaino'),
+(14, 15, 180.00, '15D', 'Economy', 'Solo zaino'),
+(15, 17, 85.00, '08C', 'Economy', 'Solo zaino'),
+(16, 19, 350.00, '4A', 'First', 'Da stiva 30kg'),
+(17, 21, 420.00, '3B', 'First', 'Da stiva 30kg'),
+(18, 23, 65.00, '11A', 'Economy', 'Solo zaino'),
+(19, 25, 135.00, '09F', 'Economy', 'Solo zaino'),
+(20, 27, 88.00, '20D', 'Economy', 'Solo zaino'),
+(21, 29, 200.00, '14B', 'Economy', 'Solo zaino'),
+(22, 2, 115.00, '16A', 'Economy', 'Solo zaino'),
+(23, 4, 130.00, '17C', 'Economy', 'Solo zaino'),
+(24, 6, 89.00, '21E', 'Economy', 'Solo zaino'),
+(25, 8, 105.00, '10D', 'Economy', 'Solo zaino'),
+(26, 10, 79.00, '12F', 'Economy', 'Solo zaino'),
+(27, 12, 140.00, '05C', 'Economy', 'Solo zaino'),
+(28, 14, 95.00, '19A', 'Economy', 'Solo zaino'),
+(29, 16, 175.00, '08B', 'Economy', 'Solo zaino'),
+(30, 18, 80.00, '22A', 'Economy', 'Solo zaino'),
+(1, 20, 230.00, '11C', 'Economy', 'Solo zaino');

@@ -1,17 +1,26 @@
-// Importo il framework 
 import express from 'express';
-import userRoutes from '@/routes/passeggeri.routes'; // Importo le rotte degli utenti
-import productRoutes from '@/routes/products.routes'; // Importo le rotte dei prodotti
+import { httpLogger } from '@/services/logger.services';
+import { errorMw } from '@/middlewares/error.middlewares';
 
+import authRoutes from '@/routes/auth.routes';
+import aeroportiRoutes from '@/routes/aeroporti.routes';
+import voliRoutes from '@/routes/voli.routes';
+import prenotazioniRoutes from '@/routes/prenotazioni.routes';
+import adminRoutes from '@/routes/admin.routes';
+import aereiRoutes from '@/routes/aerei.routes';
 
-// Creazione del app
 const app = express();
 
-// Middleware per leggere JSON (req.body)
+app.use(httpLogger);
 app.use(express.json());
 
-// Definisco le rotte
-app.get("/utenti", userRoutes);
-app.use("/products", productRoutes);
+app.use("/auth", authRoutes);
+app.use("/aeroporti", aeroportiRoutes);
+app.use("/voli", voliRoutes);
+app.use("/prenotazioni", prenotazioniRoutes);
+app.use("/admin", adminRoutes);
+app.use("/aerei", aereiRoutes);
+
+app.use(errorMw);
 
 export default app;

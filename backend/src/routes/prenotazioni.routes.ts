@@ -1,19 +1,15 @@
 import { Router } from "express";
-import {
-    getBookings,
-    getBookingById,
-    createBooking
-} from "../controllers/prenotazioni.controller";
+import { getPrenotazioniUser, getPrenotazioneById, createPrenotazione } from "@/controllers/prenotazioni.controller";
+import { authMw } from "@/middlewares/auth.middlewares";
+import { validationMw } from "@/middlewares/validation.middlewares";
+import { prenotazioneInputSchema } from "@/schemas/validation.schemas";
 
 const router = Router();
 
-// GET /prenotazioni
-router.get("/", getBookings);
+router.use(authMw);
 
-// GET /prenotazioni/:id
-router.get("/:id", getBookingById);
-
-// POST /prenotazioni
-router.post("/", createBooking);
+router.get("/", getPrenotazioniUser);
+router.get("/:id", getPrenotazioneById);
+router.post("/", validationMw({ body: prenotazioneInputSchema }), createPrenotazione);
 
 export default router;

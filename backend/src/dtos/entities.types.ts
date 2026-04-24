@@ -1,52 +1,50 @@
 export type Aereo = {
-    id: string;
+    id: number;
     capienza: number;
     stato: boolean;
     modello: string;
 }
 
 export type Aeroporto = {
-    id: string;
+    id: number;
     nome: string;
     citta: string;
 }
 
 export type Gate = {
-    id: string;
+    id: number;
     numero: string;
-    aeroporto_id: string;
+    aeroporto_id: number;
 }
 
 export type Volo = {
-    id: string;
-    aeroporto_partenza_id: string;
-    aeroporto_arrivo_id: string;
+    id: number;
+    aeroporto_partenza_id: number;
+    aeroporto_arrivo_id: number;
+    aereo_id: number;
     data_partenza: string;
     data_arrivo: string;
     ora_partenza: string;
     ora_arrivo: string;
+    prezzo_base: number;
 }
 
-export type Tratta = {
-    id: string;
-    volo_id: string;
-    aereo_id: string;
-}
-
-export type Passeggero = {
-    id: string;
+export type Utente = {
+    id: number;
     nome: string;
     cognome: string;
     email: string;
-    telefono: string;
+    password?: string;
+    telefono?: string;
+    ruolo: 'user' | 'admin';
 }
 
 export type Prenotazione = {
-    id: string;
-    passeggero_id: string;
-    volo_id: string;
+    id: number;
+    utente_id: number;
+    volo_id: number;
     data_prenotazione: string;
-    prezzo: number;
+    prezzo_finale: number;
     posto: string;
     classe: string;
     tipo_bagaglio: string;

@@ -1,0 +1,366 @@
+openapi: 3.0.3
+info:
+  title: API Compagnia Aerea - v2
+  description: API ottimizzata per la gestione di voli, prenotazioni e amministrazione.
+  version: 2.0.0
+servers:
+  - url: http://localhost:3000
+    description: Server di sviluppo
+
+paths:
+  # PUBBLICHE
+  /aeroporti:
+    get:
+      tags: [Pubbliche]
+      summary: Lista tutti gli aeroporti
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Aeroporto'
+
+  /voli/ricerca:
+    post:
+      tags: [Pubbliche]
+      summary: Ricerca voli disponibili
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - aeroporto_partenza
+                - aeroporto_arrivo
+                - data_partenza
+              properties:
+                aeroporto_partenza:
+                  type: integer
+                  description: ID dell'aeroporto di partenza
+                aeroporto_arrivo:
+                  type: integer
+                  description: ID dell'aeroporto di arrivo
+                data_partenza:
+                  type: string
+                  format: date
+                data_ritorno:
+                  type: string
+                  format: date
+      responses:
+        '200':
+          description: Risultati ricerca
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Volo'
+
+  /voli/{id}:
+    get:
+      tags: [Pubbliche]
+      summary: Dettaglio singolo volo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Volo'
+
+  /auth/login:
+    post:
+      tags: [Autenticazione]
+      summary: Login utente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Login effettuato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+
+  /auth/logout:
+    post:
+      tags: [Autenticazione]
+      summary: Logout utente
+      responses:
+        '204':
+          description: Logout effettuato
+
+  /auth/signup:
+    post:
+      tags: [Autenticazione]
+      summary: Registrazione nuovo utente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasseggeroInput'
+      responses:
+        '201':
+          description: Utente creato
+
+  # USER
+  /prenotazioni:
+    get:
+      tags: [Utente]
+      summary: Lista le proprie prenotazioni
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Prenotazione'
+    post:
+      tags: [Utente]
+      summary: Effettua una nuova prenotazione
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrenotazioneInput'
+      responses:
+        '201':
+          description: Prenotazione effettuata
+
+  /prenotazioni/{id}:
+    get:
+      tags: [Utente]
+      summary: Dettaglio di una propria prenotazione
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prenotazione'
+
+  # ADMIN
+  /admin/prenotazioni:
+    get:
+      tags: [Admin]
+      summary: Lista tutte le prenotazioni (Admin)
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Prenotazione'
+
+  /admin/statistiche:
+    get:
+      tags: [Admin]
+      summary: Ottiene statistiche globali
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totale_prenotazioni:
+                    type: integer
+                  ricavi_totali:
+                    type: number
+                  voli_attivi:
+                    type: integer
+
+  /aerei:
+    get:
+      tags: [Admin]
+      summary: Lista tutti gli aerei
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Aereo'
+    post:
+      tags: [Admin]
+      summary: Aggiungi un nuovo aereo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AereoInput'
+      responses:
+        '201':
+          description: Aereo creato
+
+  /aerei/{id}:
+    get:
+      tags: [Admin]
+      summary: Dettaglio aereo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successo
+    delete:
+      tags: [Admin]
+      summary: Rimuovi un aereo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Aereo rimosso
+
+components:
+  schemas:
+    Aeroporto:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        citta:
+          type: string
+
+    AereoInput:
+      type: object
+      required: [capienza, modello]
+      properties:
+        capienza:
+          type: integer
+        stato:
+          type: boolean
+          default: true
+        modello:
+          type: string
+
+    Aereo:
+      allOf:
+        - $ref: '#/components/schemas/AereoInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+
+    Volo:
+      type: object
+      properties:
+        id:
+          type: integer
+        aeroporto_partenza_id:
+          type: integer
+        aeroporto_arrivo_id:
+          type: integer
+        data_partenza:
+          type: string
+          format: date
+        data_arrivo:
+          type: string
+          format: date
+        ora_partenza:
+          type: string
+          format: time
+        ora_arrivo:
+          type: string
+          format: time
+
+    PasseggeroInput:
+      type: object
+      required: [nome, cognome, email, telefono]
+      properties:
+        nome:
+          type: string
+        cognome:
+          type: string
+        email:
+          type: string
+          format: email
+        telefono:
+          type: string
+
+    PrenotazioneInput:
+      type: object
+      required: [volo_id, posto, classe, tipo_bagaglio]
+      properties:
+        volo_id:
+          type: integer
+        posto:
+          type: string
+        classe:
+          type: string
+        tipo_bagaglio:
+          type: string
+
+    Prenotazione:
+      type: object
+      properties:
+        id:
+          type: integer
+        passeggero_id:
+          type: integer
+        volo_id:
+          type: integer
+        data_prenotazione:
+          type: string
+          format: date
+        prezzo:
+          type: number
+          format: float
+        posto:
+          type: string
+        classe:
+          type: string
+        tipo_bagaglio:
+          type: string
