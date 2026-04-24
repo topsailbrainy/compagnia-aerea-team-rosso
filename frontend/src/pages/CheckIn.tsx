@@ -46,18 +46,18 @@ const CheckIn: React.FC = () => {
   };
 
   return (
-    <div className="p-12 mt-20 max-w-7xl mx-auto">
-      <div className="mb-12 text-center relative py-20 rounded-3xl overflow-hidden shadow-2xl bg-primary">
+    <div className="px-6 md:px-12 pt-8 pb-12 mt-16 max-w-7xl mx-auto">
+      <div className="mb-8 text-center relative py-12 rounded-3xl overflow-hidden shadow-2xl bg-primary">
         <img src={gateImg} className="absolute inset-0 w-full h-full object-cover opacity-30" alt={t('checkinPage.title')} />
         <div className="relative z-10">
-          <h2 className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight">{t('checkinPage.title')}</h2>
-          <p className="text-white/60 text-xl">{t('checkinPage.desc')}</p>
-          <div className="w-24 h-1 bg-accent mx-auto mt-6 shadow-glow" />
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-3 tracking-tight">{t('checkinPage.title')}</h2>
+          <p className="text-white/60 text-lg">{t('checkinPage.desc')}</p>
+          <div className="w-16 h-1 bg-accent mx-auto mt-4 shadow-glow" />
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto mt-12">
-        <div className="bg-white p-10 rounded-[2.5rem] shadow-sm border border-gray-100">
+      <div className="max-w-2xl mx-auto -mt-4">
+        <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl border border-gray-100 relative z-20">
           <div className="flex items-center gap-4 p-4 bg-accent/5 border border-accent/10 rounded-2xl mb-8">
             <AlertCircle className="text-accent" size={24} />
             <p className="text-sm text-primary font-bold uppercase tracking-wide">
