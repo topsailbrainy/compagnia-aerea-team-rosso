@@ -29,6 +29,23 @@ const Admin: React.FC = () => {
   const { userRole, isLoggedIn, setSearch } = useSearchStore();
   const [activeTab, setActiveTab] = useState<'analytics' | 'flights' | 'passengers'>('analytics');
 
+  const [flights, setFlights] = useState([
+    { id: 1, flight: 'FP 102', from: 'FCO', to: 'LHR', status: 'On Time', load: '92%', revenue: '€18,400', time: '10:30' },
+    { id: 2, flight: 'FP 205', from: 'MXP', to: 'CDG', status: 'Delayed', load: '78%', revenue: '€12,200', time: '14:20' },
+    { id: 3, flight: 'FP 308', from: 'FCO', to: 'JFK', status: 'On Time', load: '95%', revenue: '€42,800', time: '09:15' },
+    { id: 4, flight: 'FP 412', from: 'CDG', to: 'FCO', status: 'Scheduled', load: '64%', revenue: '€9,100', time: '18:50' },
+  ]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingFlight, setEditingFlight] = useState<any>(null);
+  const [flightForm, setFlightForm] = useState({
+    flight: '',
+    from: '',
+    to: '',
+    status: 'Scheduled',
+    time: ''
+  });
+
   // Protective Redirect
   React.useEffect(() => {
     if (!isLoggedIn || userRole !== 'admin') {
@@ -42,6 +59,38 @@ const Admin: React.FC = () => {
     navigate('/book');
   };
 
+  const handleRemoveFlight = (id: number) => {
+    setFlights(flights.filter(f => f.id !== id));
+  };
+
+  const handleOpenAddModal = () => {
+    setEditingFlight(null);
+    setFlightForm({ flight: 'FP ' + Math.floor(100 + Math.random() * 900), from: '', to: '', status: 'Scheduled', time: '' });
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEditModal = (flight: any) => {
+    setEditingFlight(flight);
+    setFlightForm({ ...flight });
+    setIsModalOpen(true);
+  };
+
+  const handleSaveFlight = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingFlight) {
+      setFlights(flights.map(f => f.id === editingFlight.id ? { ...f, ...flightForm } : f));
+    } else {
+      const newFlight = {
+        ...flightForm,
+        id: Date.now(),
+        load: '0%',
+        revenue: '€0'
+      };
+      setFlights([newFlight, ...flights]);
+    }
+    setIsModalOpen(false);
+  };
+
   const stats = [
     { label: t('adminPage.totalRevenue'), value: '€4.2M', change: '+12.5%', icon: BarChart3, color: 'text-green-600', bg: 'bg-green-50' },
     { label: t('adminPage.activeBookings'), value: '1,284', change: '+8.2%', icon: Plane, color: 'text-blue-600', bg: 'bg-blue-50' },
@@ -49,17 +98,64 @@ const Admin: React.FC = () => {
     { label: t('adminPage.loadFactor'), value: '88%', change: '+4.1%', icon: TrendingUp, color: 'text-accent', bg: 'bg-accent/10' },
   ];
 
-  const recentFlights = [
-    { id: 1, flight: 'FP 102', from: 'FCO', to: 'LHR', status: 'On Time', load: '92%', revenue: '€18,400' },
-    { id: 2, flight: 'FP 205', from: 'MXP', to: 'CDG', status: 'Delayed', load: '78%', revenue: '€12,200' },
-    { id: 3, flight: 'FP 308', from: 'FCO', to: 'JFK', status: 'On Time', load: '95%', revenue: '€42,800' },
-    { id: 4, flight: 'FP 412', from: 'CDG', to: 'FCO', status: 'Scheduled', load: '64%', revenue: '€9,100' },
-  ];
-
   if (!isLoggedIn || userRole !== 'admin') return null;
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24 pb-12 px-4 md:px-12">
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+             <motion.div 
+               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+               onClick={() => setIsModalOpen(false)}
+               className="absolute inset-0 bg-primary/40 backdrop-blur-md"
+             />
+             <motion.div 
+               initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+               className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden border border-gray-100 p-10"
+             >
+                <h2 className="text-2xl font-black text-primary uppercase tracking-tight mb-8">
+                  {editingFlight ? 'Edit Flight' : 'Add New Flight'}
+                </h2>
+                <form onSubmit={handleSaveFlight} className="space-y-6">
+                   <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Flight Number</label>
+                        <input type="text" required value={flightForm.flight} onChange={e => setFlightForm({...flightForm, flight: e.target.value})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent" />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Time</label>
+                        <input type="time" required value={flightForm.time} onChange={e => setFlightForm({...flightForm, time: e.target.value})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent" />
+                      </div>
+                   </div>
+                   <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-2">From</label>
+                        <input type="text" required placeholder="e.g. FCO" value={flightForm.from} onChange={e => setFlightForm({...flightForm, from: e.target.value.toUpperCase()})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent" />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-2">To</label>
+                        <input type="text" required placeholder="e.g. JFK" value={flightForm.to} onChange={e => setFlightForm({...flightForm, to: e.target.value.toUpperCase()})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent" />
+                      </div>
+                   </div>
+                   <div className="space-y-1.5">
+                      <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Status</label>
+                      <select value={flightForm.status} onChange={e => setFlightForm({...flightForm, status: e.target.value})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent appearance-none">
+                         <option>On Time</option><option>Delayed</option><option>Scheduled</option><option>Departed</option>
+                      </select>
+                   </div>
+                   <div className="pt-4 flex gap-4">
+                      <button type="submit" className="flex-1 bg-primary text-accent font-black uppercase tracking-widest py-4 rounded-xl hover:bg-primary/90 transition-all">
+                        {editingFlight ? 'Update Flight' : 'Create Flight'}
+                      </button>
+                      <button type="button" onClick={() => setIsModalOpen(false)} className="px-8 bg-gray-100 text-gray-400 font-black uppercase tracking-widest py-4 rounded-xl hover:bg-gray-200 transition-all">Cancel</button>
+                   </div>
+                </form>
+             </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       <div className="max-w-7xl mx-auto">
         <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div>
@@ -70,7 +166,10 @@ const Admin: React.FC = () => {
             <button className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-white border border-gray-100 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest text-primary hover:bg-gray-50 transition-all shadow-sm">
                 <Download size={14} className="text-accent" /> {t('adminPage.export')}
             </button>
-            <button className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-accent hover:text-primary transition-all shadow-lg shadow-primary/10">
+            <button 
+              onClick={handleOpenAddModal}
+              className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-accent hover:text-primary transition-all shadow-lg shadow-primary/10"
+            >
                 <Plus size={14} /> {t('adminPage.addFlight')}
             </button>
             <button 
@@ -185,7 +284,7 @@ const Admin: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {recentFlights.map((f) => (
+                      {flights.map((f) => (
                         <tr key={f.id} className="border-b border-gray-50 group hover:bg-gray-50/50 transition-colors">
                           <td className="py-5 px-4"><span className="text-sm font-bold text-primary">{f.flight}</span></td>
                           <td className="py-5 px-4 flex items-center gap-2"><span className="text-sm font-bold text-primary">{f.from}</span><Plane size={12} className="text-gray-300" /><span className="text-sm font-bold text-primary">{f.to}</span></td>
@@ -195,7 +294,7 @@ const Admin: React.FC = () => {
                               f.status === 'Delayed' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'
                             }`}>
                               {f.status === 'On Time' ? <CheckCircle2 size={12} /> : f.status === 'Delayed' ? <AlertCircle size={12} /> : <Clock size={12} />}
-                              {f.status === 'On Time' ? t('adminPage.onTime') : f.status === 'Delayed' ? t('adminPage.delayed') : t('adminPage.scheduled')}
+                              {f.status}
                             </div>
                           </td>
                           <td className="py-5 px-4">
@@ -207,8 +306,18 @@ const Admin: React.FC = () => {
                           <td className="py-5 px-4"><span className="text-sm font-bold text-primary">{f.revenue}</span></td>
                           <td className="py-5 px-4">
                             <div className="flex justify-end gap-2">
-                              <button className="p-2 text-gray-300 hover:text-primary transition-colors"><Edit size={16} /></button>
-                              <button className="p-2 text-gray-300 hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
+                              <button 
+                                onClick={() => handleOpenEditModal(f)}
+                                className="p-2 text-gray-300 hover:text-primary transition-colors"
+                              >
+                                <Edit size={16} />
+                              </button>
+                              <button 
+                                onClick={() => handleRemoveFlight(f.id)}
+                                className="p-2 text-gray-300 hover:text-red-500 transition-colors"
+                              >
+                                <Trash2 size={16} />
+                              </button>
                             </div>
                           </td>
                         </tr>

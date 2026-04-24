@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Mail, Lock, User, ArrowRight, GitBranch, Globe } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight } from 'lucide-react';
 import logoImg from '../assets/logo.png';
 
 import { useSearchStore } from '../store';
@@ -45,11 +45,23 @@ const Auth: React.FC = () => {
         if (formData.email === 'ceo@flyplus.com' && formData.password === 'flyplus') {
           setSearch('isLoggedIn', true);
           setSearch('userRole', 'admin');
+          setSearch('userName', 'FlyPlus CEO');
+          setSearch('userEmail', 'ceo@flyplus.com');
           navigate('/admin');
           return;
         }
 
-        if (!hasSignedUp) {
+        // Check for test user
+        if (formData.email === 'test@user.com' && formData.password === 'password123') {
+           setSearch('isLoggedIn', true);
+           setSearch('userRole', 'user');
+           setSearch('userName', 'Test User');
+           setSearch('userEmail', 'test@user.com');
+           navigate('/book');
+           return;
+        }
+
+        if (!hasSignedUp && formData.email !== 'ceo@flyplus.com') {
           setError(t('authPage.errorNotSignedUp'));
           return;
         }
@@ -253,14 +265,6 @@ const Auth: React.FC = () => {
               </button>
             </div>
 
-            {isLogin && (
-              <div className="flex justify-end">
-                <button type="button" className="text-xs font-bold text-accent hover:text-primary transition-colors uppercase tracking-wider">
-                  {t('authPage.forgotPassword')}
-                </button>
-              </div>
-            )}
-
             <button 
               disabled={isLoading}
               className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-xl font-black uppercase tracking-[0.2em] text-xs transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-70"
@@ -275,26 +279,6 @@ const Auth: React.FC = () => {
               )}
             </button>
           </form>
-
-          <div className="mt-8">
-            <div className="relative flex items-center justify-center mb-8">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-100"></div>
-              </div>
-              <span className="relative px-4 bg-white text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('authPage.orContinueWith')}</span>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <button className="flex items-center justify-center gap-3 py-3 px-4 border border-gray-100 rounded-xl hover:bg-secondary transition-all group">
-                <Globe size={18} className="text-gray-400 group-hover:text-[#4285F4]" />
-                <span className="text-xs font-bold text-primary">Google</span>
-              </button>
-              <button className="flex items-center justify-center gap-3 py-3 px-4 border border-gray-100 rounded-xl hover:bg-secondary transition-all group">
-                <GitBranch size={18} className="text-gray-400 group-hover:text-black" />
-                <span className="text-xs font-bold text-primary">Github</span>
-              </button>
-            </div>
-          </div>
 
           <p className="mt-8 text-center text-xs text-gray-400 font-medium">
             {isLogin ? t('authPage.dontHaveAccount') : t('authPage.alreadyHaveAccount')}

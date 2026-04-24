@@ -73,6 +73,7 @@ const AnimatedRoutes: React.FC = () => {
       >
         <Routes location={location}>
           <Route path="/" element={<Navigate to="/book" replace />} />
+          <Route path="/myprofile" element={<Navigate to="/user" replace />} />
           <Route path="/book" element={<Book />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/passenger" element={<Passenger />} />
