@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchStore } from '../store';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -29,74 +29,161 @@ const Admin: React.FC = () => {
   const { userRole, isLoggedIn, setSearch } = useSearchStore();
   const [activeTab, setActiveTab] = useState<'analytics' | 'flights' | 'passengers'>('analytics');
 
-  const [flights, setFlights] = useState([
-    { id: 1, flight: 'FP 102', from: 'FCO', to: 'LHR', status: 'On Time', load: '92%', revenue: '€18,400', time: '10:30' },
-    { id: 2, flight: 'FP 205', from: 'MXP', to: 'CDG', status: 'Delayed', load: '78%', revenue: '€12,200', time: '14:20' },
-    { id: 3, flight: 'FP 308', from: 'FCO', to: 'JFK', status: 'On Time', load: '95%', revenue: '€42,800', time: '09:15' },
-    { id: 4, flight: 'FP 412', from: 'CDG', to: 'FCO', status: 'Scheduled', load: '64%', revenue: '€9,100', time: '18:50' },
-  ]);
+  const [flights, setFlights] = useState<any[]>([]);
+  const [stats, setStats] = useState<any[]>([]);
+  const [popularRoutes, setPopularRoutes] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFlight, setEditingFlight] = useState<any>(null);
   const [flightForm, setFlightForm] = useState({
-    flight: '',
-    from: '',
-    to: '',
-    status: 'Scheduled',
-    time: ''
+    aeroporto_partenza_id: '',
+    aeroporto_arrivo_id: '',
+    aereo_id: '',
+    data_partenza: '',
+    data_arrivo: '',
+    ora_partenza: '',
+    ora_arrivo: '',
+    prezzo_base: '',
+    stato: 'Scheduled'
   });
 
   // Protective Redirect
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isLoggedIn || userRole !== 'admin') {
       navigate('/login');
     }
   }, [isLoggedIn, userRole, navigate]);
 
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const headers = { 'Authorization': `Bearer ${token}` };
+
+      // Fetch Stats from Analytics table
+      const statsRes = await fetch('/api/admin/analytics', { headers });
+      if (statsRes.ok) {
+        const statsData = await statsRes.json();
+        setStats(statsData.filter((s: any) => s.categoria === 'stats'));
+      }
+
+      // Fetch Flights
+      const flightsRes = await fetch('/api/voli', { headers });
+      if (flightsRes.ok) {
+        const flightsData = await flightsRes.json();
+        setFlights(flightsData);
+      }
+
+      // Mock popular routes for now as they are complex to calculate
+      setPopularRoutes([
+        { route: 'Rome → London', revenue: '€850k', change: '+12%' },
+        { route: 'Milan → Paris', revenue: '€750k', change: '+8%' },
+        { route: 'Rome → New York', revenue: '€650k', change: '+15%' },
+        { route: 'Paris → Rome', revenue: '€550k', change: '+5%' },
+      ]);
+
+    } catch (err) {
+      console.error("Error fetching admin data:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isLoggedIn && userRole === 'admin') {
+      fetchData();
+    }
+  }, [isLoggedIn, userRole]);
+
   const handleLogout = () => {
     setSearch('isLoggedIn', false);
     setSearch('userRole', null);
+    localStorage.removeItem('token');
     navigate('/book');
   };
 
-  const handleRemoveFlight = (id: number) => {
-    setFlights(flights.filter(f => f.id !== id));
+  const handleRemoveFlight = async (id: number) => {
+    if (!window.confirm("Are you sure you want to delete this flight?")) return;
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`/api/voli/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setFlights(flights.filter(f => f.id !== id));
+      }
+    } catch (err) {
+      console.error("Error deleting flight:", err);
+    }
   };
 
   const handleOpenAddModal = () => {
     setEditingFlight(null);
-    setFlightForm({ flight: 'FP ' + Math.floor(100 + Math.random() * 900), from: '', to: '', status: 'Scheduled', time: '' });
+    setFlightForm({
+      aeroporto_partenza_id: '',
+      aeroporto_arrivo_id: '',
+      aereo_id: '',
+      data_partenza: '',
+      data_arrivo: '',
+      ora_partenza: '',
+      ora_arrivo: '',
+      prezzo_base: '',
+      stato: 'Scheduled'
+    });
     setIsModalOpen(true);
   };
 
   const handleOpenEditModal = (flight: any) => {
     setEditingFlight(flight);
-    setFlightForm({ ...flight });
+    setFlightForm({
+      aeroporto_partenza_id: flight.aeroporto_partenza_id,
+      aeroporto_arrivo_id: flight.aeroporto_arrivo_id,
+      aereo_id: flight.aereo_id,
+      data_partenza: flight.data_partenza.split('T')[0],
+      data_arrivo: flight.data_arrivo.split('T')[0],
+      ora_partenza: flight.ora_partenza,
+      ora_arrivo: flight.ora_arrivo,
+      prezzo_base: flight.prezzo_base,
+      stato: flight.stato
+    });
     setIsModalOpen(true);
   };
 
-  const handleSaveFlight = (e: React.FormEvent) => {
+  const handleSaveFlight = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingFlight) {
-      setFlights(flights.map(f => f.id === editingFlight.id ? { ...f, ...flightForm } : f));
-    } else {
-      const newFlight = {
-        ...flightForm,
-        id: Date.now(),
-        load: '0%',
-        revenue: '€0'
-      };
-      setFlights([newFlight, ...flights]);
-    }
-    setIsModalOpen(false);
-  };
+    try {
+      const token = localStorage.getItem('token');
+      const method = editingFlight ? 'PATCH' : 'POST';
+      const url = editingFlight ? `/api/voli/${editingFlight.id}` : '/api/voli';
+      
+      const res = await fetch(url, {
+        method,
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ...flightForm,
+          aeroporto_partenza_id: parseInt(flightForm.aeroporto_partenza_id),
+          aeroporto_arrivo_id: parseInt(flightForm.aeroporto_arrivo_id),
+          aereo_id: parseInt(flightForm.aereo_id),
+          prezzo_base: parseFloat(flightForm.prezzo_base)
+        })
+      });
 
-  const stats = [
-    { label: t('adminPage.totalRevenue'), value: '€4.2M', change: '+12.5%', icon: BarChart3, color: 'text-green-600', bg: 'bg-green-50' },
-    { label: t('adminPage.activeBookings'), value: '1,284', change: '+8.2%', icon: Plane, color: 'text-blue-600', bg: 'bg-blue-50' },
-    { label: t('adminPage.totalPassengers'), value: '12.5k', change: '-2.4%', icon: Users, color: 'text-purple-600', bg: 'bg-purple-50' },
-    { label: t('adminPage.loadFactor'), value: '88%', change: '+4.1%', icon: TrendingUp, color: 'text-accent', bg: 'bg-accent/10' },
-  ];
+      if (res.ok) {
+        setIsModalOpen(false);
+        fetchData();
+      } else {
+        const err = await res.json();
+        alert("Error: " + (err.message || "Failed to save flight"));
+      }
+    } catch (err) {
+      console.error("Error saving flight:", err);
+    }
+  };
 
   if (!isLoggedIn || userRole !== 'admin') return null;
 
@@ -112,7 +199,7 @@ const Admin: React.FC = () => {
              />
              <motion.div 
                initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-               className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden border border-gray-100 p-10"
+               className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden border border-gray-100 p-10 max-h-[90vh] overflow-y-auto"
              >
                 <h2 className="text-2xl font-black text-primary uppercase tracking-tight mb-8">
                   {editingFlight ? 'Edit Flight' : 'Add New Flight'}
@@ -120,28 +207,51 @@ const Admin: React.FC = () => {
                 <form onSubmit={handleSaveFlight} className="space-y-6">
                    <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Flight Number</label>
-                        <input type="text" required value={flightForm.flight} onChange={e => setFlightForm({...flightForm, flight: e.target.value})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent" />
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Departure Airport (ID)</label>
+                        <input type="number" required value={flightForm.aeroporto_partenza_id} onChange={e => setFlightForm({...flightForm, aeroporto_partenza_id: e.target.value})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent" />
                       </div>
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Time</label>
-                        <input type="time" required value={flightForm.time} onChange={e => setFlightForm({...flightForm, time: e.target.value})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent" />
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Arrival Airport (ID)</label>
+                        <input type="number" required value={flightForm.aeroporto_arrivo_id} onChange={e => setFlightForm({...flightForm, aeroporto_arrivo_id: e.target.value})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent" />
                       </div>
                    </div>
                    <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-black uppercase text-gray-400 ml-2">From</label>
-                        <input type="text" required placeholder="e.g. FCO" value={flightForm.from} onChange={e => setFlightForm({...flightForm, from: e.target.value.toUpperCase()})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent" />
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Date (Departure)</label>
+                        <input type="date" required value={flightForm.data_partenza} onChange={e => setFlightForm({...flightForm, data_partenza: e.target.value})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent" />
                       </div>
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-black uppercase text-gray-400 ml-2">To</label>
-                        <input type="text" required placeholder="e.g. JFK" value={flightForm.to} onChange={e => setFlightForm({...flightForm, to: e.target.value.toUpperCase()})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent" />
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Time (Departure)</label>
+                        <input type="time" required value={flightForm.ora_partenza} onChange={e => setFlightForm({...flightForm, ora_partenza: e.target.value})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent" />
+                      </div>
+                   </div>
+                   <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Date (Arrival)</label>
+                        <input type="date" required value={flightForm.data_arrivo} onChange={e => setFlightForm({...flightForm, data_arrivo: e.target.value})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent" />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Time (Arrival)</label>
+                        <input type="time" required value={flightForm.ora_arrivo} onChange={e => setFlightForm({...flightForm, ora_arrivo: e.target.value})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent" />
+                      </div>
+                   </div>
+                   <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Airplane (ID)</label>
+                        <input type="number" required value={flightForm.aereo_id} onChange={e => setFlightForm({...flightForm, aereo_id: e.target.value})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent" />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Base Price (€)</label>
+                        <input type="number" step="0.01" required value={flightForm.prezzo_base} onChange={e => setFlightForm({...flightForm, prezzo_base: e.target.value})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent" />
                       </div>
                    </div>
                    <div className="space-y-1.5">
                       <label className="text-[10px] font-black uppercase text-gray-400 ml-2">Status</label>
-                      <select value={flightForm.status} onChange={e => setFlightForm({...flightForm, status: e.target.value})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent appearance-none">
-                         <option>On Time</option><option>Delayed</option><option>Scheduled</option><option>Departed</option>
+                      <select value={flightForm.stato} onChange={e => setFlightForm({...flightForm, stato: e.target.value})} className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent appearance-none">
+                         <option value="On Time">On Time</option>
+                         <option value="Delayed">Delayed</option>
+                         <option value="Scheduled">Scheduled</option>
+                         <option value="Departed">Departed</option>
                       </select>
                    </div>
                    <div className="pt-4 flex gap-4">
@@ -183,27 +293,32 @@ const Admin: React.FC = () => {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {stats.map((stat, i) => (
-            <motion.div 
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm"
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div className={`w-12 h-12 ${stat.bg} ${stat.color} rounded-2xl flex items-center justify-center`}>
-                  <stat.icon size={24} />
+          {stats.map((stat, i) => {
+            const IconComponent = stat.icona === 'BarChart3' ? BarChart3 : 
+                                stat.icona === 'Plane' ? Plane :
+                                stat.icona === 'Users' ? Users : TrendingUp;
+            return (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <div className={`w-12 h-12 ${stat.bg_colore} ${stat.colore} rounded-2xl flex items-center justify-center`}>
+                    <IconComponent size={24} />
+                  </div>
+                  <div className={`flex items-center gap-1 text-[10px] font-black ${stat.variazione.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>
+                    {stat.variazione.startsWith('+') ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+                    {stat.variazione}
+                  </div>
                 </div>
-                <div className={`flex items-center gap-1 text-[10px] font-black ${stat.change.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>
-                  {stat.change.startsWith('+') ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-                  {stat.change}
-                </div>
-              </div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">{stat.label}</p>
-              <h3 className="text-3xl font-bold text-primary">{stat.value}</h3>
-            </motion.div>
-          ))}
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">{stat.label}</p>
+                <h3 className="text-3xl font-bold text-primary">{stat.valore}</h3>
+              </motion.div>
+            );
+          })}
         </div>
 
         {/* Main Content Area */}
@@ -255,11 +370,11 @@ const Admin: React.FC = () => {
                   <div>
                     <div className="flex justify-between items-center mb-4"><h4 className="text-lg font-bold text-primary">{t('adminPage.popularRoutes')}</h4><MoreVertical size={18} className="text-gray-300 cursor-pointer" /></div>
                     <div className="space-y-4">
-                      {['Rome → London', 'Milan → Paris', 'Rome → New York', 'Paris → Rome'].map((route, i) => (
+                      {popularRoutes.map((item, i) => (
                         <div key={i} className="flex items-center gap-4 p-4 rounded-2xl border border-gray-50 hover:bg-gray-50 transition-colors group">
                           <div className="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary group-hover:bg-accent group-hover:text-primary transition-all"><Plane size={18} /></div>
-                          <div className="flex-1"><p className="text-sm font-bold text-primary">{route}</p><p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{t('adminPage.highDemand')}</p></div>
-                          <div className="text-right"><p className="text-sm font-bold text-primary">€{850 - (i*100)}k</p><p className="text-[10px] text-green-500 font-bold">+12%</p></div>
+                          <div className="flex-1"><p className="text-sm font-bold text-primary">{item.route}</p><p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{t('adminPage.highDemand')}</p></div>
+                          <div className="text-right"><p className="text-sm font-bold text-primary">{item.revenue}</p><p className="text-[10px] text-green-500 font-bold">{item.change}</p></div>
                         </div>
                       ))}
                     </div>
@@ -286,24 +401,28 @@ const Admin: React.FC = () => {
                     <tbody>
                       {flights.map((f) => (
                         <tr key={f.id} className="border-b border-gray-50 group hover:bg-gray-50/50 transition-colors">
-                          <td className="py-5 px-4"><span className="text-sm font-bold text-primary">{f.flight}</span></td>
-                          <td className="py-5 px-4 flex items-center gap-2"><span className="text-sm font-bold text-primary">{f.from}</span><Plane size={12} className="text-gray-300" /><span className="text-sm font-bold text-primary">{f.to}</span></td>
+                          <td className="py-5 px-4"><span className="text-sm font-bold text-primary">FP{f.id}</span></td>
+                          <td className="py-5 px-4 flex items-center gap-2">
+                            <span className="text-sm font-bold text-primary">{f.partenza_citta}</span>
+                            <Plane size={12} className="text-gray-300" />
+                            <span className="text-sm font-bold text-primary">{f.arrivo_citta}</span>
+                          </td>
                           <td className="py-5 px-4">
                             <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                              f.status === 'On Time' ? 'bg-green-50 text-green-600' : 
-                              f.status === 'Delayed' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'
+                              f.stato === 'On Time' ? 'bg-green-50 text-green-600' : 
+                              f.stato === 'Delayed' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'
                             }`}>
-                              {f.status === 'On Time' ? <CheckCircle2 size={12} /> : f.status === 'Delayed' ? <AlertCircle size={12} /> : <Clock size={12} />}
-                              {f.status}
+                              {f.stato === 'On Time' ? <CheckCircle2 size={12} /> : f.stato === 'Delayed' ? <AlertCircle size={12} /> : <Clock size={12} />}
+                              {f.stato}
                             </div>
                           </td>
                           <td className="py-5 px-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden"><div className="h-full bg-accent" style={{ width: f.load }} /></div>
-                              <span className="text-xs font-bold text-primary">{f.load}</span>
+                              <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden"><div className="h-full bg-accent" style={{ width: '85%' }} /></div>
+                              <span className="text-xs font-bold text-primary">85%</span>
                             </div>
                           </td>
-                          <td className="py-5 px-4"><span className="text-sm font-bold text-primary">{f.revenue}</span></td>
+                          <td className="py-5 px-4"><span className="text-sm font-bold text-primary">€{(f.prezzo_base * 150).toLocaleString()}</span></td>
                           <td className="py-5 px-4">
                             <div className="flex justify-end gap-2">
                               <button 

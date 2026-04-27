@@ -32,3 +32,5 @@ export const aereoInputSchema = z.object({
     modello: z.string().min(1),
     stato: z.boolean().optional()
 });
+
+export const flightNumberSchema = z.string().regex(/^(FP)?\d+$/i);

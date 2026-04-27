@@ -15,3 +15,12 @@ export async function getStatistiche(_req: Request, res: Response, next: NextFun
         next(error);
     }
 }
+
+export async function getAnalytics(_req: Request, res: Response, next: NextFunction) {
+    try {
+        const result = await pool.query("SELECT * FROM analytics");
+        res.json(result.rows);
+    } catch (error) {
+        next(error);
+    }
+}
