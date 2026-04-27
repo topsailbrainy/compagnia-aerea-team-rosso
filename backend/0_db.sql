@@ -31,7 +31,20 @@ CREATE TABLE IF NOT EXISTS voli (
     data_arrivo DATE NOT NULL,
     ora_partenza TIME NOT NULL,
     ora_arrivo TIME NOT NULL,
-    prezzo_base DECIMAL(10, 2) NOT NULL
+    prezzo_base DECIMAL(10, 2) NOT NULL,
+    stato VARCHAR(50) NOT NULL DEFAULT 'Scheduled' -- 'On Time', 'Delayed', 'Scheduled', 'Departed'
+);
+
+-- Tabella Analytics (for Admin Panel)
+CREATE TABLE IF NOT EXISTS analytics (
+    id SERIAL PRIMARY KEY,
+    label VARCHAR(255) NOT NULL,
+    valore VARCHAR(255) NOT NULL,
+    variazione VARCHAR(50),
+    icona VARCHAR(50),
+    colore VARCHAR(50),
+    bg_colore VARCHAR(50),
+    categoria VARCHAR(50) -- 'stats', 'revenue_trend', etc.
 );
 
 -- Tabella Utenti
