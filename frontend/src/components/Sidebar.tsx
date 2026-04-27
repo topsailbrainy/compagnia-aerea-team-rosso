@@ -1,8 +1,23 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { Plane, Briefcase, CheckCircle2, Clock, MapPin, LayoutGrid, Info, Phone, Menu, X, ChevronRight, ChevronLeft, ShieldCheck, User } from 'lucide-react';
-import { useUIStore, useSearchStore } from '../store';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import { NavLink } from "react-router-dom";
+import {
+  Plane,
+  Briefcase,
+  CheckCircle2,
+  Clock,
+  MapPin,
+  LayoutGrid,
+  Info,
+  Phone,
+  Menu,
+  X,
+  ChevronRight,
+  ChevronLeft,
+  ShieldCheck,
+  User,
+} from "lucide-react";
+import { useUIStore, useSearchStore } from "../store";
+import { useTranslation } from "react-i18next";
 
 const Sidebar: React.FC = () => {
   const { t } = useTranslation();
@@ -10,89 +25,145 @@ const Sidebar: React.FC = () => {
   const { userRole, isLoggedIn } = useSearchStore();
 
   const navItems = [
-    { id: 'book', label: t('sidebar.book'), icon: Plane, path: '/book' },
-    { id: 'manage', label: t('sidebar.manage'), icon: Briefcase, path: '/manage' },
-    { id: 'check-in', label: t('sidebar.checkin'), icon: CheckCircle2, path: '/check-in' },
-    { id: 'flight-status', label: t('sidebar.status'), icon: Clock, path: '/flight-status' },
+    { id: "book", label: t("sidebar.book"), icon: Plane, path: "/" },
+    {
+      id: "manage",
+      label: t("sidebar.manage"),
+      icon: Briefcase,
+      path: "/manage",
+    },
+    {
+      id: "check-in",
+      label: t("sidebar.checkin"),
+      icon: CheckCircle2,
+      path: "/check-in",
+    },
+    {
+      id: "flight-status",
+      label: t("sidebar.status"),
+      icon: Clock,
+      path: "/flight-status",
+    },
   ];
 
   const secondaryItems = [
-    { id: 'destinations', label: t('sidebar.destinations'), icon: MapPin, path: '/destinations' },
-    { id: 'fleet', label: t('sidebar.fleet'), icon: LayoutGrid, path: '/fleet' },
-    { id: 'about', label: t('sidebar.about'), icon: Info, path: '/about' },
-    { id: 'contact', label: t('sidebar.contact'), icon: Phone, path: '/contact' },
+    {
+      id: "destinations",
+      label: t("sidebar.destinations"),
+      icon: MapPin,
+      path: "/destinations",
+    },
+    {
+      id: "fleet",
+      label: t("sidebar.fleet"),
+      icon: LayoutGrid,
+      path: "/fleet",
+    },
+    { id: "about", label: t("sidebar.about"), icon: Info, path: "/about" },
+    {
+      id: "contact",
+      label: t("sidebar.contact"),
+      icon: Phone,
+      path: "/contact",
+    },
   ];
 
   return (
     <>
       {/* Mobile Toggle Button */}
-      <button 
+      <button
         className="fixed top-4 left-4 z-[160] p-2 bg-primary text-accent rounded-md lg:hidden"
         onClick={() => setSidebarOpen(!isSidebarOpen)}
       >
         {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
-      <div 
+      <div
         className={`fixed top-0 left-0 h-screen transition-all duration-300 z-[150] bg-primary border-r border-white/10
-          ${isSidebarOpen ? 'w-56' : 'w-0 -translate-x-full lg:w-20 lg:translate-x-0'}`}
+          ${isSidebarOpen ? "w-56" : "w-0 -translate-x-full lg:w-20 lg:translate-x-0"}`}
       >
         {/* Desktop Sidebar Toggle Handle */}
-        <button 
+        <button
           onClick={() => setSidebarOpen(!isSidebarOpen)}
           className="hidden lg:flex absolute top-12 -right-4 w-8 h-8 items-center justify-center bg-accent text-primary rounded-full shadow-xl z-[160] transition-all hover:bg-white hover:scale-110 active:scale-95 border-4 border-primary"
         >
-          {isSidebarOpen ? <ChevronLeft size={16} strokeWidth={3} /> : <ChevronRight size={16} strokeWidth={3} />}
+          {isSidebarOpen ? (
+            <ChevronLeft size={16} strokeWidth={3} />
+          ) : (
+            <ChevronRight size={16} strokeWidth={3} />
+          )}
         </button>
 
         <div className="flex flex-col h-full overflow-y-auto no-scrollbar relative">
           {/* Logo Section */}
-          <div className={`sidebar-brand mt-8 ${isSidebarOpen ? 'mb-12' : 'mb-16'} flex flex-col items-center transition-all`}>
-            <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-20 h-20' : 'w-10 h-10'} mb-2`}>
-              <img src="/logo.png" alt={t('sidebar.logoAlt')} className="w-full h-full object-contain" />
+          <div
+            className={`sidebar-brand mt-8 ${isSidebarOpen ? "mb-12" : "mb-16"} flex flex-col items-center transition-all`}
+          >
+            <div
+              className={`transition-all duration-300 ${isSidebarOpen ? "w-20 h-20" : "w-10 h-10"} mb-2`}
+            >
+              <img
+                src="/logo.png"
+                alt={t("sidebar.logoAlt")}
+                className="w-full h-full object-contain"
+              />
             </div>
             {isSidebarOpen && (
               <div className="text-center px-4 animate-in fade-in duration-500">
-                <h1 className="text-2xl font-bold tracking-tighter text-white m-0 uppercase">Fly<span className="text-accent">Plus</span></h1>
-                <p className="text-[10px] uppercase tracking-[0.3em] text-accent/80 -mt-1 font-semibold">{t('sidebar.excellence')}</p>
+                <h1 className="text-2xl font-bold tracking-tighter text-white m-0 uppercase">
+                  Fly<span className="text-accent">Plus</span>
+                </h1>
+                <p className="text-[10px] uppercase tracking-[0.3em] text-accent/80 -mt-1 font-semibold">
+                  {t("sidebar.excellence")}
+                </p>
               </div>
             )}
           </div>
 
           {/* Primary Navigation */}
           <nav className="flex-1 space-y-1">
-            {isLoggedIn && userRole === 'admin' && (
+            {isLoggedIn && userRole === "admin" && (
               <div className="mb-6">
                 <div className="px-4 mb-2 text-[10px] font-bold text-accent uppercase tracking-widest h-4">
-                  {isSidebarOpen ? t('sidebar.admin') : ''}
+                  {isSidebarOpen ? t("sidebar.admin") : ""}
                 </div>
                 <NavLink
                   to="/admin"
-                  className={({ isActive }) => 
-                    `w-full nav-link group ${isActive ? 'active' : ''}`
+                  className={({ isActive }) =>
+                    `w-full nav-link group ${isActive ? "active" : ""}`
                   }
                 >
-                  <ShieldCheck size={22} className={isSidebarOpen ? 'mr-4' : 'mx-auto text-accent'} />
+                  <ShieldCheck
+                    size={22}
+                    className={isSidebarOpen ? "mr-4" : "mx-auto text-accent"}
+                  />
                   {isSidebarOpen && (
-                    <span className="flex-1 text-left font-bold text-accent">{t('sidebar.ceoPortal')}</span>
+                    <span className="flex-1 text-left font-bold text-accent">
+                      {t("sidebar.ceoPortal")}
+                    </span>
                   )}
                 </NavLink>
               </div>
             )}
 
             <div className="px-4 mb-2 text-[10px] font-bold text-white/30 uppercase tracking-widest h-4">
-              {isSidebarOpen ? t('sidebar.services') : ''}
+              {isSidebarOpen ? t("sidebar.services") : ""}
             </div>
-            {isLoggedIn && userRole !== 'admin' && (
+            {isLoggedIn && userRole !== "admin" && (
               <NavLink
                 to="/user"
-                className={({ isActive }) => 
-                  `w-full nav-link group ${isActive ? 'active' : ''}`
+                className={({ isActive }) =>
+                  `w-full nav-link group ${isActive ? "active" : ""}`
                 }
               >
-                <User size={22} className={isSidebarOpen ? 'mr-4' : 'mx-auto text-accent'} />
+                <User
+                  size={22}
+                  className={isSidebarOpen ? "mr-4" : "mx-auto text-accent"}
+                />
                 {isSidebarOpen && (
-                  <span className="flex-1 text-left font-bold text-accent">{t('userPage.title')}</span>
+                  <span className="flex-1 text-left font-bold text-accent">
+                    {t("userPage.title")}
+                  </span>
                 )}
               </NavLink>
             )}
@@ -100,39 +171,51 @@ const Sidebar: React.FC = () => {
               <NavLink
                 key={item.id}
                 to={item.path}
-                className={({ isActive }) => 
-                  `w-full nav-link group ${isActive ? 'active' : ''}`
+                className={({ isActive }) =>
+                  `w-full nav-link group ${isActive ? "active" : ""}`
                 }
               >
-                <item.icon size={22} className={isSidebarOpen ? 'mr-4' : 'mx-auto'} />
+                <item.icon
+                  size={22}
+                  className={isSidebarOpen ? "mr-4" : "mx-auto"}
+                />
                 {isSidebarOpen && (
                   <>
-                    <span className="flex-1 text-left font-medium">{item.label}</span>
-                    <ChevronRight size={16} className="text-accent opacity-0 group-[.active]:opacity-100 transition-opacity" />
+                    <span className="flex-1 text-left font-medium">
+                      {item.label}
+                    </span>
+                    <ChevronRight
+                      size={16}
+                      className="text-accent opacity-0 group-[.active]:opacity-100 transition-opacity"
+                    />
                   </>
                 )}
               </NavLink>
             ))}
 
             <div className="pt-6 pb-2 px-4 text-[10px] font-bold text-white/30 uppercase tracking-widest h-4">
-              {isSidebarOpen ? t('sidebar.explore') : ''}
+              {isSidebarOpen ? t("sidebar.explore") : ""}
             </div>
             {secondaryItems.map((item) => (
               <NavLink
                 key={item.id}
                 to={item.path}
-                className={({ isActive }) => 
-                  `w-full nav-link group ${isActive ? 'active' : ''}`
+                className={({ isActive }) =>
+                  `w-full nav-link group ${isActive ? "active" : ""}`
                 }
               >
-                <item.icon size={20} className={isSidebarOpen ? 'mr-4' : 'mx-auto opacity-70'} />
+                <item.icon
+                  size={20}
+                  className={isSidebarOpen ? "mr-4" : "mx-auto opacity-70"}
+                />
                 {isSidebarOpen && (
-                  <span className="flex-1 text-left font-medium text-sm">{item.label}</span>
+                  <span className="flex-1 text-left font-medium text-sm">
+                    {item.label}
+                  </span>
                 )}
               </NavLink>
             ))}
           </nav>
-
         </div>
       </div>
     </>
