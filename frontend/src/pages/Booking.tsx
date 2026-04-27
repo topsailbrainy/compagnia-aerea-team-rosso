@@ -425,11 +425,21 @@ const Booking: React.FC = () => {
                   </span>
                   {t("bookingPage.selectReturn")}
                 </h3>
-                {returnFlight && (
-                  <span className="text-xs font-bold text-green-500 uppercase tracking-widest flex items-center gap-1">
-                    <Check size={14} /> {t("bookingPage.selected")}
-                  </span>
-                )}
+                <div className="flex flex-col items-end">
+                   <p className="text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-1">Step 2 of 2</p>
+                   {returnFlight && (
+                    <span className="text-xs font-bold text-green-500 uppercase tracking-widest flex items-center gap-1">
+                      <Check size={14} /> {t("bookingPage.selected")}
+                    </span>
+                   )}
+                </div>
+              </div>
+
+              <div className="bg-accent/5 border border-accent/10 rounded-2xl p-6 mb-4">
+                <p className="text-accent font-black text-xs uppercase tracking-widest mb-1">Return Flight Search Active</p>
+                <p className="text-primary/60 text-[11px] font-medium leading-relaxed">
+                  Please select your preferred flight and cabin for the return journey from {to} to {from}.
+                </p>
               </div>
 
               <div className="space-y-4">
@@ -450,89 +460,94 @@ const Booking: React.FC = () => {
           )}
         </div>
 
-        <div className="space-y-6">
-          <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm sticky top-24">
-            <h4 className="text-lg font-bold text-primary mb-6">
-              {t("bookingPage.yourSelection")}
-            </h4>
-            <div className="space-y-6">
-              {outboundFlight && (
-                <div className="animate-in fade-in slide-in-from-top-2">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">
-                        {t("bookingPage.outbound")}
-                      </p>
-                      <p className="font-bold text-primary text-sm">
-                        {outboundFlight.from} → {outboundFlight.to}
-                      </p>
+        <div className="lg:col-span-1">
+          <div className="sticky top-28 space-y-6 self-start">
+            <motion.div 
+              layout
+              className="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm overflow-hidden"
+            >
+              <h4 className="text-lg font-black text-primary mb-6 uppercase tracking-widest">
+                {t("bookingPage.yourSelection")}
+              </h4>
+              <div className="space-y-6">
+                {outboundFlight && (
+                  <div className="animate-in fade-in slide-in-from-top-2">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">
+                          {t("bookingPage.outbound")}
+                        </p>
+                        <p className="font-bold text-primary text-sm">
+                          {outboundFlight.from} → {outboundFlight.to}
+                        </p>
+                      </div>
+                      <p className="font-bold text-primary">€{outboundPrice}</p>
                     </div>
-                    <p className="font-bold text-primary">€{outboundPrice}</p>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg px-3 py-1 inline-block">
-                    <span className="text-[9px] font-bold text-primary/60 uppercase tracking-wider">
-                      {outboundCabin}
-                    </span>
-                  </div>
-                </div>
-              )}
-              {returnFlight && (
-                <div className="animate-in fade-in slide-in-from-top-2 pt-4 border-t border-gray-50">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">
-                        {t("bookingPage.return")}
-                      </p>
-                      <p className="font-bold text-primary text-sm">
-                        {returnFlight.from} → {returnFlight.to}
-                      </p>
+                    <div className="bg-gray-50 rounded-lg px-3 py-1 inline-block">
+                      <span className="text-[9px] font-bold text-primary/60 uppercase tracking-wider">
+                        {outboundCabin}
+                      </span>
                     </div>
-                    <p className="font-bold text-primary">€{returnPrice}</p>
                   </div>
-                  <div className="bg-gray-50 rounded-lg px-3 py-1 inline-block">
-                    <span className="text-[9px] font-bold text-primary/60 uppercase tracking-wider">
-                      {returnCabin}
-                    </span>
+                )}
+                {returnFlight && (
+                  <div className="animate-in fade-in slide-in-from-top-2 pt-4 border-t border-gray-50">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">
+                          {t("bookingPage.return")}
+                        </p>
+                        <p className="font-bold text-primary text-sm">
+                          {returnFlight.from} → {returnFlight.to}
+                        </p>
+                      </div>
+                      <p className="font-bold text-primary">€{returnPrice}</p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg px-3 py-1 inline-block">
+                      <span className="text-[9px] font-bold text-primary/60 uppercase tracking-wider">
+                        {returnCabin}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              )}
-              {outboundFlight && (tripType === "oneway" || returnFlight) ? (
-                <div className="pt-6 border-t border-gray-100">
-                  <div className="flex justify-between items-center mb-6">
-                    <span className="text-gray-500 font-medium">
-                      {t("bookingPage.totalPrice")}
-                    </span>
-                    <span className="text-3xl font-bold text-primary">
-                      €{totalBasePrice}
-                    </span>
+                )}
+                {outboundFlight && (tripType === "oneway" || returnFlight) ? (
+                  <div className="pt-6 border-t border-gray-100">
+                    <div className="flex justify-between items-center mb-6">
+                      <span className="text-gray-500 font-medium">
+                        {t("bookingPage.totalPrice")}
+                      </span>
+                      <span className="text-3xl font-bold text-primary">
+                        €{totalBasePrice}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => navigate("/passenger")}
+                      className="w-full bg-accent text-primary font-black text-[10px] uppercase tracking-[0.2em] py-5 rounded-2xl hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-3"
+                    >
+                      {t("bookingPage.continuePassenger")}{" "}
+                      <ArrowRight size={16} />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => navigate("/passenger")}
-                    className="w-full bg-accent text-primary font-black text-[10px] uppercase tracking-[0.2em] py-5 rounded-2xl hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-3"
-                  >
-                    {t("bookingPage.continuePassenger")}{" "}
-                    <ArrowRight size={16} />
-                  </button>
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <Info size={32} className="text-gray-200 mx-auto mb-4" />
-                  <p className="text-gray-400 text-sm">
-                    {outboundFlight && tripType === "return"
-                      ? t("bookingPage.selectReturnToContinue")
-                      : t("bookingPage.selectOutboundToContinue")}
-                  </p>
-                </div>
-              )}
+                ) : (
+                  <div className="text-center py-12">
+                    <Info size={32} className="text-gray-200 mx-auto mb-4" />
+                    <p className="text-gray-400 text-sm">
+                      {outboundFlight && tripType === "return"
+                        ? t("bookingPage.selectReturnToContinue")
+                        : t("bookingPage.selectOutboundToContinue")}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+            <div className="bg-accent/10 rounded-3xl p-6 border border-accent/20">
+              <h5 className="font-bold text-primary mb-2">
+                {t("bookingPage.premiumTitle")}
+              </h5>
+              <p className="text-xs text-primary/60 leading-relaxed">
+                {t("bookingPage.premiumDesc")}
+              </p>
             </div>
-          </div>
-          <div className="bg-accent/10 rounded-3xl p-6 border border-accent/20">
-            <h5 className="font-bold text-primary mb-2">
-              {t("bookingPage.premiumTitle")}
-            </h5>
-            <p className="text-xs text-primary/60 leading-relaxed">
-              {t("bookingPage.premiumDesc")}
-            </p>
           </div>
         </div>
       </div>

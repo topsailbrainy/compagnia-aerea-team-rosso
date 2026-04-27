@@ -405,8 +405,11 @@ const Passenger: React.FC = () => {
           </div>
 
           <div className="lg:col-span-1">
-            <div className="sticky top-24 space-y-6">
-              <div className="bg-primary rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden">
+            <div className="sticky top-28 space-y-6 self-start">
+              <motion.div 
+                layout
+                className="bg-primary rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden"
+              >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full -mr-16 -mt-16 blur-2xl" />
                 <h3 className="text-lg font-bold mb-6 relative z-10">{t('passengerPage.bookingSummary')}</h3>
                 <div className="space-y-6 relative z-10">
@@ -451,7 +454,7 @@ const Passenger: React.FC = () => {
                     <div className="flex justify-between items-center"><span className="text-accent font-black uppercase text-[10px] tracking-widest">{t('common.total')}</span><span className="text-3xl font-bold text-white">€{totalPrice.toFixed(2)}</span></div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>

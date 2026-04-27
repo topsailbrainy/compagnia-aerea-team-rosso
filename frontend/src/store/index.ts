@@ -58,6 +58,7 @@ interface SearchState {
   isFlyPlusGuest: boolean;
   bookings: BookedFlight[];
   selectedSeats: string[];
+  selectedReturnSeats: string[];
   baggageCosts: Record<number, number>;
   assistanceCosts: Record<number, number>;
   passengerDetails: any[];
@@ -97,6 +98,7 @@ export const useSearchStore = create<SearchState>((set) => ({
   isFlyPlusGuest: false,
   bookings: [],
   selectedSeats: [],
+  selectedReturnSeats: [],
   baggageCosts: {},
   assistanceCosts: {},
   passengerDetails: [],

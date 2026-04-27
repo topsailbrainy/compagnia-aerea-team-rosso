@@ -24,10 +24,10 @@ const Payment: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // Detect if this is a membership purchase
   const queryParams = new URLSearchParams(location.search);
-  const isMembershipPurchase = queryParams.get('type') === 'membership';
+  const isMembershipPurchase = queryParams.get("type") === "membership";
 
   const {
     to,
@@ -43,10 +43,11 @@ const Payment: React.FC = () => {
     baggageCosts,
     assistanceCosts,
     selectedSeats = [],
+    selectedReturnSeats = [],
     isFlyPlusGuest,
     userId,
     passengerDetails,
-    setSearch
+    setSearch,
   } = useSearchStore();
 
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
@@ -55,33 +56,41 @@ const Payment: React.FC = () => {
   const [processingStep, setProcessingStep] = useState(0);
   const [bookingRef] = useState(() => `FP-${Math.floor(Date.now() / 1000)}`);
 
-  const totalBaggageCost = Object.values(baggageCosts || {}).reduce((acc, curr) => acc + (curr || 0), 0);
-  const totalAssistanceCost = Object.values(assistanceCosts || {}).reduce((acc, curr) => acc + (curr || 0), 0);
+  const totalBaggageCost = Object.values(baggageCosts || {}).reduce(
+    (acc, curr) => acc + (curr || 0),
+    0,
+  );
+  const totalAssistanceCost = Object.values(assistanceCosts || {}).reduce(
+    (acc, curr) => acc + (curr || 0),
+    0,
+  );
 
   const taxesPerFlight = 34.2;
   const flightsCount = tripType === "return" ? 2 : 1;
   const totalTaxes = taxesPerFlight * flightsCount * (passengerCount || 1);
   const totalBasePrice = (outboundPrice + returnPrice) * (passengerCount || 1);
-  
+
   // Final calculation based on purchase type
   const membershipFee = 49.99;
-  const totalPrice = isMembershipPurchase 
-    ? membershipFee 
-    : (totalBasePrice + totalTaxes + totalBaggageCost + totalAssistanceCost);
+  const totalPrice = isMembershipPurchase
+    ? membershipFee
+    : totalBasePrice + totalTaxes + totalBaggageCost + totalAssistanceCost;
 
-  const steps = isMembershipPurchase ? [
-    "FlyPlus: Opening Priority Gates...",
-    "Validating Excellence Status...",
-    "Activating Lounge Credentials...",
-    "Securing Premium Benefits...",
-    "Finalizing Membership Elite...",
-  ] : [
-    "FlyPlus: Fueling the transaction...",
-    "Clearing weather for payment...",
-    "Requesting clearance from Tower...",
-    "FlyPlus: Preparing for takeoff...",
-    "Lining up on the runway...",
-  ];
+  const steps = isMembershipPurchase
+    ? [
+        "FlyPlus: Opening Priority Gates...",
+        "Validating Excellence Status...",
+        "Activating Lounge Credentials...",
+        "Securing Premium Benefits...",
+        "Finalizing Membership Elite...",
+      ]
+    : [
+        "FlyPlus: Fueling the transaction...",
+        "Clearing weather for payment...",
+        "Requesting clearance from Tower...",
+        "FlyPlus: Preparing for takeoff...",
+        "Lining up on the runway...",
+      ];
 
   const [formData, setFormData] = useState({
     cardholder: "",
@@ -89,13 +98,13 @@ const Payment: React.FC = () => {
     expiry: "",
     cvv: "",
     paypalEmail: "",
-    appleEmail: ""
+    appleEmail: "",
   });
   const [errors, setErrors] = useState({
     cardNumber: "",
     expiry: "",
     cvv: "",
-    paypalEmail: ""
+    paypalEmail: "",
   });
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,16 +128,19 @@ const Payment: React.FC = () => {
       value = value.substring(0, 2) + "/" + value.substring(2, 4);
     }
     setFormData({ ...formData, expiry: value.substring(0, 5) });
-    
+
     if (value.length === 5) {
       const [month, year] = value.split("/").map(Number);
       const now = new Date();
       const currentYear = now.getFullYear() % 100;
       const currentMonth = now.getMonth() + 1;
-      
+
       if (month < 1 || month > 12) {
         setErrors({ ...errors, expiry: "Invalid month" });
-      } else if (year < currentYear || (year === currentYear && month < currentMonth)) {
+      } else if (
+        year < currentYear ||
+        (year === currentYear && month < currentMonth)
+      ) {
         setErrors({ ...errors, expiry: "Card expired" });
       } else {
         setErrors({ ...errors, expiry: "" });
@@ -150,17 +162,20 @@ const Payment: React.FC = () => {
 
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validation based on method
-    if (paymentMethod === 'card') {
-      if (formData.cardNumber.replace(/\s/g, "").length < 16 || 
-          errors.expiry || formData.expiry.length < 5 ||
-          formData.cvv.length < 3) {
+    if (paymentMethod === "card") {
+      if (
+        formData.cardNumber.replace(/\s/g, "").length < 16 ||
+        errors.expiry ||
+        formData.expiry.length < 5 ||
+        formData.cvv.length < 3
+      ) {
         return;
       }
-    } else if (paymentMethod === 'paypal') {
-      if (!formData.paypalEmail.includes('@')) {
-        setErrors({...errors, paypalEmail: 'Enter a valid PayPal email'});
+    } else if (paymentMethod === "paypal") {
+      if (!formData.paypalEmail.includes("@")) {
+        setErrors({ ...errors, paypalEmail: "Enter a valid PayPal email" });
         return;
       }
     }
@@ -168,67 +183,68 @@ const Payment: React.FC = () => {
     setIsProcessing(true);
     setProcessingStep(0);
 
-    const mappedPassengers = passengerDetails.map(p => ({
+    const mappedPassengers = passengerDetails.map((p) => ({
       nome: p.firstName,
       cognome: p.lastName,
-      data_nascita: `${p.dobYear}-${String(p.dobMonth).padStart(2, '0')}-${String(p.dobDay).padStart(2, '0')}`,
-      nazionalita: p.nationality
+      data_nascita: `${p.dobYear}-${String(p.dobMonth).padStart(2, "0")}-${String(p.dobDay).padStart(2, "0")}`,
+      nazionalita: p.nationality,
     }));
 
     try {
       if (!isMembershipPurchase && outboundFlight) {
         // Create outbound booking
-        const outRes = await fetch('/api/prenotazioni', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const outRes = await fetch("/api/prenotazioni", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             utente_id: userId || 1, // Fallback to 1 for demo if not logged in
             volo_id: outboundFlight.id,
             prezzo_finale: (outboundPrice + taxesPerFlight) * passengerCount,
-            posto: selectedSeats[0] || '12A',
+            posto: selectedSeats[0] || "12A",
             classe: outboundCabin,
-            tipo_bagaglio: baggageCosts[0] > 0 ? 'Da stiva 20kg' : 'Solo zaino',
-            passeggeri: mappedPassengers
-          })
+            tipo_bagaglio: baggageCosts[0] > 0 ? "Da stiva 20kg" : "Solo zaino",
+            passeggeri: mappedPassengers,
+          }),
         });
 
-        if (!outRes.ok) throw new Error('Failed to create outbound booking');
+        if (!outRes.ok) throw new Error("Failed to create outbound booking");
 
-        if (tripType === 'return' && returnFlight) {
+        if (tripType === "return" && returnFlight) {
           // Create return booking
-          const retRes = await fetch('/api/prenotazioni', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+          const retRes = await fetch("/api/prenotazioni", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               utente_id: userId || 1,
               volo_id: returnFlight.id,
               prezzo_finale: (returnPrice + taxesPerFlight) * passengerCount,
-              posto: selectedSeats[1] || '12B',
+              posto: selectedReturnSeats[0] || "12B",
               classe: returnCabin,
-              tipo_bagaglio: baggageCosts[0] > 0 ? 'Da stiva 20kg' : 'Solo zaino',
-              passeggeri: mappedPassengers
-            })
+              tipo_bagaglio:
+                baggageCosts[0] > 0 ? "Da stiva 20kg" : "Solo zaino",
+              passeggeri: mappedPassengers,
+            }),
           });
-          if (!retRes.ok) throw new Error('Failed to create return booking');
+          if (!retRes.ok) throw new Error("Failed to create return booking");
         }
       }
 
       // Simulate step progression for UX
       for (let i = 0; i < steps.length; i++) {
         setProcessingStep(i);
-        await new Promise(resolve => setTimeout(resolve, 800));
+        await new Promise((resolve) => setTimeout(resolve, 800));
       }
 
       setIsProcessing(false);
       setIsSuccess(true);
       if (isMembershipPurchase) {
-        setSearch('isFlyPlusGuest', true);
+        setSearch("isFlyPlusGuest", true);
       }
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
-      console.error('Payment/Booking failed:', error);
+      console.error("Payment/Booking failed:", error);
       setIsProcessing(false);
-      alert('An error occurred during booking. Please try again.');
+      alert("An error occurred during booking. Please try again.");
     }
   };
 
@@ -324,23 +340,23 @@ const Payment: React.FC = () => {
             <motion.div
               key={i}
               initial={{ opacity: 0, y: "100vh", x: "50vw", scale: 0 }}
-              animate={{ 
-                opacity: [0, 1, 0], 
-                y: "-10vh", 
+              animate={{
+                opacity: [0, 1, 0],
+                y: "-10vh",
                 x: `${(i * 37) % 100}vw`,
                 scale: [0, 1, 0.5],
-                rotate: [0, 360]
+                rotate: [0, 360],
               }}
-              transition={{ 
-                duration: 3, 
-                delay: 2 + (i * 0.2),
+              transition={{
+                duration: 3,
+                delay: 2 + i * 0.2,
                 ease: "easeOut",
                 repeat: Infinity,
-                repeatDelay: 5
+                repeatDelay: 5,
               }}
               className="absolute text-accent/30"
             >
-              <Star size={(i * 7) % 20 + 10} fill="currentColor" />
+              <Star size={((i * 7) % 20) + 10} fill="currentColor" />
             </motion.div>
           ))}
         </div>
@@ -358,23 +374,26 @@ const Payment: React.FC = () => {
           {/* Airplane Cinematic Path */}
           <motion.div
             initial={{ x: "-400%", y: 50, rotate: 0, scale: 0.4, opacity: 0 }}
-            animate={{ 
+            animate={{
               x: ["-200%", "0%", "400%"],
               y: [50, 0, -400],
               rotate: [0, -5, -45],
               scale: [0.6, 1.2, 2.5],
-              opacity: [0, 1, 0]
+              opacity: [0, 1, 0],
             }}
-            transition={{ 
-              duration: 4, 
+            transition={{
+              duration: 4,
               times: [0, 0.4, 1],
-              ease: "easeInOut" 
+              ease: "easeInOut",
             }}
             className="absolute z-20"
           >
             <div className="relative">
               {isMembershipPurchase ? (
-                <Star size={120} className="text-accent fill-accent drop-shadow-[0_20px_50px_rgba(205,164,52,0.4)]" />
+                <Star
+                  size={120}
+                  className="text-accent fill-accent drop-shadow-[0_20px_50px_rgba(205,164,52,0.4)]"
+                />
               ) : (
                 <Plane
                   size={120}
@@ -395,16 +414,21 @@ const Payment: React.FC = () => {
           <motion.div
             initial={{ scale: 0, opacity: 0, rotate: -180 }}
             animate={{ scale: 1, opacity: 1, rotate: 0 }}
-            transition={{ delay: 1.8, type: "spring", stiffness: 200, damping: 15 }}
+            transition={{
+              delay: 1.8,
+              type: "spring",
+              stiffness: 200,
+              damping: 15,
+            }}
             className="z-10"
           >
             <div className="w-40 h-40 bg-accent rounded-full flex items-center justify-center text-primary shadow-[0_20px_80px_rgba(205,164,52,0.4)] border-[12px] border-white relative">
-               <CheckCircle2 size={80} strokeWidth={2.5} />
-               <motion.div 
-                 animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
-                 transition={{ repeat: Infinity, duration: 2 }}
-                 className="absolute inset-0 rounded-full border-4 border-white/30"
-               />
+              <CheckCircle2 size={80} strokeWidth={2.5} />
+              <motion.div
+                animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+                className="absolute inset-0 rounded-full border-4 border-white/30"
+              />
             </div>
           </motion.div>
         </div>
@@ -415,22 +439,24 @@ const Payment: React.FC = () => {
           transition={{ delay: 2 }}
           className="relative z-10 w-full max-w-4xl"
         >
-          <motion.h1 
+          <motion.h1
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 2.2 }}
             className="text-6xl md:text-7xl font-black text-primary mb-2 uppercase tracking-tighter italic"
           >
-            {isMembershipPurchase ? 'ELITE STATUS ACTIVE' : 'FLYPLUS CONFIRMED'}
+            {isMembershipPurchase ? "ELITE STATUS ACTIVE" : "FLYPLUS CONFIRMED"}
           </motion.h1>
-          
-          <motion.p 
+
+          <motion.p
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 2.4 }}
             className="text-gray-500 max-w-md mx-auto mb-16 font-black uppercase tracking-[0.4em] text-xs"
           >
-            {isMembershipPurchase ? 'Welcome to the inner circle of excellence' : `Your premium journey to ${to || "the world"} is secured`}
+            {isMembershipPurchase
+              ? "Welcome to the inner circle of excellence"
+              : `Your premium journey to ${to || "the world"} is secured`}
           </motion.p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch mb-16">
@@ -445,30 +471,43 @@ const Payment: React.FC = () => {
               <div className="flex justify-between items-start mb-12">
                 <div className="space-y-1">
                   <p className="text-[10px] font-black text-accent/60 uppercase tracking-widest">
-                    {isMembershipPurchase ? 'Membership ID' : 'Booking Reference'}
+                    {isMembershipPurchase
+                      ? "Membership ID"
+                      : "Booking Reference"}
                   </p>
                   <p className="text-3xl font-black text-white tracking-widest">
-                    {isMembershipPurchase ? `FP-GUEST-${Math.floor(1000 + Math.random() * 9000)}` : bookingRef}
+                    {isMembershipPurchase
+                      ? `FP-GUEST-${Math.floor(1000 + Math.random() * 9000)}`
+                      : bookingRef}
                   </p>
                 </div>
                 <div className="bg-white/10 p-4 rounded-2xl backdrop-blur-md">
-                   {isMembershipPurchase ? <Award size={32} className="text-accent" /> : <Navigation size={32} className="text-accent rotate-45" />}
+                  {isMembershipPurchase ? (
+                    <Award size={32} className="text-accent" />
+                  ) : (
+                    <Navigation size={32} className="text-accent rotate-45" />
+                  )}
                 </div>
               </div>
 
               {isMembershipPurchase ? (
                 <div className="space-y-8">
                   <div>
-                    <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-3">Privileges Activated</p>
+                    <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-3">
+                      Privileges Activated
+                    </p>
                     <div className="space-y-4">
                       <div className="flex items-center gap-4 text-white font-bold">
-                        <ShieldCheck className="text-accent" size={20} /> Lounge Access Worldwide
+                        <ShieldCheck className="text-accent" size={20} /> Lounge
+                        Access Worldwide
                       </div>
                       <div className="flex items-center gap-4 text-white font-bold">
-                        <Award className="text-accent" size={20} /> Priority Boarding & Check-in
+                        <Award className="text-accent" size={20} /> Priority
+                        Boarding & Check-in
                       </div>
                       <div className="flex items-center gap-4 text-white font-bold">
-                        <Star className="text-accent" size={20} /> Exclusive Cabin Upgrades
+                        <Star className="text-accent" size={20} /> Exclusive
+                        Cabin Upgrades
                       </div>
                     </div>
                   </div>
@@ -476,14 +515,23 @@ const Payment: React.FC = () => {
               ) : (
                 <div className="space-y-8">
                   <div>
-                    <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-3">Flight Itinerary</p>
+                    <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-3">
+                      Flight Itinerary
+                    </p>
                     <div className="space-y-4">
                       <div className="flex items-center gap-6">
-                        <span className="text-4xl font-black text-white tracking-tighter">{outboundFlight?.from}</span>
+                        <span className="text-4xl font-black text-white tracking-tighter">
+                          {outboundFlight?.from}
+                        </span>
                         <div className="flex-1 h-[2px] bg-gradient-to-r from-accent/50 to-transparent relative">
-                          <Plane size={16} className="absolute right-0 top-1/2 -translate-y-1/2 text-accent" />
+                          <Plane
+                            size={16}
+                            className="absolute right-0 top-1/2 -translate-y-1/2 text-accent"
+                          />
                         </div>
-                        <span className="text-4xl font-black text-white tracking-tighter">{outboundFlight?.to}</span>
+                        <span className="text-4xl font-black text-white tracking-tighter">
+                          {outboundFlight?.to}
+                        </span>
                       </div>
                       <div className="flex gap-4">
                         <span className="text-[10px] font-black bg-accent text-primary px-3 py-1 rounded-full uppercase tracking-widest">
@@ -514,35 +562,55 @@ const Payment: React.FC = () => {
                   <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center text-accent">
                     <ShieldCheck size={20} />
                   </div>
-                  <h3 className="text-xl font-black text-primary uppercase tracking-tight">Payment Recap</h3>
+                  <h3 className="text-xl font-black text-primary uppercase tracking-tight">
+                    Payment Recap
+                  </h3>
                 </div>
 
                 <div className="space-y-5">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">
-                      {isMembershipPurchase ? 'Activation Fee' : 'Base Fare'}
+                      {isMembershipPurchase ? "Activation Fee" : "Base Fare"}
                     </span>
                     <span className="font-black text-primary">
-                      €{isMembershipPurchase ? membershipFee.toFixed(2) : totalBasePrice.toFixed(2)}
+                      €
+                      {isMembershipPurchase
+                        ? membershipFee.toFixed(2)
+                        : totalBasePrice.toFixed(2)}
                     </span>
                   </div>
                   {!isMembershipPurchase && (
                     <>
                       <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Taxes & Fees</span>
-                        <span className="font-black text-primary">€{totalTaxes.toFixed(2)}</span>
+                        <span className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">
+                          Taxes & Fees
+                        </span>
+                        <span className="font-black text-primary">
+                          €{totalTaxes.toFixed(2)}
+                        </span>
                       </div>
                       {(totalBaggageCost > 0 || totalAssistanceCost > 0) && (
                         <div className="flex justify-between items-center text-sm">
-                          <span className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Services</span>
-                          <span className="font-black text-primary">€{(totalBaggageCost + totalAssistanceCost).toFixed(2)}</span>
+                          <span className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">
+                            Services
+                          </span>
+                          <span className="font-black text-primary">
+                            €
+                            {(totalBaggageCost + totalAssistanceCost).toFixed(
+                              2,
+                            )}
+                          </span>
                         </div>
                       )}
                     </>
                   )}
                   <div className="flex justify-between items-center text-sm pt-4 border-t border-gray-50">
-                    <span className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Payment Method</span>
-                    <span className="font-black text-primary uppercase">{paymentMethod}</span>
+                    <span className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">
+                      Payment Method
+                    </span>
+                    <span className="font-black text-primary uppercase">
+                      {paymentMethod}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -550,8 +618,12 @@ const Payment: React.FC = () => {
               <div className="pt-10">
                 <div className="flex justify-between items-end mb-8">
                   <div>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Confirmed</p>
-                    <p className="text-5xl font-black text-accent tracking-tighter italic">€{totalPrice.toFixed(2)}</p>
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+                      Total Confirmed
+                    </p>
+                    <p className="text-5xl font-black text-accent tracking-tighter italic">
+                      €{totalPrice.toFixed(2)}
+                    </p>
                   </div>
                   <div className="text-right">
                     <div className="flex items-center gap-2 text-green-600 font-black uppercase text-[10px] tracking-widest mb-2 bg-green-50 px-3 py-1 rounded-full border border-green-100">
@@ -560,12 +632,16 @@ const Payment: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <button
-                  onClick={() => navigate(isMembershipPurchase ? "/user" : "/book")}
+                  onClick={() => navigate(isMembershipPurchase ? "/user" : "/")}
                   className="w-full group relative bg-primary text-white font-black text-[10px] uppercase tracking-[0.4em] py-6 rounded-2xl overflow-hidden shadow-2xl transition-all hover:bg-accent hover:text-primary active:scale-95"
                 >
-                  <span className="relative z-10">{isMembershipPurchase ? 'Return to Profile' : t("paymentPage.returnHome")}</span>
+                  <span className="relative z-10">
+                    {isMembershipPurchase
+                      ? "Return to Profile"
+                      : t("paymentPage.returnHome")}
+                  </span>
                 </button>
               </div>
             </motion.div>
@@ -577,10 +653,11 @@ const Payment: React.FC = () => {
             transition={{ delay: 4 }}
             className="flex flex-col items-center gap-4"
           >
-             <div className="flex items-center gap-2 text-gray-400 font-bold uppercase tracking-widest text-[10px]">
-               <Info size={14} />
-               A confirmation {isMembershipPurchase ? 'statement' : 'email'} has been sent to your primary address
-             </div>
+            <div className="flex items-center gap-2 text-gray-400 font-bold uppercase tracking-widest text-[10px]">
+              <Info size={14} />A confirmation{" "}
+              {isMembershipPurchase ? "statement" : "email"} has been sent to
+              your primary address
+            </div>
           </motion.div>
         </motion.div>
       </div>
@@ -620,7 +697,11 @@ const Payment: React.FC = () => {
                     transition={{ repeat: Infinity, duration: 2 }}
                   >
                     {isMembershipPurchase ? (
-                      <Star className="text-accent" size={64} fill="currentColor" />
+                      <Star
+                        className="text-accent"
+                        size={64}
+                        fill="currentColor"
+                      />
                     ) : (
                       <Plane className="text-accent" size={48} />
                     )}
@@ -646,10 +727,12 @@ const Payment: React.FC = () => {
             </div>
 
             <h2 className="text-white text-4xl font-black uppercase tracking-tighter mb-2 italic">
-              {isMembershipPurchase ? 'MEMBERSHIP' : 'FLY'}PLUS
+              {isMembershipPurchase ? "MEMBERSHIP" : "FLY"}PLUS
             </h2>
             <p className="text-accent/60 text-[10px] font-black uppercase tracking-[0.6em] mb-8">
-              {isMembershipPurchase ? 'Activating Excellence' : 'Securing Your Journey'}
+              {isMembershipPurchase
+                ? "Activating Excellence"
+                : "Securing Your Journey"}
             </p>
 
             <motion.p
@@ -688,16 +771,22 @@ const Payment: React.FC = () => {
             size={16}
             className="group-hover:-translate-x-1 transition-transform"
           />{" "}
-          {isMembershipPurchase ? 'Back to Profile' : t("paymentPage.backPassengers")}
+          {isMembershipPurchase
+            ? "Back to Profile"
+            : t("paymentPage.backPassengers")}
         </button>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2 space-y-8">
             <header className="mb-10">
               <h1 className="text-4xl font-black text-primary mb-2 uppercase tracking-tight">
-                {isMembershipPurchase ? 'Activation Fee' : t("paymentPage.paymentDetails")}
+                {isMembershipPurchase
+                  ? "Activation Fee"
+                  : t("paymentPage.paymentDetails")}
               </h1>
               <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px]">
-                {isMembershipPurchase ? 'Join our elite circle of premium travelers' : t("paymentPage.paymentDesc")}
+                {isMembershipPurchase
+                  ? "Join our elite circle of premium travelers"
+                  : t("paymentPage.paymentDesc")}
               </p>
             </header>
 
@@ -757,7 +846,11 @@ const Payment: React.FC = () => {
                   </div>
                   <div>
                     <h2 className="text-xl font-black text-primary uppercase tracking-tight">
-                      {paymentMethod === 'card' ? t("paymentPage.secureTransaction") : paymentMethod === 'paypal' ? 'PayPal Checkout' : 'Apple Pay'}
+                      {paymentMethod === "card"
+                        ? t("paymentPage.secureTransaction")
+                        : paymentMethod === "paypal"
+                          ? "PayPal Checkout"
+                          : "Apple Pay"}
                     </h2>
                     <p className="text-[10px] font-black text-accent uppercase tracking-[0.3em]">
                       FlyPlus Security Protocol
@@ -766,9 +859,10 @@ const Payment: React.FC = () => {
                 </div>
 
                 <div className="space-y-6">
-                  {paymentMethod === 'card' && (
-                    <motion.div 
-                      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  {paymentMethod === "card" && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
                       className="space-y-6"
                     >
                       <div>
@@ -779,7 +873,12 @@ const Payment: React.FC = () => {
                           type="text"
                           required
                           value={formData.cardholder}
-                          onChange={(e) => setFormData({ ...formData, cardholder: e.target.value })}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              cardholder: e.target.value,
+                            })
+                          }
                           placeholder={t("paymentPage.cardholderPlaceholder")}
                           className="w-full h-[58px] bg-gray-50 border-2 border-transparent rounded-2xl px-6 font-bold text-primary outline-none focus:bg-white focus:border-primary/20 transition-all"
                         />
@@ -799,10 +898,14 @@ const Payment: React.FC = () => {
                             value={formData.cardNumber}
                             onChange={handleCardNumberChange}
                             placeholder="0000 0000 0000 0000"
-                            className={`w-full h-[58px] bg-gray-50 border-2 ${errors.cardNumber ? 'border-red-300' : 'border-transparent'} rounded-2xl pl-14 pr-6 font-bold text-primary outline-none focus:bg-white focus:border-primary/20 transition-all`}
+                            className={`w-full h-[58px] bg-gray-50 border-2 ${errors.cardNumber ? "border-red-300" : "border-transparent"} rounded-2xl pl-14 pr-6 font-bold text-primary outline-none focus:bg-white focus:border-primary/20 transition-all`}
                           />
                         </div>
-                        {errors.cardNumber && <p className="text-[10px] text-red-500 font-bold mt-1 ml-2 uppercase tracking-widest">{errors.cardNumber}</p>}
+                        {errors.cardNumber && (
+                          <p className="text-[10px] text-red-500 font-bold mt-1 ml-2 uppercase tracking-widest">
+                            {errors.cardNumber}
+                          </p>
+                        )}
                       </div>
                       <div className="grid grid-cols-2 gap-6">
                         <div>
@@ -815,9 +918,13 @@ const Payment: React.FC = () => {
                             value={formData.expiry}
                             onChange={handleExpiryChange}
                             placeholder="MM/YY"
-                            className={`w-full h-[58px] bg-gray-50 border-2 ${errors.expiry ? 'border-red-300' : 'border-transparent'} rounded-2xl px-6 font-bold text-primary outline-none focus:bg-white focus:border-primary/20 transition-all`}
+                            className={`w-full h-[58px] bg-gray-50 border-2 ${errors.expiry ? "border-red-300" : "border-transparent"} rounded-2xl px-6 font-bold text-primary outline-none focus:bg-white focus:border-primary/20 transition-all`}
                           />
-                          {errors.expiry && <p className="text-[10px] text-red-500 font-bold mt-1 ml-2 uppercase tracking-widest">{errors.expiry}</p>}
+                          {errors.expiry && (
+                            <p className="text-[10px] text-red-500 font-bold mt-1 ml-2 uppercase tracking-widest">
+                              {errors.expiry}
+                            </p>
+                          )}
                         </div>
                         <div>
                           <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 block ml-2">
@@ -830,17 +937,22 @@ const Payment: React.FC = () => {
                             onChange={handleCvvChange}
                             maxLength={3}
                             placeholder="***"
-                            className={`w-full h-[58px] bg-gray-50 border-2 ${errors.cvv ? 'border-red-300' : 'border-transparent'} rounded-2xl px-6 font-bold text-primary outline-none focus:bg-white focus:border-primary/20 transition-all`}
+                            className={`w-full h-[58px] bg-gray-50 border-2 ${errors.cvv ? "border-red-300" : "border-transparent"} rounded-2xl px-6 font-bold text-primary outline-none focus:bg-white focus:border-primary/20 transition-all`}
                           />
-                          {errors.cvv && <p className="text-[10px] text-red-500 font-bold mt-1 ml-2 uppercase tracking-widest">{errors.cvv}</p>}
+                          {errors.cvv && (
+                            <p className="text-[10px] text-red-500 font-bold mt-1 ml-2 uppercase tracking-widest">
+                              {errors.cvv}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </motion.div>
                   )}
 
-                  {paymentMethod === 'paypal' && (
-                    <motion.div 
-                      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  {paymentMethod === "paypal" && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
                       className="space-y-6"
                     >
                       <div>
@@ -851,30 +963,45 @@ const Payment: React.FC = () => {
                           type="email"
                           required
                           value={formData.paypalEmail}
-                          onChange={(e) => setFormData({ ...formData, paypalEmail: e.target.value })}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              paypalEmail: e.target.value,
+                            })
+                          }
                           placeholder="your-email@example.com"
-                          className={`w-full h-[58px] bg-gray-50 border-2 ${errors.paypalEmail ? 'border-red-300' : 'border-transparent'} rounded-2xl px-6 font-bold text-primary outline-none focus:bg-white focus:border-[#0070ba]/20 transition-all`}
+                          className={`w-full h-[58px] bg-gray-50 border-2 ${errors.paypalEmail ? "border-red-300" : "border-transparent"} rounded-2xl px-6 font-bold text-primary outline-none focus:bg-white focus:border-[#0070ba]/20 transition-all`}
                         />
-                        {errors.paypalEmail && <p className="text-[10px] text-red-500 font-bold mt-1 ml-2 uppercase tracking-widest">{errors.paypalEmail}</p>}
+                        {errors.paypalEmail && (
+                          <p className="text-[10px] text-red-500 font-bold mt-1 ml-2 uppercase tracking-widest">
+                            {errors.paypalEmail}
+                          </p>
+                        )}
                       </div>
                       <div className="p-6 bg-blue-50 border border-blue-100 rounded-2xl">
                         <p className="text-[10px] font-bold text-blue-800 leading-relaxed uppercase tracking-widest">
-                          You will be redirected to PayPal to complete your purchase safely.
+                          You will be redirected to PayPal to complete your
+                          purchase safely.
                         </p>
                       </div>
                     </motion.div>
                   )}
 
-                  {paymentMethod === 'apple' && (
-                    <motion.div 
-                      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  {paymentMethod === "apple" && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
                       className="space-y-6"
                     >
                       <div className="p-8 bg-black rounded-3xl flex flex-col items-center gap-4 text-white">
                         <Apple size={32} />
                         <div className="text-center">
-                          <p className="text-xs font-black uppercase tracking-[0.2em]">Apple Pay Ready</p>
-                          <p className="text-[9px] text-white/40 font-bold uppercase tracking-widest mt-1">Confirm with Touch ID or Face ID</p>
+                          <p className="text-xs font-black uppercase tracking-[0.2em]">
+                            Apple Pay Ready
+                          </p>
+                          <p className="text-[9px] text-white/40 font-bold uppercase tracking-widest mt-1">
+                            Confirm with Touch ID or Face ID
+                          </p>
                         </div>
                       </div>
                       <div className="p-6 bg-gray-50 border border-gray-100 rounded-2xl">
@@ -910,10 +1037,19 @@ const Payment: React.FC = () => {
                       />
                     ) : (
                       <>
-                        {isMembershipPurchase ? <Award size={20} className="text-accent" /> : <Plane size={20} className="text-accent" />}
-                        {" "}
-                        {paymentMethod === 'card' ? (isMembershipPurchase ? 'Activate Membership' : t("paymentPage.completeBooking")) : paymentMethod === 'paypal' ? 'Pay with PayPal' : 'Pay with Apple Pay'} • €
-                        {totalPrice.toFixed(2)}
+                        {isMembershipPurchase ? (
+                          <Award size={20} className="text-accent" />
+                        ) : (
+                          <Plane size={20} className="text-accent" />
+                        )}{" "}
+                        {paymentMethod === "card"
+                          ? isMembershipPurchase
+                            ? "Activate Membership"
+                            : t("paymentPage.completeBooking")
+                          : paymentMethod === "paypal"
+                            ? "Pay with PayPal"
+                            : "Pay with Apple Pay"}{" "}
+                        • €{totalPrice.toFixed(2)}
                         <ChevronRight
                           size={20}
                           className="group-hover:translate-x-1 transition-transform"
@@ -927,28 +1063,36 @@ const Payment: React.FC = () => {
           </div>
 
           <div className="lg:col-span-1">
-            <div className="sticky top-24 space-y-6">
-              <div className="bg-primary rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden border border-white/5">
+            <div className="sticky top-28 space-y-6 self-start">
+              <motion.div
+                layout
+                className="bg-primary rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden border border-white/5"
+              >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full -mr-16 -mt-16 blur-2xl" />
                 <h3 className="text-lg font-black uppercase tracking-[0.2em] mb-10 relative z-10 text-accent">
-                  {isMembershipPurchase ? 'Excellence Plan' : t("paymentPage.finalSummary")}
+                  {isMembershipPurchase
+                    ? "Excellence Plan"
+                    : t("paymentPage.finalSummary")}
                 </h3>
-                
+
                 <div className="space-y-8 relative z-10">
                   {isMembershipPurchase ? (
                     <div className="pb-8 border-b border-white/10 space-y-6">
-                       <p className="text-[10px] font-black uppercase text-accent/60 tracking-widest mb-4">
+                      <p className="text-[10px] font-black uppercase text-accent/60 tracking-widest mb-4">
                         Elite Benefits Included
                       </p>
                       <div className="space-y-4">
                         <div className="flex items-center gap-3 text-xs font-bold">
-                           <ShieldCheck size={16} className="text-accent" /> Lounge Access Worldwide
+                          <ShieldCheck size={16} className="text-accent" />{" "}
+                          Lounge Access Worldwide
                         </div>
                         <div className="flex items-center gap-3 text-xs font-bold">
-                           <Award size={16} className="text-accent" /> Priority Boarding
+                          <Award size={16} className="text-accent" /> Priority
+                          Boarding
                         </div>
                         <div className="flex items-center gap-3 text-xs font-bold">
-                           <Star size={16} className="text-accent" /> Cabin Upgrades
+                          <Star size={16} className="text-accent" /> Cabin
+                          Upgrades
                         </div>
                       </div>
                     </div>
@@ -994,14 +1138,28 @@ const Payment: React.FC = () => {
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-white/40 text-[10px] font-black uppercase tracking-widest">
-                          Seats
+                          Seats (Outbound)
                         </span>
                         <span className="font-black text-sm text-accent tracking-widest">
-                          {Array.isArray(selectedSeats)
+                          {Array.isArray(selectedSeats) &&
+                          selectedSeats.length > 0
                             ? selectedSeats.join(", ")
                             : "---"}
                         </span>
                       </div>
+                      {tripType === "return" && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-white/40 text-[10px] font-black uppercase tracking-widest">
+                            Seats (Return)
+                          </span>
+                          <span className="font-black text-sm text-accent tracking-widest">
+                            {Array.isArray(selectedReturnSeats) &&
+                            selectedReturnSeats.length > 0
+                              ? selectedReturnSeats.join(", ")
+                              : "---"}
+                          </span>
+                        </div>
+                      )}
                       {(totalBaggageCost > 0 || totalAssistanceCost > 0) && (
                         <div className="pt-4 space-y-4 border-t border-white/5">
                           {totalBaggageCost > 0 && (
@@ -1026,16 +1184,19 @@ const Payment: React.FC = () => {
                           )}
                         </div>
                       )}
-                      
+
                       {isFlyPlusGuest && (
                         <div className="pt-4 mt-2 bg-accent/5 rounded-2xl border border-accent/10 p-4 space-y-2">
-                           <div className="flex items-center gap-2 text-accent">
-                             <Star size={12} fill="currentColor" />
-                             <span className="text-[9px] font-black uppercase tracking-widest">FlyPlus Guest Member</span>
-                           </div>
-                           <p className="text-[8px] text-white/50 font-bold uppercase tracking-widest leading-relaxed">
-                             Lounge & Priority included with your active membership
-                           </p>
+                          <div className="flex items-center gap-2 text-accent">
+                            <Star size={12} fill="currentColor" />
+                            <span className="text-[9px] font-black uppercase tracking-widest">
+                              FlyPlus Guest Member
+                            </span>
+                          </div>
+                          <p className="text-[8px] text-white/50 font-bold uppercase tracking-widest leading-relaxed">
+                            Lounge & Priority included with your active
+                            membership
+                          </p>
                         </div>
                       )}
                     </div>
@@ -1044,10 +1205,12 @@ const Payment: React.FC = () => {
                   <div className="pt-10 border-t-2 border-dashed border-white/10 mt-6">
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-white/30 text-[10px] font-black uppercase tracking-widest">
-                        {isMembershipPurchase ? 'Plan Term' : 'Global Taxes'}
+                        {isMembershipPurchase ? "Plan Term" : "Global Taxes"}
                       </span>
                       <span className="font-black text-xs text-white/50">
-                        {isMembershipPurchase ? 'Lifetime Access' : `€${totalTaxes.toFixed(2)}`}
+                        {isMembershipPurchase
+                          ? "Lifetime Access"
+                          : `€${totalTaxes.toFixed(2)}`}
                       </span>
                     </div>
                     <div className="flex justify-between items-end">
@@ -1060,7 +1223,7 @@ const Payment: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
               <div className="bg-white p-8 rounded-[2.5rem] border-2 border-primary/5 flex items-center gap-5 shadow-sm hover:border-accent transition-colors">
                 <div className="w-12 h-12 bg-accent rounded-2xl flex items-center justify-center text-primary shadow-lg shadow-accent/20">
                   <Info size={24} />
