@@ -151,7 +151,7 @@ const Sidebar: React.FC = () => {
             </div>
             {isLoggedIn && userRole !== "admin" && (
               <NavLink
-                to="/user"
+                to="/profile"
                 className={({ isActive }) =>
                   `w-full nav-link group ${isActive ? "active" : ""}`
                 }

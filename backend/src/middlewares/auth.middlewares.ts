@@ -7,15 +7,23 @@ const JWT_SECRET = process.env.JWT_SECRET ?? "supersecret";
 export function authMw(req: Request, _res: Response, next: NextFunction) {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return next(new AppError(401, "Token mancante o non valido"));
+        // No token provided, proceed as guest
+        return next();
     }
 
     const token = authHeader.split(" ")[1]!;
+    
+    // Check if the token is literal 'null' or 'undefined' string (common frontend bug)
+    if (token === 'null' || token === 'undefined' || !token) {
+        return next();
+    }
+
     try {
         const payload = jwt.verify(token, JWT_SECRET);
         (req as any).user = payload;
         next();
     } catch (error) {
+        // Token provided but invalid
         next(new AppError(401, "Token non valido"));
     }
 }

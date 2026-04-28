@@ -26,6 +26,7 @@ const User: React.FC = () => {
     setSearch,
     userName,
     userEmail,
+    userToken,
     bookings,
     isFlyPlusGuest,
   } = useSearchStore();
@@ -38,14 +39,18 @@ const User: React.FC = () => {
     } else {
       const fetchBookings = async () => {
         try {
-          const response = await fetch("/api/prenotazioni");
+          const response = await fetch("/api/prenotazioni", {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+          });
           if (response.ok) {
             const data = await response.json();
             const mappedBookings = data.map((b: any) => ({
               id: `FP-${b.id}`,
               flightNumber: `FP ${100 + b.volo_id}`,
-              from: String(b.aeroporto_partenza_id),
-              to: String(b.aeroporto_arrivo_id),
+              from: b.partenza_citta,
+              to: b.arrivo_citta,
               date: new Date(b.data_prenotazione).toLocaleDateString(),
               time: b.ora_partenza ? b.ora_partenza.slice(0, 5) : "10:00",
               status: b.classe === "Checked-in" ? "Checked-in" : "Confirmed",
@@ -61,27 +66,52 @@ const User: React.FC = () => {
       };
       fetchBookings();
     }
-  }, [isLoggedIn, navigate, userName, setSearch]);
+  }, [isLoggedIn, userToken, navigate, userName, setSearch]);
 
   const handleLogout = () => {
+    localStorage.removeItem("token");
     setSearch("isLoggedIn", false);
+    setSearch("userToken", null);
     setSearch("userRole", null);
     navigate("/");
   };
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const handleEliminateAccount = () => {
-    // Clear all user data from store
-    setSearch("isLoggedIn", false);
-    setSearch("userRole", null);
-    setSearch("userName", "");
-    setSearch("userEmail", "");
-    setSearch("userPassword", "");
-    setSearch("hasSignedUp", false);
-    setSearch("isFlyPlusGuest", false);
-    setSearch("bookings", []);
-    navigate("/");
+  const handleEliminateAccount = async () => {
+    try {
+      const response = await fetch("/api/auth/delete-account", {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete account");
+      }
+
+      // Clear all user data from store
+      localStorage.removeItem("token");
+      localStorage.removeItem("userRole");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("userName");
+      localStorage.removeItem("userEmail");
+
+      setSearch("isLoggedIn", false);
+      setSearch("userToken", null);
+      setSearch("userRole", null);
+      setSearch("userName", "");
+      setSearch("userEmail", "");
+      setSearch("userPassword", "");
+      setSearch("hasSignedUp", false);
+      setSearch("isFlyPlusGuest", false);
+      setSearch("bookings", []);
+      navigate("/");
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      alert("Si è verificato un errore durante l'eliminazione dell'account.");
+    }
   };
 
   const handleActivateMembership = () => {

@@ -99,10 +99,14 @@ const Admin: React.FC = () => {
   }, [isLoggedIn, userRole]);
 
   const handleLogout = () => {
-    setSearch('isLoggedIn', false);
-    setSearch('userRole', null);
-    localStorage.removeItem('token');
-    navigate('/book');
+    localStorage.removeItem("token");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userEmail");
+    setSearch("isLoggedIn", false);
+    setSearch("userRole", null);
+    navigate("/");
   };
 
   const handleRemoveFlight = async (id: number) => {

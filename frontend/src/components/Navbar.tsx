@@ -61,7 +61,7 @@ const Navbar: React.FC = () => {
               </>
             ) : (
               <NavLink 
-                to={userRole === 'admin' ? "/admin" : "/user"}
+                to={userRole === 'admin' ? "/admin" : "/profile"}
                 className={({ isActive }) => `
                   text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-2 py-2 px-4 rounded-xl border border-white/10 hover:bg-white/5
                   ${isActive ? 'text-accent bg-white/5 border-accent/20' : 'text-white hover:text-accent'}

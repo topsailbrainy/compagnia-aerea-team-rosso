@@ -6,11 +6,11 @@ import { prenotazioneInputSchema } from "@/schemas/validation.schemas";
 
 const router = Router();
 
-//router.use(authMw);
+router.use(authMw);
 
 router.get("/", getPrenotazioniUser);
 router.get("/:id", getPrenotazioneById);
-router.post("/", /*validationMw({ body: prenotazioneInputSchema }),*/ createPrenotazione);
+router.post("/", createPrenotazione);
 
 export default router;
 

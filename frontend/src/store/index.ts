@@ -54,6 +54,7 @@ interface SearchState {
   userName: string;
   userEmail: string;
   userPassword: string;
+  userToken: string | null;
   hasSignedUp: boolean;
   isFlyPlusGuest: boolean;
   bookings: BookedFlight[];
@@ -90,12 +91,13 @@ export const useSearchStore = create<SearchState>((set) => ({
   outboundPrice: 0,
   returnPrice: 0,
   alertsEnabled: false,
-  isLoggedIn: false,
-  userRole: null,
-  userId: null,
-  userName: '',
-  userEmail: '',
+  isLoggedIn: !!localStorage.getItem('token'),
+  userRole: localStorage.getItem('userRole') as 'user' | 'admin' | null,
+  userId: localStorage.getItem('userId') ? Number(localStorage.getItem('userId')) : null,
+  userName: localStorage.getItem('userName') || '',
+  userEmail: localStorage.getItem('userEmail') || '',
   userPassword: '',
+  userToken: localStorage.getItem('token'),
   hasSignedUp: false,
   isFlyPlusGuest: false,
   bookings: [],

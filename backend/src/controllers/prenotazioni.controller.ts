@@ -4,9 +4,22 @@ import { Request, Response, NextFunction } from "express";
 
 export async function getPrenotazioniUser(req: Request, res: Response, next: NextFunction) {
     try {
-        const utenteId = (req as any).user.id;
+        const user = (req as any).user;
+        if (!user) {
+            return res.json([]);
+        }
+        const utenteId = user.id;
         const result = await pool.query(
-            "SELECT id, utente_id as passeggero_id, volo_id, data_prenotazione, prezzo_finale as prezzo, posto, classe, tipo_bagaglio FROM prenotazioni WHERE utente_id = $1 ORDER BY data_prenotazione DESC",
+            `SELECT p.id, p.utente_id as passeggero_id, p.volo_id, p.data_prenotazione, 
+                    p.prezzo_finale as prezzo, p.posto, p.classe, p.tipo_bagaglio,
+                    v.ora_partenza, v.ora_arrivo,
+                    a1.citta as partenza_citta, a2.citta as arrivo_citta
+             FROM prenotazioni p
+             JOIN voli v ON p.volo_id = v.id
+             JOIN aeroporti a1 ON v.aeroporto_partenza_id = a1.id
+             JOIN aeroporti a2 ON v.aeroporto_arrivo_id = a2.id
+             WHERE p.utente_id = $1 
+             ORDER BY p.data_prenotazione DESC`,
             [utenteId]
         );
         res.json(result.rows);
@@ -18,8 +31,9 @@ export async function getPrenotazioniUser(req: Request, res: Response, next: Nex
 export async function getPrenotazioneById(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params;
-        const utenteId = (req as any).user.id;
-        const ruolo = (req as any).user.ruolo;
+        const user = (req as any).user;
+        const utenteId = user?.id;
+        const ruolo = user?.ruolo;
         
         let query = `
             SELECT p.*, v.ora_partenza, v.ora_arrivo, v.aeroporto_partenza_id, v.aeroporto_arrivo_id,
@@ -31,7 +45,7 @@ export async function getPrenotazioneById(req: Request, res: Response, next: Nex
         `;
         let params: any[] = [id];
         
-        if (ruolo !== 'admin') {
+        if (user && ruolo !== 'admin') {
             query += " AND p.utente_id = $2";
             params.push(utenteId);
         }
@@ -58,14 +72,17 @@ export async function getPrenotazioneById(req: Request, res: Response, next: Nex
 
 export async function createPrenotazione(req: Request, res: Response, next: NextFunction) {
     try {
-        const utenteId = (req as any).user.id;
-        const { volo_id, posto, classe, tipo_bagaglio, prezzo_finale, passeggeri } = req.body;
+        const user = (req as any).user;
+        const { volo_id, posto, classe, tipo_bagaglio, prezzo_finale, passeggeri, utente_id } = req.body;
         
+        // Priority: Logged in user ID > Body utente_id > Guest (1)
+        const finalUtenteId = user?.id || utente_id || 1;
+
         const result = await pool.query(
             `INSERT INTO prenotazioni (utente_id, volo_id, prezzo_finale, posto, classe, tipo_bagaglio)
              VALUES ($1, $2, $3, $4, $5, $6)
              RETURNING id, utente_id as passeggero_id, volo_id, data_prenotazione, prezzo_finale as prezzo, posto, classe, tipo_bagaglio`,
-            [utenteId, volo_id, prezzo_finale, posto, classe, tipo_bagaglio]
+            [finalUtenteId, volo_id, prezzo_finale, posto, classe, tipo_bagaglio]
         );
         
         const prenotazione = result.rows[0];

@@ -62,7 +62,13 @@ const Auth: React.FC = () => {
         }
 
         const { token, user } = await response.json();
+        localStorage.setItem("token", token);
+        localStorage.setItem("userRole", user.ruolo);
+        localStorage.setItem("userId", String(user.id));
+        localStorage.setItem("userName", `${user.nome} ${user.cognome}`);
+        localStorage.setItem("userEmail", user.email);
         setSearch("isLoggedIn", true);
+        setSearch("userToken", token);
         setSearch("userRole", user.ruolo);
         setSearch("userId", user.id);
         setSearch("userName", `${user.nome} ${user.cognome}`);
@@ -71,7 +77,7 @@ const Auth: React.FC = () => {
         if (user.ruolo === "admin") {
           navigate("/admin");
         } else {
-          navigate("/");
+          navigate("/profile");
         }
       } else {
         const nameParts = formData.fullName.trim().split(/\s+/);
@@ -99,14 +105,20 @@ const Auth: React.FC = () => {
           throw new Error(data.message || "Signup failed");
         }
 
-        const user = await response.json();
+        const { token, user } = await response.json();
+        localStorage.setItem("token", token);
+        localStorage.setItem("userRole", user.ruolo);
+        localStorage.setItem("userId", String(user.id));
+        localStorage.setItem("userName", `${user.nome} ${user.cognome}`);
+        localStorage.setItem("userEmail", user.email);
         setSearch("isLoggedIn", true);
+        setSearch("userToken", token);
         setSearch("userRole", user.ruolo);
         setSearch("userId", user.id);
         setSearch("userName", `${user.nome} ${user.cognome}`);
         setSearch("userEmail", user.email);
 
-        navigate("/");
+        navigate("/profile");
       }
     } catch (err: any) {
       setError(err.message);

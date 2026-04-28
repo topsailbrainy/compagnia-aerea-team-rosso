@@ -46,6 +46,7 @@ const Payment: React.FC = () => {
     selectedReturnSeats = [],
     isFlyPlusGuest,
     userId,
+    userToken,
     passengerDetails,
     setSearch,
   } = useSearchStore();
@@ -195,7 +196,10 @@ const Payment: React.FC = () => {
         // Create outbound booking
         const outRes = await fetch("/api/prenotazioni", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${userToken}`
+          },
           body: JSON.stringify({
             utente_id: userId || 1, // Fallback to 1 for demo if not logged in
             volo_id: outboundFlight.id,
@@ -213,7 +217,10 @@ const Payment: React.FC = () => {
           // Create return booking
           const retRes = await fetch("/api/prenotazioni", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${userToken}`
+            },
             body: JSON.stringify({
               utente_id: userId || 1,
               volo_id: returnFlight.id,
