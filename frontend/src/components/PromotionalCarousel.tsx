@@ -24,8 +24,9 @@ const PromotionalCarousel: React.FC = () => {
       category: t('promotions.items.deals.category'), 
       desc: t('promotions.items.deals.desc'), 
       image: maldiveImg,
+      buttonText: t('promotions.items.deals.button', { defaultValue: t('promotions.learnMore') }),
       action: () => {
-        setSearch('to', 'MLE'); // Maldives
+        setSearch('from', 'MLE'); // Maldives
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     },
@@ -35,8 +36,9 @@ const PromotionalCarousel: React.FC = () => {
       category: t('promotions.items.stopover.category'), 
       desc: t('promotions.items.stopover.desc'), 
       image: romaImg,
+      buttonText: t('promotions.items.stopover.button', { defaultValue: t('promotions.learnMore') }),
       action: () => {
-        setSearch('to', 'FCO'); // Rome
+        setSearch('from', 'FCO'); // Rome
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     },
@@ -46,6 +48,7 @@ const PromotionalCarousel: React.FC = () => {
       category: t('promotions.items.loyalty.category'), 
       desc: t('promotions.items.loyalty.desc'), 
       image: aereoImg,
+      buttonText: t('promotions.items.loyalty.button', { defaultValue: t('promotions.learnMore') }),
       action: () => navigate('/login?tab=signup')
     },
     { 
@@ -54,6 +57,7 @@ const PromotionalCarousel: React.FC = () => {
       category: t('promotions.items.suite.category'), 
       desc: t('promotions.items.suite.desc'), 
       image: loungeImg,
+      buttonText: t('promotions.items.suite.button', { defaultValue: t('promotions.learnMore') }),
       action: () => navigate('/about')
     },
     { 
@@ -62,8 +66,9 @@ const PromotionalCarousel: React.FC = () => {
       category: t('promotions.items.routes.category'), 
       desc: t('promotions.items.routes.desc'), 
       image: tokyoImg,
+      buttonText: t('promotions.items.routes.button', { defaultValue: t('promotions.learnMore') }),
       action: () => {
-        setSearch('to', 'NRT'); // Tokyo
+        setSearch('from', 'NRT'); // Tokyo
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     },
@@ -167,7 +172,7 @@ const PromotionalCarousel: React.FC = () => {
                   </div>
                   <div className="flex items-center text-accent font-bold text-sm gap-2 group/btn">
                     <span className="relative overflow-hidden">
-                      {t('promotions.learnMore')}
+                      {promo.buttonText}
                       <span className="absolute bottom-0 left-0 w-full h-0.5 bg-accent transform translate-x-[-100%] group-hover/btn:translate-x-0 transition-transform duration-300" />
                     </span>
                     <ChevronRight size={16} className="transform group-hover/btn:translate-x-1 transition-transform" />

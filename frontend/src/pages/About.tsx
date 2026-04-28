@@ -3,6 +3,12 @@ import { Globe, Shield, Users, Award, Landmark } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
+// Import assets
+import aereoImg from '../assets/aerei/aereo.avif';
+import loungeImg from '../assets/aerei/lounge.avif';
+import sediliImg from '../assets/aerei/sedili.avif';
+import rifornimentoImg from '../assets/aerei/rifornimento.avif';
+
 const About: React.FC = () => {
   const { t } = useTranslation();
 
@@ -12,7 +18,7 @@ const About: React.FC = () => {
       <section className="relative h-[70vh] flex items-center justify-center overflow-hidden bg-primary">
         <div className="absolute inset-0 opacity-50">
            <img 
-            src="/src/assets/aerei/aereo.avif" 
+            src={aereoImg} 
             alt="FlyPlus Aircraft" 
             className="w-full h-full object-cover"
           />
@@ -74,7 +80,7 @@ const About: React.FC = () => {
                viewport={{ once: true }}
                className="aspect-square rounded-[3rem] overflow-hidden shadow-2xl"
              >
-                <img src="/src/assets/aerei/lounge.avif" alt="Lounge" className="w-full h-full object-cover" />
+                <img src={loungeImg} alt="Lounge" className="w-full h-full object-cover" />
              </motion.div>
              <div className="absolute -bottom-10 -left-10 bg-accent p-10 rounded-[2.5rem] shadow-xl hidden md:block max-w-[280px]">
                 <Award className="text-primary mb-4" size={40} />
@@ -149,7 +155,7 @@ const About: React.FC = () => {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
            <div className="h-[400px] rounded-[3rem] overflow-hidden relative group">
-              <img src="/src/assets/aerei/sedili.avif" alt="Cabin" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <img src={sediliImg} alt="Cabin" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent" />
               <div className="absolute bottom-10 left-10 text-left">
                  <h4 className="text-white text-2xl font-black uppercase italic">{t('aboutPage.comfortTitle')}</h4>
@@ -157,7 +163,7 @@ const About: React.FC = () => {
               </div>
            </div>
            <div className="h-[400px] rounded-[3rem] overflow-hidden relative group">
-              <img src="/src/assets/aerei/rifornimento.avif" alt="Ops" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <img src={rifornimentoImg} alt="Ops" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent" />
               <div className="absolute bottom-10 left-10 text-left">
                  <h4 className="text-white text-2xl font-black uppercase italic">{t('aboutPage.hubTitle')}</h4>

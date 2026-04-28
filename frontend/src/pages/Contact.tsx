@@ -1,12 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Phone, Mail, MapPin, MessageSquare, Clock, Globe } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Phone, Mail, MapPin, MessageSquare, Clock, Globe, Check } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Contact: React.FC = () => {
   const { t } = useTranslation();
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitted(true);
+  };
 
   const contactMethods = [
+// ... (rest of contactMethods remains same)
     {
       icon: Phone,
       title: t('contactPage.methods.call.title'),
@@ -74,33 +81,71 @@ const Contact: React.FC = () => {
               <span className="text-white/40 italic">{t('contactPage.form.help')}</span>
             </h2>
             
-            <form className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <input 
-                  type="text" 
-                  placeholder={t('contactPage.form.fullName')}
-                  className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white font-bold outline-none focus:border-accent transition-colors"
-                />
-                <input 
-                  type="email" 
-                  placeholder={t('contactPage.form.email')}
-                  className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white font-bold outline-none focus:border-accent transition-colors"
-                />
-              </div>
-              <input 
-                type="text" 
-                placeholder={t('contactPage.form.subject')}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white font-bold outline-none focus:border-accent transition-colors"
-              />
-              <textarea 
-                placeholder={t('contactPage.form.message')}
-                rows={5}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white font-bold outline-none focus:border-accent transition-colors resize-none"
-              />
-              <button className="w-full bg-accent text-primary font-black uppercase tracking-widest py-6 rounded-2xl hover:bg-white transition-all shadow-xl shadow-accent/20">
-                {t('contactPage.form.send')}
-              </button>
-            </form>
+            <AnimatePresence mode="wait">
+              {!isSubmitted ? (
+                <motion.form 
+                  key="contact-form"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  onSubmit={handleSubmit}
+                  className="space-y-6"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <input 
+                      type="text" 
+                      required
+                      placeholder={t('contactPage.form.fullName')}
+                      className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white font-bold outline-none focus:border-accent transition-colors"
+                    />
+                    <input 
+                      type="email" 
+                      required
+                      placeholder={t('contactPage.form.email')}
+                      className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white font-bold outline-none focus:border-accent transition-colors"
+                    />
+                  </div>
+                  <input 
+                    type="text" 
+                    required
+                    placeholder={t('contactPage.form.subject')}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white font-bold outline-none focus:border-accent transition-colors"
+                  />
+                  <textarea 
+                    placeholder={t('contactPage.form.message')}
+                    required
+                    rows={5}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white font-bold outline-none focus:border-accent transition-colors resize-none"
+                  />
+                  <button type="submit" className="w-full bg-accent text-primary font-black uppercase tracking-widest py-6 rounded-2xl hover:bg-white transition-all shadow-xl shadow-accent/20 active:scale-[0.98]">
+                    {t('contactPage.form.send')}
+                  </button>
+                </motion.form>
+              ) : (
+                <motion.div
+                  key="success-message"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="py-20 flex flex-col items-center text-center"
+                >
+                  <div className="w-24 h-24 bg-accent rounded-full flex items-center justify-center text-primary mb-8 shadow-glow">
+                    <Check size={48} strokeWidth={3} />
+                  </div>
+                  <h3 className="text-3xl font-black text-white uppercase tracking-tight mb-4">
+                    {t('contactPage.form.successTitle')}
+                  </h3>
+                  <p className="text-white/60 font-bold uppercase tracking-widest text-sm max-w-md">
+                    {t('contactPage.form.successDesc')}
+                  </p>
+                  <button 
+                    onClick={() => setIsSubmitted(false)}
+                    className="mt-12 text-accent font-black uppercase tracking-widest text-xs border-b-2 border-accent pb-1 hover:text-white hover:border-white transition-all"
+                  >
+                    {t('common.back')}
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
           
           <div className="lg:w-1/3 bg-accent p-12 lg:p-20 flex flex-col justify-between">

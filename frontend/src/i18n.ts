@@ -91,27 +91,32 @@ const resources = {
           "deals": {
             "title": "Book our latest deals",
             "category": "OFFERS",
-            "desc": "Explore the world with our special fares."
+            "desc": "Explore the world with our special fares.",
+            "button": "Book now"
           },
           "stopover": {
             "title": "Italy Stopover",
             "category": "EXPERIENCE",
-            "desc": "Enjoy a free hotel stay in Rome or Milan."
+            "desc": "Enjoy a free hotel stay in Rome or Milan.",
+            "button": "Book your journey"
           },
           "loyalty": {
             "title": "FlyPlus Guest",
             "category": "LOYALTY",
-            "desc": "Earn miles every time you fly with us."
+            "desc": "Earn miles every time you fly with us.",
+            "button": "Join now"
           },
           "suite": {
             "title": "Sky Suite",
             "category": "LUXURY",
-            "desc": "Experience the world's most private suite in the sky."
+            "desc": "Experience the world's most private suite in the sky.",
+            "button": "Explore luxury"
           },
           "routes": {
             "title": "Our New Routes",
             "category": "EXPLORE",
-            "desc": "Discover our expanding global network."
+            "desc": "Discover our expanding global network.",
+            "button": "Discover more"
           }
         }
       },
@@ -446,7 +451,9 @@ const resources = {
           "email": "Email Address",
           "subject": "Subject",
           "message": "Your Message",
-          "send": "Send Message"
+          "send": "Send Message",
+          "successTitle": "Message Sent!",
+          "successDesc": "We have received your message and will get back to you within 2 hours."
         },
         "operatingHours": "Operating Hours",
         "monFri": "Monday - Friday",
@@ -582,27 +589,32 @@ const resources = {
           "deals": {
             "title": "Prenota le nostre ultime offerte",
             "category": "OFFERTE",
-            "desc": "Esplora il mondo con le nostre tariffe speciali."
+            "desc": "Esplora il mondo con le nostre tariffe speciali.",
+            "button": "Prenota ora"
           },
           "stopover": {
             "title": "Stopover in Italia",
             "category": "ESPERIENZA",
-            "desc": "Goditi un soggiorno gratuito in hotel a Roma o Milano."
+            "desc": "Goditi un soggiorno gratuito in hotel a Roma o Milano.",
+            "button": "Prenota il tuo viaggio"
           },
           "loyalty": {
             "title": "Ospite FlyPlus",
             "category": "FEDELTÀ",
-            "desc": "Guadagna miglia ogni volta che voli con noi."
+            "desc": "Guadagna miglia ogni volta che voli con noi.",
+            "button": "Iscriviti ora"
           },
           "suite": {
             "title": "Sky Suite",
             "category": "LUSSO",
-            "desc": "Sperimenta la suite più riservata al mondo nel cielo."
+            "desc": "Sperimenta la suite più riservata al mondo nel cielo.",
+            "button": "Esplora il lusso"
           },
           "routes": {
             "title": "Le Nostre Nuove Rotte",
             "category": "ESPLORA",
-            "desc": "Scopri la nostra rete globale in espansione."
+            "desc": "Scopri la nostra rete globale in espansione.",
+            "button": "Scopri di più"
           }
         }
       },
@@ -937,7 +949,9 @@ const resources = {
           "email": "Indirizzo Email",
           "subject": "Oggetto",
           "message": "Il Tuo Messaggio",
-          "send": "Invia Messaggio"
+          "send": "Invia Messaggio",
+          "successTitle": "Messaggio Inviato!",
+          "successDesc": "Abbiamo ricevuto il tuo messaggio e ti risponderemo entro 2 ore."
         },
         "operatingHours": "Orari di Apertura",
         "monFri": "Lunedì - Venerdì",
