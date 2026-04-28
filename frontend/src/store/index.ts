@@ -62,7 +62,9 @@ interface SearchState {
   baggageCosts: Record<number, number>;
   assistanceCosts: Record<number, number>;
   passengerDetails: any[];
-  setSearch: (key: keyof Omit<SearchState, 'setSearch' | 'addBooking' | 'updateBookingStatus'>, value: any) => void;
+  searchTrigger: number;
+  triggerSearch: () => void;
+  setSearch: (key: keyof Omit<SearchState, 'setSearch' | 'addBooking' | 'updateBookingStatus' | 'triggerSearch'>, value: any) => void;
   setPassengerCost: (key: 'baggageCosts' | 'assistanceCosts', passengerId: number, cost: number) => void;
   addBooking: (booking: BookedFlight) => void;
   updateBookingStatus: (id: string, status: BookedFlight['status']) => void;
@@ -102,6 +104,8 @@ export const useSearchStore = create<SearchState>((set) => ({
   baggageCosts: {},
   assistanceCosts: {},
   passengerDetails: [],
+  searchTrigger: 0,
+  triggerSearch: () => set((state) => ({ searchTrigger: state.searchTrigger + 1 })),
   setSearch: (key, value) => set((state) => ({ ...state, [key]: value })),
   setPassengerCost: (key, passengerId, cost) => set((state) => ({
     ...state,

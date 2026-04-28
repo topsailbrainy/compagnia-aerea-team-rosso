@@ -58,27 +58,33 @@ const Footer: React.FC = () => {
         </div>
         <div>
           <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">
-            {t("footer.services")}
+            {t("sidebar.explore")}
           </h4>
           <ul className="space-y-4 text-sm">
             <li>
-              <Link to="/fleet" className="hover:text-accent transition-colors">
-                {t("footer.business")}
+              <Link
+                to="/destinations"
+                className="hover:text-accent transition-colors"
+              >
+                {t("sidebar.destinations")}
               </Link>
             </li>
             <li>
               <Link to="/fleet" className="hover:text-accent transition-colors">
-                {t("footer.economy")}
+                {t("sidebar.fleet")}
               </Link>
             </li>
             <li>
               <Link to="/about" className="hover:text-accent transition-colors">
-                {t("footer.dining")}
+                {t("sidebar.about")}
               </Link>
             </li>
             <li>
-              <Link to="/about" className="hover:text-accent transition-colors">
-                {t("footer.loyalty")}
+              <Link
+                to="/contact"
+                className="hover:text-accent transition-colors"
+              >
+                {t("sidebar.contact")}
               </Link>
             </li>
           </ul>
@@ -103,15 +109,9 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto border-t border-white/5 mt-16 pt-8 text-xs flex flex-col md:flex-row justify-between gap-4">
         <p>© 2026 FlyPlus Aviation. {t("footer.allRights")}</p>
         <div className="flex gap-6">
-          <a href="#" className="hover:text-white">
-            {t("footer.privacy")}
-          </a>
-          <a href="#" className="hover:text-white">
-            {t("footer.terms")}
-          </a>
-          <a href="#" className="hover:text-white">
-            {t("footer.cookies")}
-          </a>
+          <span>{t("footer.privacy")}</span>
+          <span>{t("footer.terms")}</span>
+          <span>{t("footer.cookies")}</span>
         </div>
       </div>
     </footer>

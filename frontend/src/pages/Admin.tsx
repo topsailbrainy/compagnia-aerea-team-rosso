@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { useSearchStore } from '../store';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,21 +11,6 @@ import {
   Search, 
   MoreVertical, 
   Trash2, 
-=======
-import React, { useState } from "react";
-import { useSearchStore } from "../store";
-import { motion, AnimatePresence } from "framer-motion";
-import { useTranslation } from "react-i18next";
-import {
-  BarChart3,
-  Users,
-  Plane,
-  TrendingUp,
-  Plus,
-  Search,
-  MoreVertical,
-  Trash2,
->>>>>>> 4854d98499d3cab67f91f267e5a51caa55f5edc6
   Edit,
   ArrowUpRight,
   ArrowDownRight,
@@ -47,60 +31,14 @@ const Admin: React.FC = () => {
     "analytics" | "flights" | "passengers"
   >("analytics");
 
-<<<<<<< HEAD
   const [flights, setFlights] = useState<any[]>([]);
   const [stats, setStats] = useState<any[]>([]);
   const [popularRoutes, setPopularRoutes] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-=======
-  const [flights, setFlights] = useState([
-    {
-      id: 1,
-      flight: "FP 102",
-      from: "FCO",
-      to: "LHR",
-      status: "On Time",
-      load: "92%",
-      revenue: "€18,400",
-      time: "10:30",
-    },
-    {
-      id: 2,
-      flight: "FP 205",
-      from: "MXP",
-      to: "CDG",
-      status: "Delayed",
-      load: "78%",
-      revenue: "€12,200",
-      time: "14:20",
-    },
-    {
-      id: 3,
-      flight: "FP 308",
-      from: "FCO",
-      to: "JFK",
-      status: "On Time",
-      load: "95%",
-      revenue: "€42,800",
-      time: "09:15",
-    },
-    {
-      id: 4,
-      flight: "FP 412",
-      from: "CDG",
-      to: "FCO",
-      status: "Scheduled",
-      load: "64%",
-      revenue: "€9,100",
-      time: "18:50",
-    },
-  ]);
->>>>>>> 4854d98499d3cab67f91f267e5a51caa55f5edc6
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFlight, setEditingFlight] = useState<any>(null);
   const [flightForm, setFlightForm] = useState({
-<<<<<<< HEAD
     aeroporto_partenza_id: '',
     aeroporto_arrivo_id: '',
     aereo_id: '',
@@ -116,19 +54,6 @@ const Admin: React.FC = () => {
   useEffect(() => {
     if (!isLoggedIn || userRole !== 'admin') {
       navigate('/login');
-=======
-    flight: "",
-    from: "",
-    to: "",
-    status: "Scheduled",
-    time: "",
-  });
-
-  // Protective Redirect
-  React.useEffect(() => {
-    if (!isLoggedIn || userRole !== "admin") {
-      navigate("/login");
->>>>>>> 4854d98499d3cab67f91f267e5a51caa55f5edc6
     }
   }, [isLoggedIn, userRole, navigate]);
 
@@ -174,7 +99,6 @@ const Admin: React.FC = () => {
   }, [isLoggedIn, userRole]);
 
   const handleLogout = () => {
-<<<<<<< HEAD
     setSearch('isLoggedIn', false);
     setSearch('userRole', null);
     localStorage.removeItem('token');
@@ -195,21 +119,11 @@ const Admin: React.FC = () => {
     } catch (err) {
       console.error("Error deleting flight:", err);
     }
-=======
-    setSearch("isLoggedIn", false);
-    setSearch("userRole", null);
-    navigate("/");
-  };
-
-  const handleRemoveFlight = (id: number) => {
-    setFlights(flights.filter((f) => f.id !== id));
->>>>>>> 4854d98499d3cab67f91f267e5a51caa55f5edc6
   };
 
   const handleOpenAddModal = () => {
     setEditingFlight(null);
     setFlightForm({
-<<<<<<< HEAD
       aeroporto_partenza_id: '',
       aeroporto_arrivo_id: '',
       aereo_id: '',
@@ -219,13 +133,6 @@ const Admin: React.FC = () => {
       ora_arrivo: '',
       prezzo_base: '',
       stato: 'Scheduled'
-=======
-      flight: "FP " + Math.floor(100 + Math.random() * 900),
-      from: "",
-      to: "",
-      status: "Scheduled",
-      time: "",
->>>>>>> 4854d98499d3cab67f91f267e5a51caa55f5edc6
     });
     setIsModalOpen(true);
   };
@@ -248,7 +155,6 @@ const Admin: React.FC = () => {
 
   const handleSaveFlight = async (e: React.FormEvent) => {
     e.preventDefault();
-<<<<<<< HEAD
     try {
       const token = localStorage.getItem('token');
       const method = editingFlight ? 'PATCH' : 'POST';
@@ -280,60 +186,6 @@ const Admin: React.FC = () => {
       console.error("Error saving flight:", err);
     }
   };
-=======
-    if (editingFlight) {
-      setFlights(
-        flights.map((f) =>
-          f.id === editingFlight.id ? { ...f, ...flightForm } : f,
-        ),
-      );
-    } else {
-      const newFlight = {
-        ...flightForm,
-        id: Date.now(),
-        load: "0%",
-        revenue: "€0",
-      };
-      setFlights([newFlight, ...flights]);
-    }
-    setIsModalOpen(false);
-  };
-
-  const stats = [
-    {
-      label: t("adminPage.totalRevenue"),
-      value: "€4.2M",
-      change: "+12.5%",
-      icon: BarChart3,
-      color: "text-green-600",
-      bg: "bg-green-50",
-    },
-    {
-      label: t("adminPage.activeBookings"),
-      value: "1,284",
-      change: "+8.2%",
-      icon: Plane,
-      color: "text-blue-600",
-      bg: "bg-blue-50",
-    },
-    {
-      label: t("adminPage.totalPassengers"),
-      value: "12.5k",
-      change: "-2.4%",
-      icon: Users,
-      color: "text-purple-600",
-      bg: "bg-purple-50",
-    },
-    {
-      label: t("adminPage.loadFactor"),
-      value: "88%",
-      change: "+4.1%",
-      icon: TrendingUp,
-      color: "text-accent",
-      bg: "bg-accent/10",
-    },
-  ];
->>>>>>> 4854d98499d3cab67f91f267e5a51caa55f5edc6
 
   if (!isLoggedIn || userRole !== "admin") return null;
 
@@ -342,7 +194,6 @@ const Admin: React.FC = () => {
       <AnimatePresence>
         {isModalOpen && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-<<<<<<< HEAD
              <motion.div 
                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                onClick={() => setIsModalOpen(false)}
@@ -413,127 +264,6 @@ const Admin: React.FC = () => {
                    </div>
                 </form>
              </motion.div>
-=======
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsModalOpen(false)}
-              className="absolute inset-0 bg-primary/40 backdrop-blur-md"
-            />
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden border border-gray-100 p-10"
-            >
-              <h2 className="text-2xl font-black text-primary uppercase tracking-tight mb-8">
-                {editingFlight ? "Edit Flight" : "Add New Flight"}
-              </h2>
-              <form onSubmit={handleSaveFlight} className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-gray-400 ml-2">
-                      Flight Number
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={flightForm.flight}
-                      onChange={(e) =>
-                        setFlightForm({ ...flightForm, flight: e.target.value })
-                      }
-                      className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-gray-400 ml-2">
-                      Time
-                    </label>
-                    <input
-                      type="time"
-                      required
-                      value={flightForm.time}
-                      onChange={(e) =>
-                        setFlightForm({ ...flightForm, time: e.target.value })
-                      }
-                      className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-gray-400 ml-2">
-                      From
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. FCO"
-                      value={flightForm.from}
-                      onChange={(e) =>
-                        setFlightForm({
-                          ...flightForm,
-                          from: e.target.value.toUpperCase(),
-                        })
-                      }
-                      className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-gray-400 ml-2">
-                      To
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. JFK"
-                      value={flightForm.to}
-                      onChange={(e) =>
-                        setFlightForm({
-                          ...flightForm,
-                          to: e.target.value.toUpperCase(),
-                        })
-                      }
-                      className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-gray-400 ml-2">
-                    Status
-                  </label>
-                  <select
-                    value={flightForm.status}
-                    onChange={(e) =>
-                      setFlightForm({ ...flightForm, status: e.target.value })
-                    }
-                    className="w-full bg-gray-50 p-4 rounded-xl border border-gray-100 font-bold outline-none focus:ring-2 focus:ring-accent appearance-none"
-                  >
-                    <option>On Time</option>
-                    <option>Delayed</option>
-                    <option>Scheduled</option>
-                    <option>Departed</option>
-                  </select>
-                </div>
-                <div className="pt-4 flex gap-4">
-                  <button
-                    type="submit"
-                    className="flex-1 bg-primary text-accent font-black uppercase tracking-widest py-4 rounded-xl hover:bg-primary/90 transition-all"
-                  >
-                    {editingFlight ? "Update Flight" : "Create Flight"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setIsModalOpen(false)}
-                    className="px-8 bg-gray-100 text-gray-400 font-black uppercase tracking-widest py-4 rounded-xl hover:bg-gray-200 transition-all"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </motion.div>
->>>>>>> 4854d98499d3cab67f91f267e5a51caa55f5edc6
           </div>
         )}
       </AnimatePresence>
@@ -570,7 +300,6 @@ const Admin: React.FC = () => {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-<<<<<<< HEAD
           {stats.map((stat, i) => {
             const IconComponent = stat.icona === 'BarChart3' ? BarChart3 : 
                                 stat.icona === 'Plane' ? Plane :
@@ -597,39 +326,6 @@ const Admin: React.FC = () => {
               </motion.div>
             );
           })}
-=======
-          {stats.map((stat, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm"
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div
-                  className={`w-12 h-12 ${stat.bg} ${stat.color} rounded-2xl flex items-center justify-center`}
-                >
-                  <stat.icon size={24} />
-                </div>
-                <div
-                  className={`flex items-center gap-1 text-[10px] font-black ${stat.change.startsWith("+") ? "text-green-500" : "text-red-500"}`}
-                >
-                  {stat.change.startsWith("+") ? (
-                    <ArrowUpRight size={12} />
-                  ) : (
-                    <ArrowDownRight size={12} />
-                  )}
-                  {stat.change}
-                </div>
-              </div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">
-                {stat.label}
-              </p>
-              <h3 className="text-3xl font-bold text-primary">{stat.value}</h3>
-            </motion.div>
-          ))}
->>>>>>> 4854d98499d3cab67f91f267e5a51caa55f5edc6
         </div>
 
         {/* Main Content Area */}
@@ -726,43 +422,11 @@ const Admin: React.FC = () => {
                       />
                     </div>
                     <div className="space-y-4">
-<<<<<<< HEAD
                       {popularRoutes.map((item, i) => (
                         <div key={i} className="flex items-center gap-4 p-4 rounded-2xl border border-gray-50 hover:bg-gray-50 transition-colors group">
                           <div className="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary group-hover:bg-accent group-hover:text-primary transition-all"><Plane size={18} /></div>
                           <div className="flex-1"><p className="text-sm font-bold text-primary">{item.route}</p><p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{t('adminPage.highDemand')}</p></div>
                           <div className="text-right"><p className="text-sm font-bold text-primary">{item.revenue}</p><p className="text-[10px] text-green-500 font-bold">{item.change}</p></div>
-=======
-                      {[
-                        "Rome → London",
-                        "Milan → Paris",
-                        "Rome → New York",
-                        "Paris → Rome",
-                      ].map((route, i) => (
-                        <div
-                          key={i}
-                          className="flex items-center gap-4 p-4 rounded-2xl border border-gray-50 hover:bg-gray-50 transition-colors group"
-                        >
-                          <div className="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary group-hover:bg-accent group-hover:text-primary transition-all">
-                            <Plane size={18} />
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-sm font-bold text-primary">
-                              {route}
-                            </p>
-                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-                              {t("adminPage.highDemand")}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm font-bold text-primary">
-                              €{850 - i * 100}k
-                            </p>
-                            <p className="text-[10px] text-green-500 font-bold">
-                              +12%
-                            </p>
-                          </div>
->>>>>>> 4854d98499d3cab67f91f267e5a51caa55f5edc6
                         </div>
                       ))}
                     </div>
@@ -803,7 +467,6 @@ const Admin: React.FC = () => {
                     </thead>
                     <tbody>
                       {flights.map((f) => (
-<<<<<<< HEAD
                         <tr key={f.id} className="border-b border-gray-50 group hover:bg-gray-50/50 transition-colors">
                           <td className="py-5 px-4"><span className="text-sm font-bold text-primary">FP{f.id}</span></td>
                           <td className="py-5 px-4 flex items-center gap-2">
@@ -818,72 +481,15 @@ const Admin: React.FC = () => {
                             }`}>
                               {f.stato === 'On Time' ? <CheckCircle2 size={12} /> : f.stato === 'Delayed' ? <AlertCircle size={12} /> : <Clock size={12} />}
                               {f.stato}
-=======
-                        <tr
-                          key={f.id}
-                          className="border-b border-gray-50 group hover:bg-gray-50/50 transition-colors"
-                        >
-                          <td className="py-5 px-4">
-                            <span className="text-sm font-bold text-primary">
-                              {f.flight}
-                            </span>
-                          </td>
-                          <td className="py-5 px-4 flex items-center gap-2">
-                            <span className="text-sm font-bold text-primary">
-                              {f.from}
-                            </span>
-                            <Plane size={12} className="text-gray-300" />
-                            <span className="text-sm font-bold text-primary">
-                              {f.to}
-                            </span>
-                          </td>
-                          <td className="py-5 px-4">
-                            <div
-                              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                                f.status === "On Time"
-                                  ? "bg-green-50 text-green-600"
-                                  : f.status === "Delayed"
-                                    ? "bg-red-50 text-red-600"
-                                    : "bg-blue-50 text-blue-600"
-                              }`}
-                            >
-                              {f.status === "On Time" ? (
-                                <CheckCircle2 size={12} />
-                              ) : f.status === "Delayed" ? (
-                                <AlertCircle size={12} />
-                              ) : (
-                                <Clock size={12} />
-                              )}
-                              {f.status}
->>>>>>> 4854d98499d3cab67f91f267e5a51caa55f5edc6
                             </div>
                           </td>
                           <td className="py-5 px-4">
                             <div className="flex items-center gap-3">
-<<<<<<< HEAD
                               <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden"><div className="h-full bg-accent" style={{ width: '85%' }} /></div>
                               <span className="text-xs font-bold text-primary">85%</span>
                             </div>
                           </td>
                           <td className="py-5 px-4"><span className="text-sm font-bold text-primary">€{(f.prezzo_base * 150).toLocaleString()}</span></td>
-=======
-                              <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
-                                <div
-                                  className="h-full bg-accent"
-                                  style={{ width: f.load }}
-                                />
-                              </div>
-                              <span className="text-xs font-bold text-primary">
-                                {f.load}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="py-5 px-4">
-                            <span className="text-sm font-bold text-primary">
-                              {f.revenue}
-                            </span>
-                          </td>
->>>>>>> 4854d98499d3cab67f91f267e5a51caa55f5edc6
                           <td className="py-5 px-4">
                             <div className="flex justify-end gap-2">
                               <button

@@ -9,10 +9,12 @@ export async function ricercaVoli(req: Request, res: Response, next: NextFunctio
         const result = await pool.query(
             `SELECT v.*, 
              ap.nome as partenza_nome, ap.citta as partenza_citta,
-             aa.nome as arrivo_nome, aa.citta as arrivo_citta
+             aa.nome as arrivo_nome, aa.citta as arrivo_citta,
+             ae.modello as aereo_modello, ae.capienza as aereo_capienza
              FROM voli v
              JOIN aeroporti ap ON v.aeroporto_partenza_id = ap.id
              JOIN aeroporti aa ON v.aeroporto_arrivo_id = aa.id
+             JOIN aerei ae ON v.aereo_id = ae.id
              WHERE v.aeroporto_partenza_id = $1 
              AND v.aeroporto_arrivo_id = $2 
              AND v.data_partenza = $3`,
@@ -31,10 +33,12 @@ export async function getVoloById(req: Request, res: Response, next: NextFunctio
         const result = await pool.query(
             `SELECT v.*, 
              ap.nome as partenza_nome, ap.citta as partenza_citta,
-             aa.nome as arrivo_nome, aa.citta as arrivo_citta
+             aa.nome as arrivo_nome, aa.citta as arrivo_citta,
+             ae.modello as aereo_modello, ae.capienza as aereo_capienza
              FROM voli v
              JOIN aeroporti ap ON v.aeroporto_partenza_id = ap.id
              JOIN aeroporti aa ON v.aeroporto_arrivo_id = aa.id
+             JOIN aerei ae ON v.aereo_id = ae.id
              WHERE v.id = $1`, 
             [id]
         );
@@ -54,10 +58,12 @@ export async function getAllVoli(req: Request, res: Response, next: NextFunction
         const result = await pool.query(
             `SELECT v.*, 
              ap.nome as partenza_nome, ap.citta as partenza_citta,
-             aa.nome as arrivo_nome, aa.citta as arrivo_citta
+             aa.nome as arrivo_nome, aa.citta as arrivo_citta,
+             ae.modello as aereo_modello
              FROM voli v
              JOIN aeroporti ap ON v.aeroporto_partenza_id = ap.id
              JOIN aeroporti aa ON v.aeroporto_arrivo_id = aa.id
+             JOIN aerei ae ON v.aereo_id = ae.id
              ORDER BY v.data_partenza DESC, v.ora_partenza DESC`
         );
         res.json(result.rows);

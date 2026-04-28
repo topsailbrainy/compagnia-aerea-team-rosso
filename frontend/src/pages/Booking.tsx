@@ -25,6 +25,8 @@ const FlightCard: React.FC<{
   isReturn: boolean;
 }> = ({ flight, isSelected, selectedCabin, onSelect, isReturn }) => {
   const { t } = useTranslation();
+  const [showDetails, setShowDetails] = useState(false);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -95,30 +97,62 @@ const FlightCard: React.FC<{
             ))}
           </div>
         </div>
-        <div className="mt-8 pt-6 border-t border-gray-50 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2 text-gray-400">
-              <Wifi size={14} />
-              <span className="text-[10px] font-bold uppercase">
-                {t("bookingPage.wifi")}
-              </span>
+        <div className="mt-8 pt-6 border-t border-gray-50 flex flex-col gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2 text-gray-400">
+                <Wifi size={14} />
+                <span className="text-[10px] font-bold uppercase">
+                  {t("bookingPage.wifi")}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-400">
+                <Coffee size={14} />
+                <span className="text-[10px] font-bold uppercase">
+                  {t("bookingPage.meals")}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-400">
+                <Monitor size={14} />
+                <span className="text-[10px] font-bold uppercase">
+                  {t("bookingPage.entertainment")}
+                </span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-gray-400">
-              <Coffee size={14} />
-              <span className="text-[10px] font-bold uppercase">
-                {t("bookingPage.meals")}
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-400">
-              <Monitor size={14} />
-              <span className="text-[10px] font-bold uppercase">
-                {t("bookingPage.entertainment")}
-              </span>
+            <div 
+              onClick={() => setShowDetails(!showDetails)}
+              className="flex items-center gap-2 text-primary font-bold text-xs cursor-pointer hover:text-accent transition-colors"
+            >
+              {t("bookingPage.flightDetails")} <ChevronDown size={14} className={`transition-transform ${showDetails ? 'rotate-180' : ''}`} />
             </div>
           </div>
-          <div className="flex items-center gap-2 text-primary font-bold text-xs cursor-pointer hover:text-accent transition-colors">
-            {t("bookingPage.flightDetails")} <ChevronDown size={14} />
-          </div>
+
+          <AnimatePresence>
+            {showDetails && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden"
+              >
+                <div className="bg-gray-50 rounded-2xl p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">Aircraft Information</p>
+                    <p className="text-sm font-bold text-primary">{flight.airplaneModello || "Boeing 787-9 Dreamliner"}</p>
+                    <p className="text-[10px] text-gray-400 uppercase mt-1">Operated by FlyPlus Premium</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">Flight Number</p>
+                    <p className="text-sm font-bold text-primary">{flight.flightNumber}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">Cabin Class</p>
+                    <p className="text-sm font-bold text-primary">All Classes Available</p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </motion.div>
@@ -142,6 +176,7 @@ const Booking: React.FC = () => {
     outboundCabin,
     returnCabin,
     cabinClass,
+    searchTrigger,
     setSearch,
   } = useSearchStore();
 
@@ -172,8 +207,9 @@ const Booking: React.FC = () => {
       departure: departureTime,
       arrival: arrivalTime,
       duration,
-      from: String(f.aeroporto_partenza_id),
-      to: String(f.aeroporto_arrivo_id),
+      from: String(f.partenza_citta || f.aeroporto_partenza_id),
+      to: String(f.arrivo_citta || f.aeroporto_arrivo_id),
+      airplaneModello: f.aereo_modello,
       prices: {
         economy: Number(f.prezzo_base),
         business: Math.round(Number(f.prezzo_base) * 2.5),
@@ -186,6 +222,7 @@ const Booking: React.FC = () => {
     const fetchFlights = async () => {
       if (!from || !to || !departureDate) return;
       setIsLoading(true);
+      setIsModifying(false); // Close modify form on search
       try {
         // Fetch outbound
         const outRes = await fetch("/api/voli/ricerca", {
@@ -225,7 +262,7 @@ const Booking: React.FC = () => {
       }
     };
     fetchFlights();
-  }, [from, to, departureDate, returnDate, tripType]);
+  }, [searchTrigger]);
 
   const handleSelectOutbound = (flight: any, cabin: string, price: number) => {
     setSearch("outboundFlight", flight);
@@ -234,12 +271,6 @@ const Booking: React.FC = () => {
     setSearch("cabinClass", cabin);
     if (tripType === "return" && !returnFlight) {
       setSelectingReturn(true);
-      setTimeout(() => {
-        const returnSection = document.getElementById("return-flights-section");
-        if (returnSection) {
-          returnSection.scrollIntoView({ behavior: "smooth" });
-        }
-      }, 100);
     }
   };
 
@@ -398,18 +429,33 @@ const Booking: React.FC = () => {
             </div>
 
             <div className="space-y-4">
-              {outboundFlightsList.map((flight) => (
-                <FlightCard
-                  key={flight.id}
-                  flight={flight}
-                  isSelected={outboundFlight?.id === flight.id}
-                  selectedCabin={outboundCabin}
-                  onSelect={(cabin, price) =>
-                    handleSelectOutbound(flight, cabin, price)
-                  }
-                  isReturn={false}
-                />
-              ))}
+              {isLoading ? (
+                <div className="py-12 flex flex-col items-center justify-center bg-white rounded-3xl border border-gray-100 shadow-sm">
+                  <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin mb-4" />
+                  <p className="text-gray-400 font-bold text-xs uppercase tracking-widest">{t("bookingPage.searchingOutbound")}</p>
+                </div>
+              ) : outboundFlightsList.length > 0 ? (
+                outboundFlightsList.map((flight) => (
+                  <FlightCard
+                    key={flight.id}
+                    flight={flight}
+                    isSelected={outboundFlight?.id === flight.id}
+                    selectedCabin={outboundCabin}
+                    onSelect={(cabin, price) =>
+                      handleSelectOutbound(flight, cabin, price)
+                    }
+                    isReturn={false}
+                  />
+                ))
+              ) : (
+                <div className="py-12 flex flex-col items-center justify-center bg-white rounded-3xl border border-dashed border-gray-200">
+                  <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4 text-gray-300">
+                    <Plane size={32} />
+                  </div>
+                  <h4 className="text-primary font-bold mb-1">{t("bookingPage.noFlightsTitle")}</h4>
+                  <p className="text-gray-400 text-sm">{t("bookingPage.noFlightsDesc")}</p>
+                </div>
+              )}
             </div>
           </div>
 
@@ -443,18 +489,33 @@ const Booking: React.FC = () => {
               </div>
 
               <div className="space-y-4">
-                {returnFlightsList.map((flight) => (
-                  <FlightCard
-                    key={flight.id}
-                    flight={flight}
-                    isSelected={returnFlight?.id === flight.id}
-                    selectedCabin={returnCabin}
-                    onSelect={(cabin, price) =>
-                      handleSelectReturn(flight, cabin, price)
-                    }
-                    isReturn={true}
-                  />
-                ))}
+                {isLoading ? (
+                  <div className="py-12 flex flex-col items-center justify-center bg-white rounded-3xl border border-gray-100 shadow-sm">
+                    <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin mb-4" />
+                    <p className="text-gray-400 font-bold text-xs uppercase tracking-widest">{t("bookingPage.searchingReturn")}</p>
+                  </div>
+                ) : returnFlightsList.length > 0 ? (
+                  returnFlightsList.map((flight) => (
+                    <FlightCard
+                      key={flight.id}
+                      flight={flight}
+                      isSelected={returnFlight?.id === flight.id}
+                      selectedCabin={returnCabin}
+                      onSelect={(cabin, price) =>
+                        handleSelectReturn(flight, cabin, price)
+                      }
+                      isReturn={true}
+                    />
+                  ))
+                ) : (
+                  <div className="py-12 flex flex-col items-center justify-center bg-white rounded-3xl border border-dashed border-gray-200">
+                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4 text-gray-300">
+                      <Plane size={32} className="-rotate-180" />
+                    </div>
+                    <h4 className="text-primary font-bold mb-1">{t("bookingPage.noFlightsTitle")}</h4>
+                    <p className="text-gray-400 text-sm">{t("bookingPage.noFlightsDescReturn")}</p>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -481,7 +542,12 @@ const Booking: React.FC = () => {
                           {outboundFlight.from} → {outboundFlight.to}
                         </p>
                       </div>
-                      <p className="font-bold text-primary">€{outboundPrice}</p>
+                      <div className="text-right">
+                        <p className="font-bold text-primary">€{outboundPrice * passengers}</p>
+                        {passengers > 1 && (
+                          <p className="text-[9px] text-gray-400 font-bold">€{outboundPrice} x {passengers}</p>
+                        )}
+                      </div>
                     </div>
                     <div className="bg-gray-50 rounded-lg px-3 py-1 inline-block">
                       <span className="text-[9px] font-bold text-primary/60 uppercase tracking-wider">
@@ -501,7 +567,12 @@ const Booking: React.FC = () => {
                           {returnFlight.from} → {returnFlight.to}
                         </p>
                       </div>
-                      <p className="font-bold text-primary">€{returnPrice}</p>
+                      <div className="text-right">
+                        <p className="font-bold text-primary">€{returnPrice * passengers}</p>
+                        {passengers > 1 && (
+                          <p className="text-[9px] text-gray-400 font-bold">€{returnPrice} x {passengers}</p>
+                        )}
+                      </div>
                     </div>
                     <div className="bg-gray-50 rounded-lg px-3 py-1 inline-block">
                       <span className="text-[9px] font-bold text-primary/60 uppercase tracking-wider">
@@ -512,12 +583,20 @@ const Booking: React.FC = () => {
                 )}
                 {outboundFlight && (tripType === "oneway" || returnFlight) ? (
                   <div className="pt-6 border-t border-gray-100">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-gray-500 font-medium">
+                        {t("booking.passengers")}
+                      </span>
+                      <span className="text-primary font-bold">
+                        {passengers} {passengers > 1 ? t("common.guests") : t("common.guest")}
+                      </span>
+                    </div>
                     <div className="flex justify-between items-center mb-6">
                       <span className="text-gray-500 font-medium">
                         {t("bookingPage.totalPrice")}
                       </span>
                       <span className="text-3xl font-bold text-primary">
-                        €{totalBasePrice}
+                        €{totalBasePrice * passengers}
                       </span>
                     </div>
                     <button

@@ -1132,8 +1132,8 @@ const Payment: React.FC = () => {
                         <span className="text-white/40 text-[10px] font-black uppercase tracking-widest">
                           {t("common.guests")}
                         </span>
-                        <span className="font-black text-sm">
-                          {passengerCount}
+                        <span className="font-bold">
+                          {passengerCount} {passengerCount > 1 ? t("booking.passengers") : t("booking.passenger")}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">

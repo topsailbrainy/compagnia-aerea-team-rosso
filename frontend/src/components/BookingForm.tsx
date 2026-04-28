@@ -21,6 +21,7 @@ const CustomSelect: React.FC<{
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const selectedLabel = options.find(o => o.value === value)?.label || '';
+  const listRef = React.useRef<HTMLDivElement>(null);
 
   const toggleOpen = () => {
     const newState = !isOpen;
@@ -28,14 +29,27 @@ const CustomSelect: React.FC<{
     onOpenStateChange?.(newState);
   };
 
+  React.useEffect(() => {
+    if (isOpen && listRef.current) {
+      const timer = setTimeout(() => {
+        const container = listRef.current;
+        const selectedItem = container?.querySelector('[data-selected="true"]') as HTMLElement;
+        if (selectedItem && container) {
+          selectedItem.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        }
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
   return (
-    <div className="relative w-full md:w-56">
+    <div className="relative w-full md:w-56 min-w-0">
       <div 
         onClick={toggleOpen}
-        className="flex items-center gap-3 px-6 py-3 bg-gray-50 hover:bg-white border border-gray-100 hover:border-accent/30 rounded-2xl cursor-pointer transition-all group h-[48px]"
+        className="flex items-center gap-3 px-6 py-3 bg-gray-50 hover:bg-white border border-gray-100 hover:border-accent/30 rounded-2xl cursor-pointer transition-all group h-[48px] overflow-hidden"
       >
         {icon && <div className="text-accent group-hover:scale-110 transition-transform flex-shrink-0">{icon}</div>}
-        <span className="text-[0.85rem] font-black uppercase tracking-tight text-primary flex-1 truncate">{selectedLabel || t('booking.select')}</span>
+        <span className="text-[0.85rem] font-black uppercase tracking-tight text-primary truncate flex-1 min-w-0">{selectedLabel || t('booking.select')}</span>
         <ChevronDown size={14} className={`text-gray-400 flex-shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
       </div>
 
@@ -47,18 +61,20 @@ const CustomSelect: React.FC<{
               initial={{ opacity: 0, y: 10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
-              className="absolute left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl z-[70] overflow-hidden"
+              className="absolute left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl z-[70] overflow-hidden max-h-60 overflow-y-auto"
+              ref={listRef}
             >
               {options.map((opt) => (
                 <div 
                   key={opt.value}
+                  data-selected={String(value) === String(opt.value)}
                   onClick={() => {
                     onChange(opt.value);
                     setIsOpen(false);
                     onOpenStateChange?.(false);
                   }}
                   className={`px-6 py-3 text-[10px] font-black uppercase tracking-widest cursor-pointer transition-colors ${
-                    value === opt.value ? 'bg-accent text-primary' : 'hover:bg-gray-50 text-gray-500'
+                    String(value) === String(opt.value) ? 'bg-accent text-primary' : 'hover:bg-gray-50 text-gray-500'
                   }`}
                 >
                   {opt.label}
@@ -83,6 +99,7 @@ const LocationSelect: React.FC<{
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const selectedLabel = options.find(o => o.value === value)?.label || '';
+  const listRef = React.useRef<HTMLDivElement>(null);
 
   const filteredOptions = options.filter(opt => 
     opt.label.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -96,14 +113,27 @@ const LocationSelect: React.FC<{
     onOpenStateChange?.(newState);
   };
 
+  React.useEffect(() => {
+    if (isOpen && listRef.current && !searchTerm) {
+      const timer = setTimeout(() => {
+        const container = listRef.current;
+        const selectedItem = container?.querySelector('[data-selected="true"]') as HTMLElement;
+        if (selectedItem && container) {
+          selectedItem.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        }
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, searchTerm]);
+
   return (
-    <div className="flex flex-col gap-1.5 w-full">
+    <div className="flex flex-col gap-1.5 w-full min-w-0">
       <label className="text-[10px] uppercase font-black text-gray-400 tracking-[0.2em] ml-2">{label}</label>
       <div className="relative group">
-        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-accent group-hover:scale-110 transition-transform z-10" size={16} />
+        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-accent group-hover:scale-110 transition-transform z-10 flex-shrink-0" size={16} />
         <div 
           onClick={toggleOpen}
-          className="w-full pl-12 pr-6 h-[50px] bg-gray-50 border border-gray-100 rounded-2xl flex items-center cursor-pointer hover:bg-white hover:border-accent/20 transition-all"
+          className="w-full pl-12 pr-6 h-[50px] bg-gray-50 border border-gray-100 rounded-2xl flex items-center cursor-pointer hover:bg-white hover:border-accent/20 transition-all overflow-hidden"
         >
           {isOpen ? (
             <input
@@ -116,11 +146,11 @@ const LocationSelect: React.FC<{
               onClick={(e) => e.stopPropagation()}
             />
           ) : (
-            <span className={`text-[0.85rem] font-black ${selectedLabel ? 'text-primary' : 'text-gray-300'}`}>
+            <span className={`text-[0.85rem] font-black truncate flex-1 min-w-0 ${selectedLabel ? 'text-primary' : 'text-gray-300'}`}>
               {selectedLabel || placeholder}
             </span>
           )}
-          <ChevronDown size={14} className={`ml-auto text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown size={14} className={`ml-auto text-gray-400 flex-shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
         </div>
 
         <AnimatePresence>
@@ -132,18 +162,20 @@ const LocationSelect: React.FC<{
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
                 className="absolute left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl z-[70] overflow-hidden max-h-60 overflow-y-auto"
+                ref={listRef}
               >
                 {filteredOptions.length > 0 ? (
                   filteredOptions.map((opt) => (
                     <div 
                       key={opt.value}
+                      data-selected={String(value) === String(opt.value)}
                       onClick={() => {
                         onChange(opt.value);
                         setIsOpen(false);
                         onOpenStateChange?.(false);
                       }}
                       className={`px-6 py-4 text-sm font-bold cursor-pointer transition-colors ${
-                        value === opt.value ? 'bg-accent text-primary' : 'hover:bg-gray-50 text-primary'
+                        String(value) === String(opt.value) ? 'bg-accent text-primary' : 'hover:bg-gray-50 text-primary'
                       }`}
                     >
                       {opt.label}
@@ -225,7 +257,7 @@ const BookingForm: React.FC = () => {
     fetchAirports();
   }, []);
 
-  const { from, to, departureDate, returnDate, passengers, tripType, setSearch } = useSearchStore();
+  const { from, to, departureDate, returnDate, passengers, tripType, setSearch, triggerSearch } = useSearchStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [validationError, setValidationError] = useState<{ title: string; desc: string } | null>(null);
 
@@ -286,6 +318,7 @@ const BookingForm: React.FC = () => {
     setSearch('returnFlight', null);
     setSearch('outboundPrice', 0);
     setSearch('returnPrice', 0);
+    triggerSearch();
     navigate('/booking');
   };
 

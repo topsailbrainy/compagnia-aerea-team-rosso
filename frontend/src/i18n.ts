@@ -220,7 +220,12 @@ const resources = {
         "first": "First Class",
         "wifi": "Wi-Fi",
         "meals": "Meals",
-        "entertainment": "In-flight Ent."
+        "entertainment": "In-flight Ent.",
+        "searchingOutbound": "Searching for outbound flights...",
+        "searchingReturn": "Searching for return flights...",
+        "noFlightsTitle": "No Flights Found",
+        "noFlightsDesc": "We couldn't find any outbound flights for the selected date. Please try another date or destination.",
+        "noFlightsDescReturn": "We couldn't find any return flights for the selected date. Please try another date."
       },
       "passengerPage": {
         "backFlights": "Back to Flights",
@@ -706,7 +711,12 @@ const resources = {
         "first": "Prima Classe",
         "wifi": "Wi-Fi",
         "meals": "Pasti",
-        "entertainment": "Intrattenimento"
+        "entertainment": "Intrattenimento",
+        "searchingOutbound": "Ricerca voli di andata in corso...",
+        "searchingReturn": "Ricerca voli di ritorno in corso...",
+        "noFlightsTitle": "Nessun Volo Trovato",
+        "noFlightsDesc": "Non abbiamo trovato voli di andata per la data selezionata. Prova con un'altra data o destinazione.",
+        "noFlightsDescReturn": "Non abbiamo trovato voli di ritorno per la data selezionata. Prova con un'altra data."
       },
       "passengerPage": {
         "backFlights": "Torna ai Voli",

@@ -423,7 +423,7 @@ const Passenger: React.FC = () => {
                   <div className="space-y-3">
                     <div className="flex justify-between items-center"><span className="text-white/50 text-sm font-medium">{t('passengerPage.outboundCabin')}</span><span className="font-bold capitalize">{t(`bookingPage.${outboundCabin}`)}</span></div>
                     {tripType === 'return' && <div className="flex justify-between items-center"><span className="text-white/50 text-sm font-medium">{t('passengerPage.returnCabin')}</span><span className="font-bold capitalize">{t(`bookingPage.${returnCabin}`)}</span></div>}
-                    <div className="flex justify-between items-center"><span className="text-white/50 text-sm font-medium">{t('common.guests')}</span><span className="font-bold">{passengerCount} {passengerCount > 1 ? t('passengerPage.passengers') : t('passengerPage.passenger')}</span></div>
+                    <div className="flex justify-between items-center"><span className="text-white/50 text-sm font-medium">{t('common.guests')}</span><span className="font-bold">{passengerCount} {passengerCount > 1 ? t('booking.passengers') : t('booking.passenger')}</span></div>
                     {totalBaggageCost > 0 && <div className="flex justify-between items-center animate-in fade-in"><span className="text-white/50 text-sm font-medium">Extra Baggage</span><span className="font-bold">€{totalBaggageCost.toFixed(2)}</span></div>}
                     {totalAssistanceCost > 0 && <div className="flex justify-between items-center animate-in fade-in"><span className="text-white/50 text-sm font-medium">Special Assistance</span><span className="font-bold">€{totalAssistanceCost.toFixed(2)}</span></div>}
                     
