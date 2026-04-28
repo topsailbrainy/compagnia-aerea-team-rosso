@@ -1,4 +1,4 @@
-/* -- Inserimento Dati Campione
+-- Inserimento Dati Campione
 
 -- 1. Aeroporti (Estratti da aereoporti.txt)
 INSERT INTO aeroporti (nome, citta) VALUES
@@ -4944,4 +4944,3 @@ INSERT INTO analytics (label, valore, variazione, icona, colore, bg_colore, cate
 ('Total Passengers', '12.5k', '-2.4%', 'Users', 'text-purple-600', 'bg-purple-50', 'stats'),
 ('Load Factor', '88%', '+4.1%', 'TrendingUp', 'text-accent', 'bg-accent/10', 'stats');
 
- */
