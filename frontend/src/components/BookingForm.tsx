@@ -34,8 +34,16 @@ const CustomSelect: React.FC<{
       const timer = setTimeout(() => {
         const container = listRef.current;
         const selectedItem = container?.querySelector('[data-selected="true"]') as HTMLElement;
+        
+        // Internal container scroll to center selected item
         if (selectedItem && container) {
-          selectedItem.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          const scrollPos = selectedItem.offsetTop - (container.clientHeight / 2) + (selectedItem.clientHeight / 2);
+          container.scrollTo({ top: scrollPos, behavior: 'smooth' });
+        }
+
+        // Page-level scroll only on /booking page to ensure the list is visible
+        if (window.location.pathname.includes('/booking')) {
+          container?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         }
       }, 150);
       return () => clearTimeout(timer);
@@ -118,8 +126,16 @@ const LocationSelect: React.FC<{
       const timer = setTimeout(() => {
         const container = listRef.current;
         const selectedItem = container?.querySelector('[data-selected="true"]') as HTMLElement;
+        
+        // Internal container scroll to center selected item
         if (selectedItem && container) {
-          selectedItem.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          const scrollPos = selectedItem.offsetTop - (container.clientHeight / 2) + (selectedItem.clientHeight / 2);
+          container.scrollTo({ top: scrollPos, behavior: 'smooth' });
+        }
+
+        // Page-level scroll only on /booking page to ensure the list is visible
+        if (window.location.pathname.includes('/booking')) {
+          container?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         }
       }, 150);
       return () => clearTimeout(timer);
