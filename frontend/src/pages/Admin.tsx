@@ -29,7 +29,7 @@ const Admin: React.FC = () => {
   const { userRole, isLoggedIn, setSearch } = useSearchStore();
   const [activeTab, setActiveTab] = useState<
     "analytics" | "flights" | "passengers"
-  >("analytics");
+  >("flights");
 
   const [flights, setFlights] = useState<any[]>([]);
   const [stats, setStats] = useState<any[]>([]);
@@ -59,37 +59,40 @@ const Admin: React.FC = () => {
 
   const fetchData = async () => {
     setIsLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      const headers = { 'Authorization': `Bearer ${token}` };
+    const token = localStorage.getItem('token');
+    const headers = { 'Authorization': `Bearer ${token}` };
 
+    try {
       // Fetch Stats from Analytics table
       const statsRes = await fetch('/api/admin/analytics', { headers });
       if (statsRes.ok) {
         const statsData = await statsRes.json();
         setStats(statsData.filter((s: any) => s.categoria === 'stats'));
       }
+    } catch (err) {
+      console.error("Error fetching stats:", err);
+    }
 
+    try {
       // Fetch Flights
       const flightsRes = await fetch('/api/voli', { headers });
       if (flightsRes.ok) {
         const flightsData = await flightsRes.json();
         setFlights(flightsData);
       }
-
-      // Mock popular routes for now as they are complex to calculate
-      setPopularRoutes([
-        { route: 'Rome → London', revenue: '€850k', change: '+12%' },
-        { route: 'Milan → Paris', revenue: '€750k', change: '+8%' },
-        { route: 'Rome → New York', revenue: '€650k', change: '+15%' },
-        { route: 'Paris → Rome', revenue: '€550k', change: '+5%' },
-      ]);
-
     } catch (err) {
-      console.error("Error fetching admin data:", err);
-    } finally {
-      setIsLoading(false);
+      console.error("Error fetching flights:", err);
     }
+
+    // Mock popular routes for now as they are complex to calculate
+    setPopularRoutes([
+      { route: 'Rome → London', revenue: '€850k', change: '+12%' },
+      { route: 'Milan → Paris', revenue: '€750k', change: '+8%' },
+      { route: 'Rome → New York', revenue: '€650k', change: '+15%' },
+      { route: 'Paris → Rome', revenue: '€550k', change: '+5%' },
+    ]);
+
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -283,10 +286,6 @@ const Admin: React.FC = () => {
             </p>
           </div>
           <div className="flex gap-4 w-full md:w-auto">
-            <button className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-white border border-gray-100 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest text-primary hover:bg-gray-50 transition-all shadow-sm">
-              <Download size={14} className="text-accent" />{" "}
-              {t("adminPage.export")}
-            </button>
             <button
               onClick={handleOpenAddModal}
               className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-accent hover:text-primary transition-all shadow-lg shadow-primary/10"

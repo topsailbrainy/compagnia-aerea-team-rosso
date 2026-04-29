@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import { Search, Briefcase, ChevronRight, Plane, Calendar, Clock, AlertCircle } from 'lucide-react';
+import { Search, Briefcase, ChevronRight, Plane, Calendar, Clock, AlertCircle, LogOut, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import attesaImg from '../assets/persone/attesa.avif';
 import { useSearchStore } from '../store';
-import type { BookedFlight } from '../store';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from "react-router-dom";
 
 const Manage: React.FC = () => {
   const { t } = useTranslation();
-  const { bookings } = useSearchStore();
+  const navigate = useNavigate();
   const [ref, setRef] = useState('');
   const [lastName, setLastName] = useState('');
-  const [searchResult, setSearchResult] = useState<BookedFlight | null>(null);
+  const [searchResult, setSearchResult] = useState<any>(null);
   const [error, setError] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSearch = async () => {
     setError('');
@@ -30,40 +32,30 @@ const Manage: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`/api/prenotazioni/${id}`);
+      const response = await fetch(`/api/prenotazioni/search?id=${id}&cognome=${encodeURIComponent(lastName)}`);
       if (!response.ok) {
-        if (response.status === 401) {
-            setError('Please login to manage your bookings');
-        } else {
-            setError(t('managePage.notFound'));
-        }
+        const data = await response.json();
+        setError(data.message || t('managePage.notFound'));
         return;
       }
 
       const data = await response.json();
       
-      // Basic last name verification (check main user or any passenger)
-      const matchesLastName = 
-        data.utente_cognome?.toLowerCase() === lastName.toLowerCase() ||
-        data.passeggeri?.some((p: any) => p.cognome.toLowerCase() === lastName.toLowerCase());
-
-      if (!matchesLastName) {
-        setError(t('managePage.notFound'));
-        return;
-      }
-
-      setSearchResult({
+      const mappedResult = {
         id: `FP-${data.id}`,
         flightNumber: `FP ${100 + data.volo_id}`,
-        from: String(data.aeroporto_partenza_id),
-        to: String(data.aeroporto_arrivo_id),
-        date: new Date(data.data_prenotazione).toLocaleDateString(),
-        time: data.ora_partenza.slice(0, 5),
-        status: 'Confirmed',
+        from: data.partenza_citta,
+        to: data.arrivo_citta,
+        date: new Date(data.volo_data_partenza).toLocaleDateString(),
+        time: data.ora_partenza ? data.ora_partenza.slice(0, 5) : "10:00",
+        status: data.classe === "Checked-in" ? "Checked-in" : "Confirmed",
         passengerName: `${data.utente_nome} ${data.utente_cognome}`,
         lastName: data.utente_cognome,
         cabinClass: data.classe
-      });
+      };
+
+      setSearchResult(mappedResult);
+      setIsModalOpen(true);
     } catch (err) {
       setError('An error occurred during search');
     }
@@ -71,6 +63,142 @@ const Manage: React.FC = () => {
 
   return (
     <div className="p-12 mt-20 max-w-7xl mx-auto">
+      <AnimatePresence>
+        {isModalOpen && searchResult && (
+          <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 md:p-8">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsModalOpen(false)}
+              className="absolute inset-0 bg-primary/40 backdrop-blur-md"
+            />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl relative z-10 overflow-hidden border border-gray-100"
+            >
+              <div className="bg-primary p-10 text-white relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full -mr-32 -mt-32 blur-3xl" />
+                <div className="relative z-10 flex justify-between items-start">
+                  <div>
+                    <span className="text-accent font-black uppercase tracking-[0.3em] text-[10px] mb-2 block">
+                      Conferma Prenotazione
+                    </span>
+                    <h2 className="text-4xl font-black tracking-tighter uppercase italic">
+                      {searchResult.id}
+                    </h2>
+                  </div>
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+                  >
+                    <LogOut className="rotate-180" size={18} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="p-10 space-y-10">
+                <div className="flex items-center justify-between gap-6 px-4">
+                  <div className="text-center">
+                    <p className="text-5xl font-black text-primary tracking-tighter">
+                      {searchResult.from}
+                    </p>
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-2">
+                      Città di Partenza
+                    </p>
+                  </div>
+                  <div className="flex-1 flex flex-col items-center gap-2">
+                    <div className="w-full h-[2px] bg-gray-100 relative">
+                      <Plane
+                        size={24}
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-accent rotate-90"
+                      />
+                    </div>
+                    <span className="text-xs font-black text-accent uppercase tracking-widest">
+                      {searchResult.flightNumber}
+                    </span>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-5xl font-black text-primary tracking-tighter">
+                      {searchResult.to}
+                    </p>
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-2">
+                      Città di Arrivo
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-8 py-8 border-y border-gray-50">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                      Data del Viaggio
+                    </p>
+                    <p className="text-lg font-bold text-primary">
+                      {searchResult.date}
+                    </p>
+                  </div>
+                  <div className="space-y-1 text-right">
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                      Orario di Partenza
+                    </p>
+                    <p className="text-lg font-bold text-primary">
+                      {searchResult.time}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                      Classe di Cabina
+                    </p>
+                    <p className="text-lg font-bold text-primary capitalize">
+                      {searchResult.cabinClass}
+                    </p>
+                  </div>
+                  <div className="space-y-1 text-right">
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                      Stato Prenotazione
+                    </p>
+                    <span
+                      className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg inline-block mt-1 ${
+                        searchResult.status === "Checked-in"
+                          ? "bg-green-500 text-white"
+                          : "bg-primary text-accent"
+                      }`}
+                    >
+                      {searchResult.status === "Checked-in"
+                        ? "Effettuato"
+                        : searchResult.status}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4">
+                  {searchResult.status === "Confirmed" ? (
+                    <button
+                      onClick={() => navigate("/check-in")}
+                      className="flex-1 bg-accent text-primary font-black uppercase tracking-[0.2em] py-5 rounded-2xl hover:bg-primary hover:text-white transition-all shadow-xl shadow-accent/20 flex items-center justify-center gap-3"
+                    >
+                      Effettua Check-in <ChevronRight size={18} />
+                    </button>
+                  ) : (
+                    <button className="flex-1 bg-green-500 text-white font-black uppercase tracking-[0.2em] py-5 rounded-2xl cursor-default flex items-center justify-center gap-3">
+                      Check-in Completato <ShieldCheck size={18} />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="flex-1 bg-gray-50 text-gray-400 font-black uppercase tracking-[0.2em] py-5 rounded-2xl hover:bg-gray-100 hover:text-primary transition-all flex items-center justify-center gap-3"
+                  >
+                    Chiudi
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       <div className="mb-12 flex flex-col md:flex-row justify-between items-start gap-8">
         <div className="flex-1">
           <h2 className="text-4xl md:text-6xl font-bold text-primary mb-4 tracking-tight">{t('managePage.title')}</h2>
@@ -126,63 +254,6 @@ const Manage: React.FC = () => {
                 {t('managePage.findBooking')}
               </button>
             </div>
-
-            {searchResult && (
-              <div className="mt-12 p-8 rounded-3xl border border-accent/20 bg-accent/5 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="flex justify-between items-start mb-6">
-                  <div>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-accent mb-2 block">{t('paymentPage.bookingRef')}</span>
-                    <h4 className="text-2xl font-black text-primary">{searchResult.id}</h4>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 block">{t('common.status')}</span>
-                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg ${searchResult.status === 'Confirmed' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
-                      {searchResult.status}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between gap-8 py-8 border-y border-accent/10 mb-6">
-                  <div className="text-center flex-1">
-                    <p className="text-3xl font-black text-primary">{searchResult.from}</p>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">DEP</p>
-                  </div>
-                  <div className="flex-1 flex flex-col items-center">
-                    <div className="w-full h-[2px] bg-accent/20 relative">
-                      <Plane size={18} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-accent" />
-                    </div>
-                  </div>
-                  <div className="text-center flex-1">
-                    <p className="text-3xl font-black text-primary">{searchResult.to}</p>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">ARR</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                  <div>
-                    <div className="flex items-center gap-2 text-gray-400 mb-1">
-                      <Calendar size={14} />
-                      <span className="text-[10px] font-black uppercase tracking-widest">{t('booking.departure')}</span>
-                    </div>
-                    <p className="font-bold text-sm text-primary">{searchResult.date}</p>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 text-gray-400 mb-1">
-                      <Clock size={14} />
-                      <span className="text-[10px] font-black uppercase tracking-widest">Time</span>
-                    </div>
-                    <p className="font-bold text-sm text-primary">{searchResult.time}</p>
-                  </div>
-                  <div className="col-span-2">
-                    <div className="flex items-center gap-2 text-gray-400 mb-1">
-                      <Briefcase size={14} />
-                      <span className="text-[10px] font-black uppercase tracking-widest">{t('userPage.personalInfo')}</span>
-                    </div>
-                    <p className="font-bold text-sm text-primary">{searchResult.passengerName}</p>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
 

@@ -125,9 +125,9 @@ INSERT INTO voli (aeroporto_partenza_id, aeroporto_arrivo_id, aereo_id, data_par
 
 -- 5. Utenti
 INSERT INTO utenti (nome, cognome, email, password, telefono, ruolo) VALUES
-('Mario', 'Rossi', 'mario.rossi@example.com', 'password123', '3331234567', 'user'),
-('Laura', 'Bianchi', 'laura.bianchi@example.com', 'securepass', '3337654321', 'user'),
-('Admin', 'TeamRosso', 'admin@compagnia.aerea', 'admin2026', '3330000000', 'admin'),
+('Mario', 'Rossi', 'mario.rossi@example.com', '$2b$10$Le0N2JNth9KGSW3Ywhf4mewi1Y754LHId6QMVPm8EbgK297qYW/ce', '3331112222', 'user'),
+('Laura', 'Bianchi', 'laura.bianchi@example.com', '$2b$10$k4IPYODnQlAWWDxf/uV07.nbufAmLHSMbr3Z.4r4QIwENgeB09cRi', '3334445555', 'user'),
+('Admin', 'TeamRosso', 'admin@compagnia.aerea', '$2b$10$F6etnQrDMg0OWgv4P.6jh.DkCzNShdmHL/.7QbEw9tVAbFkHZ32hu', '3330000000', 'admin'), --admin2026
 ('Giuseppe', 'Verdi', 'g.verdi@music.it', 'operapass', '3471112223', 'user'),
 ('Anna', 'Neri', 'anna.neri@email.com', 'annapass', '3484445556', 'user'),
 ('Luca', 'Gialli', 'luca.g@provider.com', 'lucapass123', '3497778889', 'user'),

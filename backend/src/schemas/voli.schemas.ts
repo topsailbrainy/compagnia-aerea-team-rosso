@@ -12,7 +12,7 @@ const voloBaseSchema = z.object({
     stato: z.enum(['On Time', 'Delayed', 'Scheduled', 'Departed']).default('Scheduled'),
 });
 
-export const addVoloSchema = z.object(voloBaseSchema);
+export const addVoloSchema = voloBaseSchema;
 
 export const updateVoloSchema = z.object({
     aeroporto_partenza_id: voloBaseSchema.shape.aeroporto_partenza_id.optional(),

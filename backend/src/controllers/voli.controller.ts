@@ -53,6 +53,35 @@ export async function getVoloById(req: Request, res: Response, next: NextFunctio
     }
 }
 
+export async function ricercaStatoVolo(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { id, data } = req.query;
+        
+        if (!id || !data) {
+            throw new AppError(400, "ID e data sono richiesti");
+        }
+
+        const result = await pool.query(
+            `SELECT v.*, 
+             ap.nome as partenza_nome, ap.citta as partenza_citta,
+             aa.nome as arrivo_nome, aa.citta as arrivo_citta
+             FROM voli v
+             JOIN aeroporti ap ON v.aeroporto_partenza_id = ap.id
+             JOIN aeroporti aa ON v.aeroporto_arrivo_id = aa.id
+             WHERE v.id = $1 AND v.data_partenza = $2`,
+            [id, data]
+        );
+        
+        if (result.rows.length === 0) {
+            throw new AppError(404, "Volo non trovato per la data specificata");
+        }
+        
+        res.json(result.rows[0]);
+    } catch (error) {
+        next(error);
+    }
+}
+
 export async function getAllVoli(req: Request, res: Response, next: NextFunction) {
     try {
         const result = await pool.query(

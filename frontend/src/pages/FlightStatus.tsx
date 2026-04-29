@@ -85,30 +85,25 @@ const FlightStatus: React.FC = () => {
     setSearchResult(null);
 
     try {
-      const response = await fetch(`/api/voli/${id}`);
+      const response = await fetch(`/api/voli/status?id=${id}&data=${date}`);
       if (!response.ok) {
-        throw new Error("Flight not found");
+        const data = await response.json();
+        throw new Error(data.message || "Flight not found");
       }
 
       const data = await response.json();
       
-      // Verify date matches (optional, but good for UX)
-      if (data.data_partenza.split('T')[0] !== date) {
-        // We could still show it but warn, or just say not found for that date
-        // For simplicity, let's just show what we found since we search by ID
-      }
-
       setSearchResult({
         number: "FP" + data.id,
-        from: data.partenza_citta || data.aeroporto_partenza_id,
-        to: data.arrivo_citta || data.aeroporto_arrivo_id,
+        from: data.partenza_citta,
+        to: data.arrivo_citta,
         status: data.stato,
         departure: data.ora_partenza.slice(0, 5),
         arrival: data.ora_arrivo.slice(0, 5),
         gate: "A" + (data.id % 20 + 1), // Pseudo-random gate based on ID
       });
-    } catch (err) {
-      setError("Flight not found for the selected criteria.");
+    } catch (err: any) {
+      setError(err.message || "Flight not found for the selected criteria.");
     } finally {
       setIsSearching(false);
     }
