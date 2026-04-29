@@ -185,6 +185,32 @@ const Booking: React.FC = () => {
   const [outboundFlightsList, setOutboundFlightsList] = useState<any[]>([]);
   const [returnFlightsList, setReturnFlightsList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [airports, setAirports] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    const fetchAirports = async () => {
+      try {
+        const res = await fetch("/api/aeroporti");
+        if (res.ok) {
+          const data = await res.json();
+          setAirports(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch airports:", error);
+      }
+    };
+    fetchAirports();
+  }, []);
+
+  const fromAirportName = useMemo(() => {
+    const airport = airports.find(a => String(a.id) === String(from));
+    return airport ? `${airport.citta}, ${airport.nome}` : from;
+  }, [airports, from]);
+
+  const toAirportName = useMemo(() => {
+    const airport = airports.find(a => String(a.id) === String(to));
+    return airport ? `${airport.citta}, ${airport.nome}` : to;
+  }, [airports, to]);
 
   const mapFlight = (f: any) => {
     const departureTime = f.ora_partenza.slice(0, 5);
@@ -324,7 +350,7 @@ const Booking: React.FC = () => {
                   <p className="text-accent text-[10px] font-black uppercase tracking-widest mb-1">
                     {t("booking.origin")}
                   </p>
-                  <h2 className="text-3xl font-bold">{from || "FCO"}</h2>
+                  <h2 className="text-3xl font-bold">{fromAirportName}</h2>
                 </div>
                 <div className="flex flex-col items-center">
                   <div className="w-16 h-[2px] bg-white/20 relative">
@@ -338,7 +364,7 @@ const Booking: React.FC = () => {
                   <p className="text-accent text-[10px] font-black uppercase tracking-widest mb-1">
                     {t("booking.destination")}
                   </p>
-                  <h2 className="text-3xl font-bold">{to || "LHR"}</h2>
+                  <h2 className="text-3xl font-bold">{toAirportName}</h2>
                 </div>
               </div>
               <div className="h-12 w-[1px] bg-white/10 hidden md:block" />
@@ -484,7 +510,7 @@ const Booking: React.FC = () => {
               <div className="bg-accent/5 border border-accent/10 rounded-2xl p-6 mb-4">
                 <p className="text-accent font-black text-xs uppercase tracking-widest mb-1">Return Flight Search Active</p>
                 <p className="text-primary/60 text-[11px] font-medium leading-relaxed">
-                  Please select your preferred flight and cabin for the return journey from {to} to {from}.
+                  Please select your preferred flight and cabin for the return journey from {toAirportName} to {fromAirportName}.
                 </p>
               </div>
 
