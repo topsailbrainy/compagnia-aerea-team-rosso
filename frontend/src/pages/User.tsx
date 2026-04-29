@@ -38,7 +38,10 @@ const User: React.FC = () => {
     } else {
       const fetchBookings = async () => {
         try {
-          const response = await fetch("/api/prenotazioni");
+          const token = localStorage.getItem("token");
+          const response = await fetch("/api/prenotazioni", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
           if (response.ok) {
             const data = await response.json();
             const mappedBookings = data.map((b: any) => ({
@@ -66,6 +69,7 @@ const User: React.FC = () => {
   const handleLogout = () => {
     setSearch("isLoggedIn", false);
     setSearch("userRole", null);
+    localStorage.removeItem("token");
     navigate("/");
   };
 

@@ -191,11 +191,15 @@ const Payment: React.FC = () => {
     }));
 
     try {
+      const token = localStorage.getItem("token");
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
       if (!isMembershipPurchase && outboundFlight) {
         // Create outbound booking
         const outRes = await fetch("/api/prenotazioni", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify({
             utente_id: userId || 1, // Fallback to 1 for demo if not logged in
             volo_id: outboundFlight.id,
@@ -213,7 +217,7 @@ const Payment: React.FC = () => {
           // Create return booking
           const retRes = await fetch("/api/prenotazioni", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers,
             body: JSON.stringify({
               utente_id: userId || 1,
               volo_id: returnFlight.id,

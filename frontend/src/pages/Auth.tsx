@@ -67,6 +67,7 @@ const Auth: React.FC = () => {
         setSearch("userId", user.id);
         setSearch("userName", `${user.nome} ${user.cognome}`);
         setSearch("userEmail", user.email);
+        localStorage.setItem("token", token);
 
         if (user.ruolo === "admin") {
           navigate("/admin");

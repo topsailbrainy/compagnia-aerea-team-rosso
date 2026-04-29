@@ -8,9 +8,9 @@ const router = Router();
 
 //router.use(authMw);
 
-router.get("/", getPrenotazioniUser);
-router.get("/:id", getPrenotazioneById);
-router.post("/", /*validationMw({ body: prenotazioneInputSchema }),*/ createPrenotazione);
+router.get("/", authMw, getPrenotazioniUser);
+router.get("/:id", authMw, getPrenotazioneById);
+router.post("/", createPrenotazione);
 
 export default router;
 
