@@ -101,7 +101,7 @@ const AnimatedRoutes: React.FC = () => {
           <Route path="/check-in" element={<CheckIn />} />
           <Route path="/flight-status" element={<FlightStatus />} />
           <Route path="/login" element={<Auth />} />
-          <Route path="/profile" element={<User />} />
+          <Route path="/user" element={<User />} />
           <Route path="/destinations" element={<Destinations />} />
           <Route path="/fleet" element={<FleetPlaceholder />} />
           <Route path="/about" element={<About />} />

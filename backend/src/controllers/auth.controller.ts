@@ -19,7 +19,14 @@ export async function signup(req: Request, res: Response, next: NextFunction) {
             [nome, cognome, email, hashedPassword, telefono]
         );
         
-        res.status(201).json(result.rows[0]);
+        const user = result.rows[0];
+        const token = jwt.sign(
+            { id: user.id, email: user.email, ruolo: user.ruolo },
+            JWT_SECRET,
+            { expiresIn: "1d" }
+        );
+        
+        res.status(201).json({ token, user });
     } catch (error) {
         next(error);
     }
@@ -36,8 +43,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
         
         const user = result.rows[0];
         
-        // if (!user || !(await bcrypt.compare(password, user.password))) {
-        if (!user || password != user.password) {
+        if (!user || !(await bcrypt.compare(password, user.password))) {
             throw new AppError(401, "Credenziali non valide");
         }
         

@@ -99,12 +99,13 @@ const Auth: React.FC = () => {
           throw new Error(data.message || "Signup failed");
         }
 
-        const user = await response.json();
+        const { token, user } = await response.json();
         setSearch("isLoggedIn", true);
         setSearch("userRole", user.ruolo);
         setSearch("userId", user.id);
         setSearch("userName", `${user.nome} ${user.cognome}`);
         setSearch("userEmail", user.email);
+        localStorage.setItem("token", token);
 
         navigate("/");
       }
