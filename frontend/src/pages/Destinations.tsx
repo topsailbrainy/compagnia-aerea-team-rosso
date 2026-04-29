@@ -21,19 +21,19 @@ const Destinations: React.FC = () => {
     {
       name: t("destinations.africa"),
       img: africaImg,
-      cities: ["16", "30"], // Athens, Tel-aviv as placeholders for Africa/nearby
+      cities: ["30"], // Houari Boumediene Airport
       subtitle: "Wild landscapes and ancient wonders",
     },
     {
       name: t("destinations.america"),
       img: americaImg,
-      cities: ["4", "6", "12"], // Paris, London, Amsterdam as placeholders
+      cities: ["36"], // New York (JFK)
       subtitle: "From North to South, discover the New World",
     },
     {
       name: t("destinations.asia"),
       img: asiaImg,
-      cities: ["29"], // Istanbul as placeholder
+      cities: ["32"], // Tokyo
       subtitle: "Technological marvels and deep traditions",
     },
     {
@@ -45,13 +45,13 @@ const Destinations: React.FC = () => {
     {
       name: t("destinations.oceania"),
       img: oceaniaImg,
-      cities: ["17"], // Lisbon as placeholder
+      cities: ["39"], // Sydney
       subtitle: "Unexplored nature and vibrant cities",
     },
     {
       name: t("destinations.middleEast"),
       img: arabiaImg,
-      cities: ["29", "30"], // Istanbul, Tel-aviv
+      cities: ["40"], // Dubai
       subtitle: "Luxury and modernity in the desert",
     },
   ];
