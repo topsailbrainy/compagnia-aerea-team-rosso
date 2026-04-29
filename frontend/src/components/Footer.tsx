@@ -89,21 +89,8 @@ const Footer: React.FC = () => {
             </li>
           </ul>
         </div>
-        <div>
-          <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">
-            {t("footer.newsletter")}
-          </h4>
-          <p className="text-sm mb-4">{t("footer.newsSub")}</p>
-          <div className="flex">
-            <input
-              type="email"
-              placeholder={t("footer.emailPlaceholder")}
-              className="bg-white/5 border border-white/10 px-4 py-2 rounded-l outline-none focus:border-accent w-full"
-            />
-            <button className="bg-accent text-primary font-bold px-4 rounded-r hover:bg-white transition-colors">
-              {t("footer.join")}
-            </button>
-          </div>
+        <div className="col-span-1">
+          {/* This empty div preserves the grid layout if needed, or you can adjust grid-cols */}
         </div>
       </div>
       <div className="max-w-7xl mx-auto border-t border-white/5 mt-16 pt-8 text-xs flex flex-col md:flex-row justify-between gap-4">

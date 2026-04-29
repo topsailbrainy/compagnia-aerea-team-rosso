@@ -15,7 +15,6 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Filter,
-  Download,
   CheckCircle2,
   Clock,
   AlertCircle,
@@ -279,10 +278,6 @@ const Admin: React.FC = () => {
             </p>
           </div>
           <div className="flex gap-4 w-full md:w-auto">
-            <button className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-white border border-gray-100 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest text-primary hover:bg-gray-50 transition-all shadow-sm">
-              <Download size={14} className="text-accent" />{" "}
-              {t("adminPage.export")}
-            </button>
             <button
               onClick={handleOpenAddModal}
               className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-accent hover:text-primary transition-all shadow-lg shadow-primary/10"
