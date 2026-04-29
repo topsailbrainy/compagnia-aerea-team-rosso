@@ -39,12 +39,15 @@ const Book: React.FC = () => {
 
   const handleDestinationClick = (destName: string) => {
     const cityMap: Record<string, string> = {
-      [t("destinations.rome")]: "FCO",
-      Pechino: "PEK",
-      [t("destinations.dubai")]: "DXB",
+      [t("destinations.rome")]: "1",
+      [t("destinations.beijing")]: "37",
+      [t("destinations.dubai")]: "40",
     };
 
-    setSearch("to", cityMap[destName] || destName);
+    const targetId = cityMap[destName];
+    if (targetId) {
+      setSearch("to", targetId);
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -178,7 +181,7 @@ const Book: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 { name: t("destinations.rome"), img: romaImg, price: "129" },
-                { name: "Pechino", img: pechinoImg, price: "520" },
+                { name: t("destinations.beijing"), img: pechinoImg, price: "520" },
                 { name: t("destinations.dubai"), img: dubaiImg, price: "450" },
               ].map((dest, i) => (
                 <div

@@ -133,6 +133,7 @@ const resources = {
         "viewAll": "View All Destinations",
         "from": "From",
         "rome": "Rome, Italy",
+        "beijing": "Beijing, China",
         "genoa": "Genoa, Italy",
         "dubai": "Dubai, UAE"
       },
@@ -631,6 +632,7 @@ const resources = {
         "viewAll": "Vedi Tutte le Destinazioni",
         "from": "Da",
         "rome": "Roma, Italia",
+        "beijing": "Pechino, Cina",
         "genoa": "Genova, Italia",
         "dubai": "Dubai, Emirati Arabi Uniti"
       },

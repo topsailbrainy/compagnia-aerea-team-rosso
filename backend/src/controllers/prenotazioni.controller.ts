@@ -67,14 +67,20 @@ export async function getPrenotazioneById(req: Request, res: Response, next: Nex
 
 export async function createPrenotazione(req: Request, res: Response, next: NextFunction) {
     try {
-        const utenteId = (req as any).user.id;
-        const { volo_id, posto, classe, tipo_bagaglio, prezzo_finale, passeggeri } = req.body;
+        const userIdFromAuth = (req as any).user?.id;
+        const { utente_id, volo_id, posto, classe, tipo_bagaglio, prezzo_finale, passeggeri } = req.body;
         
+        const targetUtenteId = userIdFromAuth || utente_id;
+        
+        if (!targetUtenteId) {
+            throw new AppError(400, "ID Utente mancante");
+        }
+
         const result = await pool.query(
             `INSERT INTO prenotazioni (utente_id, volo_id, prezzo_finale, posto, classe, tipo_bagaglio)
              VALUES ($1, $2, $3, $4, $5, $6)
              RETURNING id, utente_id as passeggero_id, volo_id, data_prenotazione, prezzo_finale as prezzo, posto, classe, tipo_bagaglio`,
-            [utenteId, volo_id, prezzo_finale, posto, classe, tipo_bagaglio]
+            [targetUtenteId, volo_id, prezzo_finale, posto, classe, tipo_bagaglio]
         );
         
         const prenotazione = result.rows[0];
