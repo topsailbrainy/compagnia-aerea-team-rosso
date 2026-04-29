@@ -6,7 +6,16 @@ export async function getPrenotazioniUser(req: Request, res: Response, next: Nex
     try {
         const utenteId = (req as any).user.id;
         const result = await pool.query(
-            "SELECT id, utente_id as passeggero_id, volo_id, data_prenotazione, prezzo_finale as prezzo, posto, classe, tipo_bagaglio FROM prenotazioni WHERE utente_id = $1 ORDER BY data_prenotazione DESC",
+            `SELECT p.id, p.utente_id as passeggero_id, p.volo_id, p.data_prenotazione, 
+             p.prezzo_finale as prezzo, p.posto, p.classe, p.tipo_bagaglio,
+             v.data_partenza, v.ora_partenza,
+             ap.citta as partenza_citta, aa.citta as arrivo_citta
+             FROM prenotazioni p
+             JOIN voli v ON p.volo_id = v.id
+             JOIN aeroporti ap ON v.aeroporto_partenza_id = ap.id
+             JOIN aeroporti aa ON v.aeroporto_arrivo_id = aa.id
+             WHERE p.utente_id = $1 
+             ORDER BY v.data_partenza DESC`,
             [utenteId]
         );
         res.json(result.rows);

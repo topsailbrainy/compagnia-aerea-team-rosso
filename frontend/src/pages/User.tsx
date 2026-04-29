@@ -44,9 +44,9 @@ const User: React.FC = () => {
             const mappedBookings = data.map((b: any) => ({
               id: `FP-${b.id}`,
               flightNumber: `FP ${100 + b.volo_id}`,
-              from: String(b.aeroporto_partenza_id),
-              to: String(b.aeroporto_arrivo_id),
-              date: new Date(b.data_prenotazione).toLocaleDateString(),
+              from: b.partenza_citta || String(b.aeroporto_partenza_id),
+              to: b.arrivo_citta || String(b.aeroporto_arrivo_id),
+              date: new Date(b.data_partenza || b.data_prenotazione).toLocaleDateString(),
               time: b.ora_partenza ? b.ora_partenza.slice(0, 5) : "10:00",
               status: b.classe === "Checked-in" ? "Checked-in" : "Confirmed",
               passengerName: userName,

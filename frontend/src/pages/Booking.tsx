@@ -350,7 +350,7 @@ const Booking: React.FC = () => {
                   <p className="text-accent text-[10px] font-black uppercase tracking-widest mb-1">
                     {t("booking.origin")}
                   </p>
-                  <h2 className="text-3xl font-bold">{fromAirportName}</h2>
+                  <h2 className="text-xl font-bold">{fromAirportName}</h2>
                 </div>
                 <div className="flex flex-col items-center">
                   <div className="w-16 h-[2px] bg-white/20 relative">
@@ -364,7 +364,7 @@ const Booking: React.FC = () => {
                   <p className="text-accent text-[10px] font-black uppercase tracking-widest mb-1">
                     {t("booking.destination")}
                   </p>
-                  <h2 className="text-3xl font-bold">{toAirportName}</h2>
+                  <h2 className="text-xl font-bold">{toAirportName}</h2>
                 </div>
               </div>
               <div className="h-12 w-[1px] bg-white/10 hidden md:block" />
